@@ -194,7 +194,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             spacing: 6,
             runSpacing: 6,
             children: listing.tags
-                .map((tag) => Container(
+                .map<Widget>((tag) => Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -413,6 +413,61 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
+  // ── EMPTY STATE ─────────────────────────────────────────────────────────────
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.search_off_rounded,
+              size: 48, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          Text(
+            'No skills found',
+            style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try different keywords or filters',
+            style: AppTextStyles.bodyMedium
+                .copyWith(color: AppColors.textMuted),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── DELETE DIALOG ───────────────────────────────────────────────────────────
+  void _showDeleteDialog(MockListing listing) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
+        title: const Text('Delete Listing'),
+        content: Text(
+          'Are you sure you want to delete "${listing.title}"? '
+          'This cannot be undone.',
+          style: AppTextStyles.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDropdown({
     required String value,
     required List<String> items,
@@ -433,8 +488,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           .toList(),
     );
   }
-}
 
+  // ── HERO SECTION ──────────────────────────────────────────────────────────
+  Widget _buildHero() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
