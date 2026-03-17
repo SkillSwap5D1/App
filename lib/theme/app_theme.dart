@@ -46,8 +46,7 @@ class AppTextStyles {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
-  ); 
-
+  );
 
   // Body
   static const TextStyle bodyLarge = TextStyle(
@@ -69,8 +68,7 @@ class AppTextStyles {
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
     height: 1.3,
-  ); 
-
+  );
 
   // Labels
   static const TextStyle label = TextStyle(
@@ -114,18 +112,10 @@ class AppRadius {
 
 class AppShadows {
   static const List<BoxShadow> card = [
-    BoxShadow(
-      color: Color(0x0A000000),
-      blurRadius: 8,
-      offset: Offset(0, 2),
-    ),
+    BoxShadow(color: Color(0x0A000000), blurRadius: 8, offset: Offset(0, 2)),
   ];
   static const List<BoxShadow> modal = [
-    BoxShadow(
-      color: Color(0x1A000000),
-      blurRadius: 20,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: Color(0x1A000000), blurRadius: 20, offset: Offset(0, 8)),
   ];
 }
 
@@ -162,5 +152,25 @@ class AppTheme {
         textStyle: AppTextStyles.button,
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.error,
+        side: const BorderSide(color: AppColors.error, width: 1.5),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        textStyle: AppTextStyles.button.copyWith(color: AppColors.error),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+        textStyle: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ),
   );
-} 
+}
