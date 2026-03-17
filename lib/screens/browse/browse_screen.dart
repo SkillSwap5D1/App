@@ -111,6 +111,190 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
+  // ── LISTING CARD ────────────────────────────────────────────────────────────
+  Widget _buildListingCard(MockListing listing) {
+    final isMySkills = _selectedTab == 'My Skills';
+    final initials = listing.ownerName.isNotEmpty
+        ? listing.ownerName[0].toUpperCase()
+        : '?';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.border),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                ),
+                child: Center(
+                  child: Text(
+                    initials,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      listing.title,
+                      style: AppTextStyles.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w700),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(listing.ownerName,
+                        style: AppTextStyles.bodySmall),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  const Icon(Icons.star_rounded,
+                      color: Color(0xFFF59E0B), size: 14),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${listing.ownerRating} (${listing.ownerReviewCount})',
+                    style: AppTextStyles.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            listing.description,
+            style: AppTextStyles.bodySmall
+                .copyWith(color: AppColors.textSecondary),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: listing.tags
+                .map((tag) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius:
+                            BorderRadius.circular(AppRadius.full),
+                      ),
+                      child: Text(
+                        tag,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
+                .toList(),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Icon(Icons.access_time_rounded,
+                  size: 12, color: AppColors.textMuted),
+              const SizedBox(width: 4),
+              Text(listing.nextAvailable, style: AppTextStyles.caption),
+              const SizedBox(width: 12),
+              const Icon(Icons.location_on_outlined,
+                  size: 12, color: AppColors.textMuted),
+              const SizedBox(width: 4),
+              Text(listing.modality, style: AppTextStyles.caption),
+            ],
+          ),
+          const Spacer(),
+          if (isMySkills) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    child: const Text('Edit'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _showDeleteDialog(listing),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    child: const Text('Delete'),
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.send_rounded, size: 14),
+                    label: const Text('Send Request'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      listing.isBookmarked
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_outline_rounded,
+                      color: listing.isBookmarked
+                          ? AppColors.primary
+                          : AppColors.textMuted,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   // ── SIDEBAR ─────────────────────────────────────────────────────────────────
   Widget _buildSidebar() {
     return Container(
