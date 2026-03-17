@@ -211,3 +211,52 @@ class AppTheme {
       ),
       margin: const EdgeInsets.symmetric(vertical: 6),
     ),
+
+
+
+    // Bottom Navigation Bar
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.surface,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.textMuted,
+      elevation: 8,
+      type: BottomNavigationBarType.fixed,
+      selectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: TextStyle(fontSize: 11),
+    ),
+
+    // Chips — skill tags
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.primaryLight,
+      labelStyle: AppTextStyles.caption.copyWith(
+        color: AppColors.primary,
+        fontWeight: FontWeight.w500,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.full),
+      ),
+      side: BorderSide.none,
+    ),
+
+    // Divider
+    dividerTheme: const DividerThemeData(
+      color: AppColors.border,
+      thickness: 1,
+      space: 1,
+    ),
+
+    // Snackbar — for toasts like "Removed — Undo"
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.textPrimary,
+      contentTextStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.surface,
+      ),
+      actionTextColor: AppColors.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}
