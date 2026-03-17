@@ -65,9 +65,46 @@ class _BrowseScreenState extends State<BrowseScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSidebar(),
-                const Expanded(child: SizedBox()),
+                Expanded(child: _buildListingGrid()),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── LISTING GRID ────────────────────────────────────────────────────────────
+  Widget _buildListingGrid() {
+    final listings = _filteredListings;
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: listings.isEmpty
+                ? _buildEmptyState()
+                : GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: listings.length,
+                    itemBuilder: (context, index) =>
+                        _buildListingCard(listings[index]),
+                  ),
           ),
         ],
       ),
