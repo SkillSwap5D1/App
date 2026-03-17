@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
   String? _emailError;
 
   @override
@@ -32,6 +33,45 @@ class _LoginScreenState extends State<LoginScreen> {
         _emailError = null;
       }
     });
+  }
+
+  Future<void> _handleSignIn() async {
+    // Validate email field
+    if (_emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email is required')),
+      );
+      return;
+    }
+
+    // Validate password field
+    if (_passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password is required')),
+      );
+      return;
+    }
+
+    // Validate email format
+    if (_emailError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please use your @myport.ac.uk email')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+      // TODO: Navigate to home/dashboard after successful login
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in successful!')),
+      );
+    }
   }
 
   @override
@@ -145,6 +185,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 const SizedBox(height: AppSpacing.sm),
                                 _buildPasswordField(),
+                                const SizedBox(height: AppSpacing.lg),
+
+                                // Sign in button
+                                _buildSignInButton(),
+                                const SizedBox(height: AppSpacing.md),
                               ],
                             ),
                           ),
@@ -247,6 +292,47 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       style: AppTextStyles.bodyMedium,
+    );
+  }
+
+  Widget _buildSignInButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _handleSignIn,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+        child: _isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sign In',
+                    style: AppTextStyles.button,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  const Text(
+                    '→',
+                    style: AppTextStyles.button,
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
