@@ -55,6 +55,57 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          _buildHero(),
+          const Expanded(child: SizedBox()),
+        ],
+      ),
+    );
+  }
+
+  // ── HERO SECTION ────────────────────────────────────────────────────────────
+  Widget _buildHero() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFF0FDF9),
+            Color(0xFFFFF7ED),
+            Color(0xFFF8F7F4),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome,
+                  color: AppColors.primary, size: 16),
+              const SizedBox(width: 6),
+              Text(
+                'Discover & Exchange',
+                style: AppTextStyles.label.copyWith(color: AppColors.primary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Find Skills to Learn', style: AppTextStyles.h1),
+          const SizedBox(height: 8),
+          Text(
+            'Browse skills offered by students at your university\nand start learning today.',
+            style: AppTextStyles.bodyMedium
+                .copyWith(color: AppColors.textSecondary),
+          ),
+        ],
+      ),
+    );
   }
 }
