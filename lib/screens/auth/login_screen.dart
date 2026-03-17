@@ -9,6 +9,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  
+  bool _isPasswordVisible = false;
+  String? _emailError;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _emailError = null;
+      } else if (!value.endsWith('@myport.ac.uk')) {
+        _emailError = 'Please use your @myport.ac.uk email';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -51,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                  // Form card placeholder
+                  // Form card
                   Expanded(
                     flex: 1,
                     child: Padding(
@@ -90,6 +115,36 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Sign in to continue learning',
                                   style: AppTextStyles.bodySmall,
                                 ),
+                                const SizedBox(height: AppSpacing.lg),
+
+                                // Email field
+                                Text(
+                                  'Email',
+                                  style: AppTextStyles.label,
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                _buildEmailField(),
+                                if (_emailError != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: AppSpacing.xs,
+                                    ),
+                                    child: Text(
+                                      _emailError!,
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: AppColors.error,
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(height: AppSpacing.md),
+
+                                // Password field
+                                Text(
+                                  'Password',
+                                  style: AppTextStyles.label,
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                _buildPasswordField(),
                               ],
                             ),
                           ),
@@ -111,6 +166,87 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      onChanged: _validateEmail,
+      decoration: InputDecoration(
+        hintText: 'you@myport.ac.uk',
+        prefixIcon: const Icon(Icons.mail_outline),
+        prefixIconColor: AppColors.textMuted,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.error,
+            width: 2,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextField(
+      controller: _passwordController,
+      obscureText: !_isPasswordVisible,
+      decoration: InputDecoration(
+        hintText: '••••••',
+        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIconColor: AppColors.textMuted,
+        suffixIcon: GestureDetector(
+          onTap: () {
+            setState(() => _isPasswordVisible = !_isPasswordVisible);
+          },
+          child: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.textMuted,
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 2,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
     );
   }
 
