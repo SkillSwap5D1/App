@@ -60,14 +60,160 @@ class _BrowseScreenState extends State<BrowseScreen> {
       body: Column(
         children: [
           _buildHero(),
-          const Expanded(child: SizedBox()),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSidebar(),
+                const Expanded(child: SizedBox()),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // ── HERO SECTION ────────────────────────────────────────────────────────────
-  Widget _buildHero() {
+  // ── SIDEBAR ─────────────────────────────────────────────────────────────────
+  Widget _buildSidebar() {
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(right: BorderSide(color: AppColors.border)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              child: Row(
+                children: [
+                  _buildTabButton('Available'),
+                  _buildTabButton('My Skills'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildSidebarLabel('SEARCH'),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _searchController,
+              onChanged: (val) => setState(() => _searchQuery = val),
+              decoration: const InputDecoration(
+                hintText: 'Search skills...',
+                prefixIcon:
+                    Icon(Icons.search, color: AppColors.textMuted, size: 18),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildSidebarLabel('CATEGORY'),
+            const SizedBox(height: 8),
+            _buildDropdown(
+              value: _selectedCategory,
+              items: MockData.categories,
+              onChanged: (val) => setState(() => _selectedCategory = val!),
+            ),
+            const SizedBox(height: 20),
+            _buildSidebarLabel('LEVEL'),
+            const SizedBox(height: 8),
+            _buildDropdown(
+              value: _selectedLevel,
+              items: MockData.levels,
+              onChanged: (val) => setState(() => _selectedLevel = val!),
+            ),
+            const SizedBox(height: 20),
+            _buildSidebarLabel('FORMAT'),
+            const SizedBox(height: 8),
+            _buildDropdown(
+              value: _selectedFormat,
+              items: MockData.formats,
+              onChanged: (val) => setState(() => _selectedFormat = val!),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabButton(String label) {
+    final isSelected = _selectedTab == label;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTab = label),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.surface : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            boxShadow: isSelected ? AppShadows.card : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                label == 'Available' ? Icons.search : Icons.grid_view,
+                size: 14,
+                color: isSelected ? AppColors.textPrimary : AppColors.textMuted,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: isSelected
+                      ? AppColors.textPrimary
+                      : AppColors.textMuted,
+                  fontWeight:
+                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebarLabel(String text) {
+    return Text(
+      text,
+      style: AppTextStyles.caption.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.8,
+        color: AppColors.textMuted,
+      ),
+    );
+  }
+
+  Widget _buildDropdown({
+    required String value,
+    required List<String> items,
+    required void Function(String?) onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      onChanged: onChanged,
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+      style: AppTextStyles.bodyMedium,
+      items: items
+          .map((item) => DropdownMenuItem(
+                value: item,
+                child: Text(item, style: AppTextStyles.bodyMedium),
+              ))
+          .toList(),
+    );
+  }
+}
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
