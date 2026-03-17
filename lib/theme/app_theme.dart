@@ -93,6 +93,7 @@ class AppTextStyles {
     color: AppColors.surface,
     letterSpacing: 0.2,
   );
+<<<<<<< HEAD
 }
 
 class AppSpacing {
@@ -162,3 +163,6 @@ class AppTheme {
         textStyle: AppTextStyles.button,
       ),
     ),
+=======
+} 
+>>>>>>> 37370465f69532f75d6b4aebec229b41cf500ca2
