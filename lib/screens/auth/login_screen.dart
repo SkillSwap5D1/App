@@ -74,6 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _navigateToRegister() {
+    // Navigate to register screen
+    Navigator.of(context).pushNamed('/register');
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -190,6 +195,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Sign in button
                                 _buildSignInButton(),
                                 const SizedBox(height: AppSpacing.md),
+
+                                // Create account link
+                                Center(
+                                  child: GestureDetector(
+                                    onTap: _navigateToRegister,
+                                    child: Text(
+                                      'Create an account',
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
