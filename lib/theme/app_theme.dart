@@ -196,7 +196,7 @@ class AppTheme {
       labelStyle: AppTextStyles.label,
       errorStyle: AppTextStyles.caption.copyWith(color: AppColors.error),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: AppColors.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
