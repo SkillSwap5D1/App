@@ -109,6 +109,7 @@ class MockConversation {
   final String timestamp;
   final int unreadCount;
   final bool isOnline;
+  final String category;  // Programming / Languages / Design / Music
   final List<MockMessage> messages;
 
   const MockConversation({
@@ -119,6 +120,7 @@ class MockConversation {
     required this.timestamp,
     required this.unreadCount,
     required this.isOnline,
+    required this.category,
     required this.messages,
   });
 }
@@ -447,6 +449,7 @@ class MockData {
       timestamp: '10:42 AM',
       unreadCount: 2,
       isOnline: true,
+      category: 'Languages',
       messages: [
         MockMessage(
           id: 'msg_001',
@@ -503,6 +506,7 @@ class MockData {
       timestamp: 'Yesterday',
       unreadCount: 0,
       isOnline: false,
+      category: 'Programming',
       messages: [
         MockMessage(
           id: 'msg_007',

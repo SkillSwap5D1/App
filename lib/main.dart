@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
-import 'screens/browse/browse_screen.dart';
+import 'screens/chat/chat_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'SkillSwap',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: const BrowseScreen(),
+      home: const ChatListScreen(),
     );
   }
 }
