@@ -13,7 +13,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Align(
         alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -22,20 +22,37 @@ class MessageBubble extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: message.isMe ? AppColors.primary : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(AppRadius.md),
+              topRight: const Radius.circular(AppRadius.md),
+              bottomLeft: Radius.circular(
+                message.isMe ? AppRadius.md : 2,
+              ),
+              bottomRight: Radius.circular(
+                message.isMe ? 2 : AppRadius.md,
+              ),
+            ),
             border: Border.all(
               color: message.isMe ? AppColors.primary : AppColors.border,
+              width: 0.5,
             ),
-            boxShadow: AppShadows.card,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+            vertical: 8.0,
           ),
           child: Column(
             crossAxisAlignment: message.isMe
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 message.text,
@@ -43,14 +60,18 @@ class MessageBubble extends StatelessWidget {
                   color: message.isMe
                       ? AppColors.surface
                       : AppColors.textPrimary,
+                  height: 1.4,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              const SizedBox(height: 4),
               Text(
                 message.timestamp,
-                style: AppTextStyles.caption.copyWith(
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                ).copyWith(
                   color: message.isMe
-                      ? AppColors.primaryLight.withOpacity(0.7)
+                      ? AppColors.primaryLight.withOpacity(0.8)
                       : AppColors.textMuted,
                 ),
               ),
