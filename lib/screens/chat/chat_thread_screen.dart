@@ -238,11 +238,16 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
+                      backgroundColor: AppColors.primary,
                       disabledBackgroundColor: AppColors.border,
+                      elevation: _isComposing ? 2 : 0,
                     ),
                     child: Icon(
                       Icons.send,
-                      color: _isComposing ? AppColors.surface : AppColors.textMuted,
+                      color: _isComposing
+                          ? AppColors.surface
+                          : AppColors.textMuted,
+                      size: 20,
                     ),
                   ),
                 ),
