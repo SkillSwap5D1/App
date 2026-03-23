@@ -52,7 +52,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
     }
@@ -169,8 +169,12 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
               itemCount: widget.conversation.messages.length,
+              addAutomaticKeepAlives: true,
               itemBuilder: (context, index) {
                 final message = widget.conversation.messages[index];
                 return MessageBubble(message: message);
