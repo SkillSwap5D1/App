@@ -181,12 +181,22 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           // ── MESSAGE INPUT ──────────────────────────────────────────────
           Container(
             color: AppColors.surface,
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md + MediaQuery.of(context).viewInsets.bottom,
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: _isComposing ? (_) {
+                      _messageController.clear();
+                      _scrollToBottom();
+                    } : null,
                     decoration: InputDecoration(
                       hintText: 'Type a message...',
                       hintStyle: const TextStyle(
@@ -219,6 +229,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       ),
                     ),
                     maxLines: null,
+                    minLines: 1,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
