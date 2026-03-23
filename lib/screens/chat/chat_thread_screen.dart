@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/message_bubble.dart';
 
 class ChatThreadScreen extends StatefulWidget {
   final MockConversation conversation;
@@ -16,17 +17,45 @@ class ChatThreadScreen extends StatefulWidget {
 
 class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final TextEditingController _messageController;
+  late final ScrollController _scrollController;
+  bool _isComposing = false;
 
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
+    _scrollController = ScrollController();
+    
+    // Listen for text changes to enable/disable send button
+    _messageController.addListener(_handleTextChanged);
+    
+    // Scroll to bottom after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _handleTextChanged() {
+    setState(() {
+      _isComposing = _messageController.text.trim().isNotEmpty;
+    });
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   // Get category emoji
@@ -48,10 +77,12 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        elevation: 0,
+        elevation: 1,
+        shadowColor: AppColors.border,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -75,35 +106,74 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               ),
             ),
             const SizedBox(width: AppSpacing.md),
-            // Name
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.conversation.otherUserName,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
+            // Name and Online Status
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.conversation.otherUserName,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  widget.conversation.isOnline ? 'Online' : 'Offline',
-                  style: AppTextStyles.caption,
-                ),
-              ],
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: widget.conversation.isOnline
+                              ? AppColors.success
+                              : AppColors.textMuted,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.conversation.isOnline ? 'Online' : 'Offline',
+                        style: AppTextStyles.caption,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {
+              // TODO: Open menu for Report/Block
+              showMenu(
+                context: context,
+                position: const RelativeRect.fromLTRB(100, 60, 0, 0),
+                items: [
+                  const PopupMenuItem(
+                    child: Text('Report'),
+                  ),
+                  const PopupMenuItem(
+                    child: Text('Block'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           // ── MESSAGES LIST ──────────────────────────────────────────────
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(AppSpacing.md),
               itemCount: widget.conversation.messages.length,
               itemBuilder: (context, index) {
                 final message = widget.conversation.messages[index];
-                return _MessageBubble(message: message);
+                return MessageBubble(message: message);
               },
             ),
           ),
@@ -136,6 +206,13 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                           color: AppColors.border,
                         ),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
                         vertical: AppSpacing.sm,
@@ -149,81 +226,30 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   width: 48,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Send message
-                      _messageController.clear();
-                    },
+                    onPressed: _isComposing
+                        ? () {
+                            // Clear and scroll to bottom
+                            _messageController.clear();
+                            _scrollToBottom();
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
+                      disabledBackgroundColor: AppColors.border,
                     ),
-                    child: const Icon(Icons.send),
+                    child: Icon(
+                      Icons.send,
+                      color: _isComposing ? AppColors.surface : AppColors.textMuted,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── MESSAGE BUBBLE WIDGET ──────────────────────────────────────────────────
-class _MessageBubble extends StatelessWidget {
-  final MockMessage message;
-
-  const _MessageBubble({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Align(
-        alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.75,
-          ),
-          decoration: BoxDecoration(
-            color: message.isMe ? AppColors.primary : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(
-              color: message.isMe ? AppColors.primary : AppColors.border,
-            ),
-            boxShadow: AppShadows.card,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          child: Column(
-            crossAxisAlignment: message.isMe
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
-            children: [
-              Text(
-                message.text,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: message.isMe
-                      ? AppColors.surface
-                      : AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                message.timestamp,
-                style: AppTextStyles.caption.copyWith(
-                  color: message.isMe
-                      ? AppColors.primaryLight.withOpacity(0.7)
-                      : AppColors.textMuted,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
