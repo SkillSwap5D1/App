@@ -144,20 +144,52 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert, size: 24),
             onPressed: () {
-              // TODO: Open menu for Report/Block
-              showMenu(
+              // Open menu for Report/Block
+              showModalBottomSheet(
                 context: context,
-                position: const RelativeRect.fromLTRB(100, 60, 0, 0),
-                items: [
-                  const PopupMenuItem(
-                    child: Text('Report'),
+                builder: (context) => Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(AppRadius.lg),
+                    ),
                   ),
-                  const PopupMenuItem(
-                    child: Text('Block'),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: AppSpacing.sm),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius:
+                              BorderRadius.circular(AppRadius.full),
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.flag, color: AppColors.error),
+                        title: const Text('Report User'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: Open report sheet
+                        },
+                      ),
+                      ListTile(
+                        leading:
+                            const Icon(Icons.block, color: AppColors.error),
+                        title: const Text('Block User'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: Block user
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                    ],
                   ),
-                ],
+                ),
               );
             },
           ),
@@ -177,7 +209,10 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               addAutomaticKeepAlives: true,
               itemBuilder: (context, index) {
                 final message = widget.conversation.messages[index];
-                return MessageBubble(message: message);
+                return MessageBubble(
+                  message: message,
+                  showDeliveryStatus: true,
+                );
               },
             ),
           ),
