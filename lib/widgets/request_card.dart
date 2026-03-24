@@ -33,6 +33,13 @@ class RequestCard extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4.0,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       padding: EdgeInsets.all(16.0),
       child: Column(
