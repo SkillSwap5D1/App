@@ -53,25 +53,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showReportSheet() {
-    final reportBlocked = ReportBlockedScreen(
-      userName: '$_firstName $_lastName',
-      userId: 'user_sarah_001',
-      onBlock: () {
-        setState(() => _isUserBlocked = true);
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReportBlockedScreen(
+          userName: '$_firstName $_lastName',
+          userId: 'user_sarah_001',
+          onBlock: () {
+            setState(() => _isUserBlocked = true);
+          },
+        ),
+      ),
     );
-    reportBlocked._showReportForm();
   }
 
   void _showBlockDialog() {
-    final reportBlocked = ReportBlockedScreen(
-      userName: '$_firstName $_lastName',
-      userId: 'user_sarah_001',
-      onBlock: () {
-        setState(() => _isUserBlocked = true);
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReportBlockedScreen(
+          userName: '$_firstName $_lastName',
+          userId: 'user_sarah_001',
+          onBlock: () {
+            setState(() => _isUserBlocked = true);
+          },
+        ),
+      ),
     );
-    reportBlocked._showBlockConfirmation();
   }
 
   @override
