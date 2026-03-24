@@ -57,12 +57,49 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   // Provider info row
                   _buildProviderHeader(),
                   SizedBox(height: AppSpacing.lg),
+
+                  // Skill title
+                  _buildSkillTitle(),
+                  SizedBox(height: AppSpacing.md),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSkillTitle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.listing.title,
+          style: AppTextStyles.h1.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: AppSpacing.sm),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: Text(
+            widget.listing.category,
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
