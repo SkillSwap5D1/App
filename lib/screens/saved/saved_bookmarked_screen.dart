@@ -49,15 +49,36 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Saved Skills',
-                    style: AppTextStyles.h2,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Saved Skills',
+                        style: AppTextStyles.h2,
+                      ),
+                      // Count badge
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight,
+                          borderRadius:
+                              BorderRadius.circular(AppRadius.full),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          '${_getSavedCount()}',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    '${_savedListings.length} skill${_savedListings.length != 1 ? 's' : ''}',
-                    style: AppTextStyles.bodySmall,
-                  ),
                 ],
               ),
             ),
