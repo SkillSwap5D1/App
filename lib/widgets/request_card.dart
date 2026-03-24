@@ -5,11 +5,15 @@ class RequestCard extends StatelessWidget {
   final String senderName;
   final String skillToLearn;
   final String avatarInitial;
+  final String timestamp;
+  final String status;
 
   const RequestCard({
     required this.senderName,
     required this.skillToLearn,
     required this.avatarInitial,
+    required this.timestamp,
+    required this.status,
   });
 
   @override
@@ -62,7 +66,48 @@ class RequestCard extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(width: 12.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              decoration: BoxDecoration(
+                color: _getStatusColor(),
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Text(
+                status,
+                style: AppTextStyles.caption.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              timestamp,
+              style: AppTextStyles.caption,
+            ),
+          ],
+        ),
       ],
     );
+  }
+
+  Color _getStatusColor() {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return AppColors.textMuted;
+      case 'accepted':
+        return AppColors.success;
+      case 'declined':
+        return AppColors.error;
+      default:
+        return AppColors.textMuted;
+    }
   }
 }
