@@ -16,17 +16,18 @@ class TagChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.xs,
-        vertical: AppSpacing.xxs,
+        horizontal: 8.0,
+        vertical: 3.0,
       ),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.tagBg,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
+        color: backgroundColor ?? AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(12.0),
       ),
       child: Text(
         label,
-        style: AppTextStyles.bodySmall.copyWith(
-          color: textColor ?? AppColors.tagText,
+        style: AppTextStyles.caption.copyWith(
+          color: textColor ?? AppColors.primary,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

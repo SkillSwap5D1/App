@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skillswap_app/models/listing.dart';
+import 'package:skillswap_app/data/mock_data.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 import 'package:skillswap_app/widgets/star_rating.dart';
 import 'package:skillswap_app/widgets/tag_chip.dart';
@@ -45,22 +45,22 @@ class _ListingCardState extends State<ListingCard> {
       onTap: widget.onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: AppColors.border, width: 1),
         ),
-        padding: EdgeInsets.all(AppSpacing.md),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(height: 8.0),
             _buildDescription(),
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(height: 8.0),
             _buildTags(),
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(height: 8.0),
             _buildAvailability(),
-            SizedBox(height: AppSpacing.md),
+            SizedBox(height: 16.0),
             if (widget.isOwner) _buildOwnerButtons() else _buildUserButtons(),
           ],
         ),
@@ -73,23 +73,23 @@ class _ListingCardState extends State<ListingCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-          radius: 24,
-          backgroundColor: AppColors.avatarBg,
+          radius: 20,
+          backgroundColor: AppColors.primaryLight,
           child: Text(
             widget.listing.ownerName[0].toUpperCase(),
-            style: AppTextStyles.headingSmall.copyWith(
-              color: Colors.white,
+            style: AppTextStyles.h3.copyWith(
+              color: AppColors.primary,
             ),
           ),
         ),
-        SizedBox(width: AppSpacing.md),
+        SizedBox(width: 12.0),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 widget.listing.title,
-                style: AppTextStyles.bodyLarge.copyWith(
+                style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 1,
@@ -97,14 +97,12 @@ class _ListingCardState extends State<ListingCard> {
               ),
               Text(
                 widget.listing.ownerName,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: AppTextStyles.bodySmall,
               ),
             ],
           ),
         ),
-        SizedBox(width: AppSpacing.sm),
+        SizedBox(width: 8.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -118,8 +116,8 @@ class _ListingCardState extends State<ListingCard> {
               onTap: _toggleBookmark,
               child: Icon(
                 _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                color: _isBookmarked ? AppColors.primary : AppColors.textSecondary,
-                size: 20,
+                color: _isBookmarked ? AppColors.primary : AppColors.textMuted,
+                size: 18,
               ),
             ),
           ],
@@ -139,8 +137,8 @@ class _ListingCardState extends State<ListingCard> {
 
   Widget _buildTags() {
     return Wrap(
-      spacing: AppSpacing.xs,
-      runSpacing: AppSpacing.xs,
+      spacing: 6.0,
+      runSpacing: 6.0,
       children: widget.listing.tags
           .take(3)
           .map((tag) => TagChip(label: tag))
@@ -154,26 +152,22 @@ class _ListingCardState extends State<ListingCard> {
       children: [
         Row(
           children: [
-            Icon(Icons.schedule, size: 16, color: AppColors.textSecondary),
+            Icon(Icons.schedule, size: 12, color: AppColors.textMuted),
             SizedBox(width: 4),
             Text(
               'Tomorrow, 3 PM',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: AppTextStyles.caption,
             ),
           ],
         ),
         SizedBox(height: 4),
         Row(
           children: [
-            Icon(Icons.location_on, size: 16, color: AppColors.textSecondary),
+            Icon(Icons.location_on, size: 12, color: AppColors.textMuted),
             SizedBox(width: 4),
             Text(
               widget.listing.modality,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: AppTextStyles.caption,
             ),
           ],
         ),
@@ -187,12 +181,10 @@ class _ListingCardState extends State<ListingCard> {
       children: [
         ElevatedButton.icon(
           onPressed: widget.onSendRequest,
-          icon: Icon(Icons.send, size: 16),
+          icon: Icon(Icons.send, size: 14),
           label: Text('Send Request'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            padding: EdgeInsets.symmetric(vertical: 12.0),
           ),
         ),
       ],
@@ -205,22 +197,22 @@ class _ListingCardState extends State<ListingCard> {
         Expanded(
           child: OutlinedButton(
             onPressed: () {},
-            child: Text('Edit'),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              padding: EdgeInsets.symmetric(vertical: 10.0),
             ),
+            child: Text('Edit'),
           ),
         ),
-        SizedBox(width: AppSpacing.sm),
+        SizedBox(width: 8.0),
         Expanded(
           child: OutlinedButton(
             onPressed: () {},
-            child: Text('Delete'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: BorderSide(color: Colors.red),
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              foregroundColor: AppColors.error,
+              side: BorderSide(color: AppColors.error),
+              padding: EdgeInsets.symmetric(vertical: 10.0),
             ),
+            child: Text('Delete'),
           ),
         ),
       ],
