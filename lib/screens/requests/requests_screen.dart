@@ -183,20 +183,27 @@ class _RequestsScreenState extends State<RequestsScreen> {
       itemCount: _incomingRequests.length,
       itemBuilder: (context, index) {
         final request = _incomingRequests[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: RequestCard(
-            senderName: request['senderName'],
-            skillToLearn: request['skillToLearn'],
-            avatarInitial: request['avatarInitial'],
-            timestamp: request['timestamp'],
-            status: request['status'],
-            message: request['message'],
-            proposedTimeSlots: request['proposedTimeSlots'],
-            onAccept: () => _handleAccept(index),
-            onDecline: () => _handleDecline(index),
-            onCounter: () => _handleCounter(index),
-          ),
+        final isLast = index == _incomingRequests.length - 1;
+        return Column(
+          children: [
+            RequestCard(
+              senderName: request['senderName'],
+              skillToLearn: request['skillToLearn'],
+              avatarInitial: request['avatarInitial'],
+              timestamp: request['timestamp'],
+              status: request['status'],
+              message: request['message'],
+              proposedTimeSlots: request['proposedTimeSlots'],
+              onAccept: () => _handleAccept(index),
+              onDecline: () => _handleDecline(index),
+              onCounter: () => _handleCounter(index),
+            ),
+            if (!isLast)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                child: Divider(color: AppColors.border),
+              ),
+          ],
         );
       },
     );
@@ -215,16 +222,23 @@ class _RequestsScreenState extends State<RequestsScreen> {
       itemCount: _outgoingRequests.length,
       itemBuilder: (context, index) {
         final request = _outgoingRequests[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: RequestCard(
-            senderName: request['senderName'],
-            skillToLearn: request['skillToLearn'],
-            avatarInitial: request['avatarInitial'],
-            timestamp: request['timestamp'],
-            status: request['status'],
-            proposedTimeSlots: request['proposedTimeSlots'],
-          ),
+        final isLast = index == _outgoingRequests.length - 1;
+        return Column(
+          children: [
+            RequestCard(
+              senderName: request['senderName'],
+              skillToLearn: request['skillToLearn'],
+              avatarInitial: request['avatarInitial'],
+              timestamp: request['timestamp'],
+              status: request['status'],
+              proposedTimeSlots: request['proposedTimeSlots'],
+            ),
+            if (!isLast)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                child: Divider(color: AppColors.border),
+              ),
+          ],
         );
       },
     );
