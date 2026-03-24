@@ -58,11 +58,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Expanded(
               child: _notifications.isEmpty
                   ? _buildEmptyState()
-                  : ListView.builder(
+                  : ListView.separated(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md,
                       ),
                       itemCount: _notifications.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: AppSpacing.sm),
                       itemBuilder: (context, index) {
                         final notification = _notifications[index];
                         return _NotificationRow(
