@@ -101,25 +101,37 @@ class RequestCard extends StatelessWidget {
         Expanded(
           child: ElevatedButton.icon(
             onPressed: onAccept,
-            icon: Icon(Icons.check, size: 14),
+            icon: Icon(Icons.check_circle, size: 16),
             label: Text('Accept'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 10.0),
+              padding: EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 8.0,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           ),
         ),
-        SizedBox(width: 8.0),
+        SizedBox(width: 12.0),
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onDecline,
-            icon: Icon(Icons.close, size: 14),
+            icon: Icon(Icons.cancel, size: 16),
             label: Text('Decline'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.error,
-              side: BorderSide(color: AppColors.error),
-              padding: EdgeInsets.symmetric(vertical: 10.0),
+              side: BorderSide(color: AppColors.error, width: 2),
+              padding: EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 8.0,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           ),
         ),
