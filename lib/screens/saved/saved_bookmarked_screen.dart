@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
-import '../browse/listing_card.dart';
+import '../../widgets/listing_card.dart';
 import 'saved_empty_state.dart';
 
 class SavedBookmarkedScreen extends StatefulWidget {
@@ -14,7 +14,6 @@ class SavedBookmarkedScreen extends StatefulWidget {
 class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   // ── STATE ──────────────────────────────────────────────────────────
   late List<MockListing> _savedListings;
-  final Map<String, int> _removalHistory = {};
 
   @override
   void initState() {
@@ -27,10 +26,6 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   }
 
   int _getSavedCount() => _savedListings.length;
-
-  bool _isListingSaved(String listingId) {
-    return _savedListings.any((listing) => listing.id == listingId);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,49 +128,35 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   }
 
   Widget _buildSavedCard(MockListing listing, int index) {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () {
-            // TODO: Navigate to listing detail
-          },
-          child: ListingCard(
-            listing: listing,
-            isSaved: true,
-            onSaveToggle: () {
-              _removeFromSaved(listing, index);
-            },
-          ),
-        ),
-        // Filled bookmark indicator with animation
-        Positioned(
-          top: AppSpacing.md,
-          right: AppSpacing.md,
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.elasticOut,
-            builder: (context, value, child) {
-              return Transform.scale(
-                scale: value,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: AppShadows.card,
-                  ),
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  child: const Icon(
-                    Icons.bookmark,
-                    color: AppColors.surface,
-                    size: 18,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          '/listing-detail',
+          arguments: listing,
+        );
+      },
+      child: ListingCard(
+        listing: listing,
+        isBookmarked: true,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/listing-detail',
+            arguments: listing,
+          );
+        },
+        onBookmark: () {
+          _removeFromSaved(listing, index);
+        },
+        onSendRequest: () {
+          Navigator.pushNamed(
+            context,
+            '/send-request',
+            arguments: listing,
+          );
+        },
+      ),
     );
   }
 
