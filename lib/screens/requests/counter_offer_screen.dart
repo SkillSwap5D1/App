@@ -21,6 +21,9 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
   List<TimeSlot> _selectedTimeSlots = [];
   final TextEditingController _messageController = TextEditingController();
 
+  // ── VALIDATION ─────────────────────────────────────────────────────────────
+  bool get _isValid => _selectedTimeSlots.isNotEmpty;
+
   @override
   void dispose() {
     _messageController.dispose();
