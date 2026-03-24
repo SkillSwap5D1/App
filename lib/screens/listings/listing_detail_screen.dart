@@ -54,6 +54,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Provider info row
+                  _buildProviderHeader(),
                   SizedBox(height: AppSpacing.lg),
                 ],
               ),
@@ -61,6 +63,70 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProviderHeader() {
+    return Row(
+      children: [
+        // Avatar with initials
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(AppRadius.full),
+          ),
+          child: Center(
+            child: Text(
+              widget.listing.ownerName
+                  .split(' ')
+                  .map((n) => n[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase(),
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: AppSpacing.md),
+
+        // Name and rating
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.listing.ownerName,
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: AppSpacing.xs),
+              Row(
+                children: [
+                  Icon(
+                    Icons.star_filled,
+                    size: 16,
+                    color: const Color(0xFFFCD34D), // Yellow star
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Text(
+                    '${widget.listing.ownerRating.toStringAsFixed(1)} (${widget.listing.ownerReviewCount} reviews)',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
