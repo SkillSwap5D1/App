@@ -202,6 +202,76 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
+
+              // Email field (non-editable)
+              Text('Contact Information', style: AppTextStyles.h3),
+              const SizedBox(height: AppSpacing.md),
+
+              // Email field - greyed out, non-editable
+              TextField(
+                enabled: false,
+                decoration: InputDecoration(
+                  labelText: 'Email Address',
+                  hintText: _originalEmail,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.md,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Save Changes button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _hasChanges ? _saveChanges : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: Colors.grey[300],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Save Changes',
+                    style: AppTextStyles.button.copyWith(
+                      color: _hasChanges ? AppColors.surface : Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Cancel link
+              GestureDetector(
+                onTap: _cancelChanges,
+                child: Text(
+                  'Cancel',
+                  style: AppTextStyles.label.copyWith(
+                    color: AppColors.textSecondary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),
