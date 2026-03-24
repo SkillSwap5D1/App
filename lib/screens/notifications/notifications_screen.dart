@@ -53,6 +53,39 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  void _handleNotificationTap(MockNotification notification) {
+    // Navigator based on notification type
+    switch (notification.type) {
+      case 'message':
+        // TODO: Navigate to chat thread
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Opening chat...')),
+        );
+        break;
+      case 'request':
+        // TODO: Navigate to requests screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Opening requests...')),
+        );
+        break;
+      case 'reminder':
+        // TODO: Navigate to relevant screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Opening reminder...')),
+        );
+        break;
+      case 'accepted':
+      case 'declined':
+        // TODO: Navigate to requests/bookings
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Opening status update...')),
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +135,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           notification: notification,
                           onTap: () {
                             _markAsRead(index);
-                            // TODO: Navigate based on notification type
+                            _handleNotificationTap(notification);
                           },
                         );
                       },
