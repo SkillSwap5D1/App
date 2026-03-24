@@ -543,20 +543,23 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 style: AppTextStyles.label.copyWith(color: AppColors.primary),
               ),
               const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed('/profile');
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primary.withOpacity(0.1),
-                  ),
-                  child: const Icon(
-                    Icons.person_outline,
-                    color: AppColors.primary,
-                    size: 20,
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/profile');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primary.withOpacity(0.1),
+                    ),
+                    child: const Icon(
+                      Icons.person_outline,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
