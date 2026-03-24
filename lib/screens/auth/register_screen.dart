@@ -70,6 +70,87 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
+  Future<void> _handleCreateAccount() async {
+    // Validate first name
+    if (_firstNameController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('First name is required')));
+      return;
+    }
+
+    // Validate last name
+    if (_lastNameController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Last name is required')));
+      return;
+    }
+
+    // Validate email field
+    if (_emailController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Email is required')));
+      return;
+    }
+
+    // Validate email format
+    if (_emailError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please use your @myport.ac.uk email')),
+      );
+      return;
+    }
+
+    // Validate password field
+    if (_passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Password is required')));
+      return;
+    }
+
+    // Validate confirm password field
+    if (_confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please confirm your password')),
+      );
+      return;
+    }
+
+    // Validate password match
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      return;
+    }
+
+    // Validate course selection
+    if (_selectedCourse == null || _selectedCourse!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select your course')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+      // Navigate to onboarding screen
+      Navigator.of(context).pushNamed('/onboarding');
+    }
+  }
+
+  void _navigateToSignIn() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -221,6 +302,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                           const SizedBox(height: AppSpacing.lg),
+
+                          // Create account button
+                          _buildCreateAccountButton(),
+                          const SizedBox(height: AppSpacing.md),
+
+                          // Sign in link
+                          Center(
+                            child: GestureDetector(
+                              onTap: _navigateToSignIn,
+                              child: Text(
+                                'Already have an account? Sign in',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -239,6 +338,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCreateAccountButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _handleCreateAccount,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+        child:
+            _isLoading
+                ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.surface,
+                    ),
+                  ),
+                )
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Create Account', style: AppTextStyles.button),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Text('→', style: AppTextStyles.button),
+                  ],
+                ),
       ),
     );
   }
