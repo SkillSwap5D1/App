@@ -21,18 +21,19 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   // ── FILTERED LISTINGS ──────────────────────────────────────────────────────
   List<MockListing> get _filteredListings {
-    final source = _selectedTab == 'Available'
-        ? MockData.listings
-        : MockData.myListings;
+    final source =
+        _selectedTab == 'Available' ? MockData.listings : MockData.myListings;
 
     return source.where((listing) {
-      final matchesSearch = _searchQuery.isEmpty ||
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           listing.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          listing.description
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
-          listing.tags
-              .any((t) => t.toLowerCase().contains(_searchQuery.toLowerCase()));
+          listing.description.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          listing.tags.any(
+            (t) => t.toLowerCase().contains(_searchQuery.toLowerCase()),
+          );
 
       final matchesCategory =
           _selectedCategory == 'All' || listing.category == _selectedCategory;
@@ -41,7 +42,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
           _selectedLevel == 'All Levels' || listing.level == _selectedLevel;
 
       final matchesFormat =
-          _selectedFormat == 'All Formats' || listing.modality == _selectedFormat;
+          _selectedFormat == 'All Formats' ||
+          listing.modality == _selectedFormat;
 
       return matchesSearch && matchesCategory && matchesLevel && matchesFormat;
     }).toList();
@@ -59,14 +61,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
+          _buildNavBar(),
           _buildHero(),
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSidebar(),
-                Expanded(child: _buildListingGrid()),
-              ],
+              children: [_buildSidebar(), Expanded(child: _buildListingGrid())],
             ),
           ),
         ],
@@ -74,37 +74,124 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
+  // ── TOP NAVBAR ─────────────────────────────────────────────────────────────
+  Widget _buildNavBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Logo
+          Row(
+            children: [
+              const Icon(
+                Icons.handshake_outlined,
+                color: AppColors.primary,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'SkillSwap',
+                style: AppTextStyles.h3.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          // Nav items
+          Row(
+            spacing: 32,
+            children: [
+              _buildNavItem('Browse', Icons.search_rounded),
+              _buildNavItem('Requests', Icons.mail_outline_rounded),
+              _buildNavItem('Saved', Icons.bookmark_outline_rounded),
+              _buildNavItem('Chat', Icons.chat_bubble_outline_rounded),
+              _buildNavItem('Profile', Icons.person_outline_rounded),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.logout_rounded,
+                  color: AppColors.textMuted,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String label, IconData icon) {
+    return Row(
+      spacing: 6,
+      children: [
+        Icon(icon, color: AppColors.textMuted, size: 18),
+        Text(
+          label,
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        ),
+      ],
+    );
+  }
+
   // ── LISTING GRID ────────────────────────────────────────────────────────────
   Widget _buildListingGrid() {
     final listings = _filteredListings;
+    final isMySkills = _selectedTab == 'My Skills';
+
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (isMySkills)
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Create New Listing'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: listings.isEmpty
-                ? _buildEmptyState()
-                : GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.75,
+            child:
+                listings.isEmpty
+                    ? _buildEmptyState()
+                    : GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.75,
+                          ),
+                      itemCount: listings.length,
+                      itemBuilder:
+                          (context, index) =>
+                              _buildListingCard(listings[index]),
                     ),
-                    itemCount: listings.length,
-                    itemBuilder: (context, index) =>
-                        _buildListingCard(listings[index]),
-                  ),
           ),
         ],
       ),
@@ -114,9 +201,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
   // ── LISTING CARD ────────────────────────────────────────────────────────────
   Widget _buildListingCard(MockListing listing) {
     final isMySkills = _selectedTab == 'My Skills';
-    final initials = listing.ownerName.isNotEmpty
-        ? listing.ownerName[0].toUpperCase()
-        : '?';
+    final initials =
+        listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
 
     return Container(
       decoration: BoxDecoration(
@@ -155,20 +241,23 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   children: [
                     Text(
                       listing.title,
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(fontWeight: FontWeight.w700),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(listing.ownerName,
-                        style: AppTextStyles.bodySmall),
+                    Text(listing.ownerName, style: AppTextStyles.bodySmall),
                   ],
                 ),
               ),
               Row(
                 children: [
-                  const Icon(Icons.star_rounded,
-                      color: Color(0xFFF59E0B), size: 14),
+                  const Icon(
+                    Icons.star_rounded,
+                    color: Color(0xFFF59E0B),
+                    size: 14,
+                  ),
                   const SizedBox(width: 2),
                   Text(
                     '${listing.ownerRating} (${listing.ownerReviewCount})',
@@ -184,8 +273,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           const SizedBox(height: 10),
           Text(
             listing.description,
-            style: AppTextStyles.bodySmall
-                .copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -193,35 +283,45 @@ class _BrowseScreenState extends State<BrowseScreen> {
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: listing.tags
-                .map<Widget>((tag) => Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.full),
-                      ),
-                      child: Text(
-                        tag,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
+            children:
+                listing.tags
+                    .map<Widget>(
+                      (tag) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight,
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                        ),
+                        child: Text(
+                          tag,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                    ))
-                .toList(),
+                    )
+                    .toList(),
           ),
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.access_time_rounded,
-                  size: 12, color: AppColors.textMuted),
+              const Icon(
+                Icons.access_time_rounded,
+                size: 12,
+                color: AppColors.textMuted,
+              ),
               const SizedBox(width: 4),
               Text(listing.nextAvailable, style: AppTextStyles.caption),
               const SizedBox(width: 12),
-              const Icon(Icons.location_on_outlined,
-                  size: 12, color: AppColors.textMuted),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 12,
+                color: AppColors.textMuted,
+              ),
               const SizedBox(width: 4),
               Text(listing.modality, style: AppTextStyles.caption),
             ],
@@ -280,9 +380,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
                       listing.isBookmarked
                           ? Icons.bookmark_rounded
                           : Icons.bookmark_outline_rounded,
-                      color: listing.isBookmarked
-                          ? AppColors.primary
-                          : AppColors.textMuted,
+                      color:
+                          listing.isBookmarked
+                              ? AppColors.primary
+                              : AppColors.textMuted,
                       size: 18,
                     ),
                   ),
@@ -328,10 +429,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
               onChanged: (val) => setState(() => _searchQuery = val),
               decoration: const InputDecoration(
                 hintText: 'Search skills...',
-                prefixIcon:
-                    Icon(Icons.search, color: AppColors.textMuted, size: 18),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: AppColors.textMuted,
+                  size: 18,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -388,11 +494,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
               Text(
                 label,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: isSelected
-                      ? AppColors.textPrimary
-                      : AppColors.textMuted,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color:
+                      isSelected ? AppColors.textPrimary : AppColors.textMuted,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ],
@@ -419,8 +523,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.search_off_rounded,
-              size: 48, color: AppColors.textMuted),
+          const Icon(
+            Icons.search_off_rounded,
+            size: 48,
+            color: AppColors.textMuted,
+          ),
           const SizedBox(height: 16),
           Text(
             'No skills found',
@@ -429,8 +536,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           const SizedBox(height: 8),
           Text(
             'Try different keywords or filters',
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -441,30 +549,31 @@ class _BrowseScreenState extends State<BrowseScreen> {
   void _showDeleteDialog(MockListing listing) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-        ),
-        title: const Text('Delete Listing'),
-        content: Text(
-          'Are you sure you want to delete "${listing.title}"? '
-          'This cannot be undone.',
-          style: AppTextStyles.bodyMedium,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.xl),
             ),
-            child: const Text('Delete'),
+            title: const Text('Delete Listing'),
+            content: Text(
+              'Are you sure you want to delete "${listing.title}"? '
+              'This cannot be undone.',
+              style: AppTextStyles.bodyMedium,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -480,12 +589,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       style: AppTextStyles.bodyMedium,
-      items: items
-          .map((item) => DropdownMenuItem(
-                value: item,
-                child: Text(item, style: AppTextStyles.bodyMedium),
-              ))
-          .toList(),
+      items:
+          items
+              .map(
+                (item) => DropdownMenuItem(
+                  value: item,
+                  child: Text(item, style: AppTextStyles.bodyMedium),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -498,11 +610,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF0FDF9),
-            Color(0xFFFFF7ED),
-            Color(0xFFF8F7F4),
-          ],
+          colors: [Color(0xFFF0FDF9), Color(0xFFFFF7ED), Color(0xFFF8F7F4)],
         ),
       ),
       child: Column(
@@ -510,8 +618,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome,
-                  color: AppColors.primary, size: 16),
+              const Icon(
+                Icons.auto_awesome,
+                color: AppColors.primary,
+                size: 16,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Discover & Exchange',
@@ -524,8 +635,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           const SizedBox(height: 8),
           Text(
             'Browse skills offered by students at your university\nand start learning today.',
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
