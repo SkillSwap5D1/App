@@ -9,6 +9,8 @@ class RequestCard extends StatelessWidget {
   final String status;
   final String? message;
   final List<String> proposedTimeSlots;
+  final VoidCallback? onAccept;
+  final VoidCallback? onDecline;
 
   const RequestCard({
     required this.senderName,
@@ -18,6 +20,8 @@ class RequestCard extends StatelessWidget {
     required this.status,
     this.message,
     required this.proposedTimeSlots,
+    this.onAccept,
+    this.onDecline,
   });
 
   @override
@@ -39,6 +43,10 @@ class RequestCard extends StatelessWidget {
           ],
           SizedBox(height: 12.0),
           _buildTimeSlots(),
+          if (onAccept != null && onDecline != null) ...[
+            SizedBox(height: 12.0),
+            _buildActionButtons(),
+          ],
         ],
       ),
     );
@@ -70,6 +78,38 @@ class RequestCard extends StatelessWidget {
             ),
           );
         }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: onAccept,
+            icon: Icon(Icons.check, size: 14),
+            label: Text('Accept'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+            ),
+          ),
+        ),
+        SizedBox(width: 8.0),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: onDecline,
+            icon: Icon(Icons.close, size: 14),
+            label: Text('Decline'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.error,
+              side: BorderSide(color: AppColors.error),
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+            ),
+          ),
+        ),
       ],
     );
   }
