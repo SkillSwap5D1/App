@@ -52,7 +52,8 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
                 },
               ),
               SizedBox(height: AppSpacing.lg),
-              // Message field will go here
+              _buildMessageField(),
+              SizedBox(height: AppSpacing.lg),
               // Submit button will go here
             ],
           ),
@@ -105,6 +106,38 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     return Text(
       'Propose New Times',
       style: AppTextStyles.h3,
+    );
+  }
+
+  Widget _buildMessageField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Message (Optional)',
+          style: AppTextStyles.label,
+        ),
+        SizedBox(height: AppSpacing.sm),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: TextField(
+            controller: _messageController,
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText: 'Explain why you need different times...',
+              hintStyle: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textMuted,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(AppSpacing.md),
+            ),
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+      ],
     );
   }
 }
