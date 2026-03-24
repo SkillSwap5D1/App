@@ -67,8 +67,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _saveChanges() {
+    // Prepare updated data
+    final updatedData = {
+      'firstName': _firstNameController.text,
+      'lastName': _lastNameController.text,
+      'bio': _bioController.text,
+      'course': _courseController.text,
+    };
+
     // TODO: Call API to save changes
-    Navigator.pop(context);
+    // Return to Profile Screen with updated data
+    Navigator.pop(context, updatedData);
   }
 
   @override

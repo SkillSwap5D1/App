@@ -9,6 +9,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  // User profile data
+  late String _firstName;
+  late String _lastName;
+  late String _bio;
+  late String _course;
+
   // Privacy settings state
   late bool _showFullName;
   late bool _showCourse;
@@ -17,9 +23,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    // Initialize user data
+    _firstName = 'Sarah';
+    _lastName = 'Johnson';
+    _bio =
+        'Passionate about computer science and teaching others. Love problem-solving and innovation.';
+    _course = 'Computer Science';
+
+    // Initialize privacy settings
     _showFullName = true;
     _showCourse = true;
     _showProfilePicture = true;
+  }
+
+  Future<void> _navigateToEditProfile() async {
+    final result = await Navigator.of(context).pushNamed('/edit-profile');
+
+    // Handle returned data
+    if (result is Map<String, dynamic>) {
+      setState(() {
+        _firstName = result['firstName'] ?? _firstName;
+        _lastName = result['lastName'] ?? _lastName;
+        _bio = result['bio'] ?? _bio;
+        _course = result['course'] ?? _course;
+      });
+    }
   }
 
   @override
@@ -64,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Name
                     Text(
-                      'Sarah Johnson',
+                      '$_firstName $_lastName',
                       style: AppTextStyles.h2,
                       textAlign: TextAlign.center,
                     ),
@@ -84,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Course
                     Text(
-                      'Computer Science',
+                      _course,
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -116,10 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // About section
               Text('About', style: AppTextStyles.h3),
               const SizedBox(height: AppSpacing.md),
-              Text(
-                'I\'m a passionate Computer Science student in my third year. I love teaching programming concepts and helping others understand code. I specialize in Python, JavaScript, and have experience with Flutter for mobile development.',
-                style: AppTextStyles.bodyMedium.copyWith(height: 1.6),
-              ),
+              Text(_bio, style: AppTextStyles.bodyMedium.copyWith(height: 1.6)),
               const SizedBox(height: AppSpacing.lg),
 
               // Contact section
@@ -234,9 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/edit-profile');
-                  },
+                  onPressed: _navigateToEditProfile,
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('Edit Profile'),
                   style: ElevatedButton.styleFrom(
