@@ -60,8 +60,9 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: AppSpacing.sm),
               _buildOriginalRequestCard(),
-              SizedBox(height: AppSpacing.lg),
+              SizedBox(height: AppSpacing.xl),
               _buildProposeHeading(),
               SizedBox(height: AppSpacing.md),
               TimeSlotPicker(
@@ -70,7 +71,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
                   setState(() => _selectedTimeSlots = slots);
                 },
               ),
-              SizedBox(height: AppSpacing.lg),
+              SizedBox(height: AppSpacing.xl),
               _buildMessageField(),
               SizedBox(height: AppSpacing.lg),
               _buildSubmitButton(),
@@ -84,11 +85,18 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
 
   Widget _buildOriginalRequestCard() {
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
+      padding: EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.border, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,24 +106,47 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
             style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
             ),
           ),
-          SizedBox(height: AppSpacing.sm),
+          SizedBox(height: AppSpacing.md),
           Text(
             '${widget.originalRequest.skillName}',
-            style: AppTextStyles.h3,
+            style: AppTextStyles.h2.copyWith(
+              color: AppColors.primary,
+            ),
+          ),
+          SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              Icon(
+                Icons.person_outline,
+                size: 16,
+                color: AppColors.textMuted,
+              ),
+              SizedBox(width: AppSpacing.sm),
+              Text(
+                'Requested by: ${widget.originalRequest.senderName}',
+                style: AppTextStyles.bodyMedium,
+              ),
+            ],
           ),
           SizedBox(height: AppSpacing.sm),
-          Text(
-            'Requested by: ${widget.originalRequest.senderName}',
-            style: AppTextStyles.bodyMedium,
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Text(
-            'Status: ${widget.originalRequest.status}',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 16,
+                color: AppColors.textMuted,
+              ),
+              SizedBox(width: AppSpacing.sm),
+              Text(
+                'Status: ${widget.originalRequest.status}',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textMuted,
+                ),
+              ),
+            ],
           ),
         ],
       ),
