@@ -221,6 +221,40 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
       ),
       body: Column(
         children: [
+          // ── BLOCKED NOTIFICATION ───────────────────────────────────────
+          if (_isUserBlocked)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.error.withOpacity(0.3),
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.block,
+                    color: AppColors.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      'You have blocked ${widget.conversation.otherUserName}. Messages are hidden.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // ── MESSAGES LIST ──────────────────────────────────────────────
           Expanded(
             child: ListView.builder(
@@ -233,6 +267,36 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               addAutomaticKeepAlives: true,
               itemBuilder: (context, index) {
                 final message = widget.conversation.messages[index];
+                
+                // Check if user is blocked
+                if (_isUserBlocked) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.textMuted.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(
+                            color: AppColors.textMuted.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          'Message hidden',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textMuted,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                
                 return MessageBubble(
                   message: message,
                   showDeliveryStatus: true,
