@@ -68,6 +68,12 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                 child: SavedEmptyState(
                   onBrowsePressed: () {
                     // TODO: Navigate to Browse screen
+                    // Uses Navigator to push Browse screen
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => const BrowseScreen(),
+                    //   ),
+                    // );
                   },
                 ),
               )
