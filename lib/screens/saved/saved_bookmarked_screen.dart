@@ -122,22 +122,32 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
             },
           ),
         ),
-        // Filled bookmark indicator
+        // Filled bookmark indicator with animation
         Positioned(
           top: AppSpacing.md,
           right: AppSpacing.md,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-              boxShadow: AppShadows.card,
-            ),
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            child: const Icon(
-              Icons.bookmark,
-              color: AppColors.surface,
-              size: 18,
-            ),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: value,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: AppShadows.card,
+                  ),
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  child: const Icon(
+                    Icons.bookmark,
+                    color: AppColors.surface,
+                    size: 18,
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
