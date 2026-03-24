@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
+import '../browse/listing_card.dart';
 
 class SavedBookmarkedScreen extends StatefulWidget {
   const SavedBookmarkedScreen({super.key});
@@ -122,59 +123,36 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   }
 
   Widget _buildSavedCard(MockListing listing, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppShadows.card,
+    return GestureDetector(
+      onLongPress: () {
+        _removeFromSaved(listing, index);
+      },
+      child: ListingCard(
+        listing: listing,
+        isSaved: true,
+        onSaveToggle: () {
+          _removeFromSaved(listing, index);
+        },
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Card content
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    listing.title,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    listing.ownerName,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textMuted,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Bookmark button
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Remove from saved
-              },
-              child: Icon(
-                Icons.bookmark,
-                color: AppColors.primary,
-                size: 24,
-              ),
-            ),
-          ),
-        ],
+    );
+  }
+
+  void _removeFromSaved(MockListing listing, int index) {
+    setState(() {
+      _savedListings.removeAt(index);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Removed from saved'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _savedListings.insert(index, listing);
+            });
+          },
+        ),
       ),
     );
   }
