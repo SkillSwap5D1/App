@@ -23,6 +23,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
   String? _selectedCategory;
   final TextEditingController _descriptionController = TextEditingController();
   bool _isSubmittingReport = false;
+  int _descriptionCharCount = 0;
 
   // Categories for report
   static const List<String> _reportCategories = [
@@ -61,6 +62,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
     setState(() {
       _selectedCategory = null;
       _descriptionController.clear();
+      _descriptionCharCount = 0;
     });
 
     showModalBottomSheet(
@@ -211,24 +213,45 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               const SizedBox(height: AppSpacing.lg),
 
               // Description field
-              Text(
-                'Description (optional)',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Description (optional)',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${_descriptionCharCount}/1000',
+                    style: AppTextStyles.caption.copyWith(
+                      color: _descriptionCharCount > 900
+                          ? AppColors.error
+                          : AppColors.textMuted,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: AppSpacing.sm),
               TextField(
                 controller: _descriptionController,
                 maxLines: 4,
-                placeholder: const Text('Tell us what happened...'),
+                maxLength: 1000,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   contentPadding: const EdgeInsets.all(AppSpacing.md),
-                  hintText: 'Tell us what happened...',
+                  hintText: 'Tell us what happened... (be specific)',
+                  counterText: '',
+                  filled: true,
+                  fillColor: AppColors.background,
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    _descriptionCharCount = value.length;
+                  });
+                },
               ),
               const SizedBox(height: AppSpacing.lg),
 
