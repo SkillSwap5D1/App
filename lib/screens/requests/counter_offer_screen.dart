@@ -40,13 +40,54 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Original request details will go here
+              _buildOriginalRequestCard(),
+              SizedBox(height: AppSpacing.lg),
               // Time slot picker will go here
               // Message field will go here
               // Submit button will go here
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildOriginalRequestCard() {
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Original Request',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Text(
+            '${widget.originalRequest.skillName}',
+            style: AppTextStyles.h3,
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Text(
+            'Requested by: ${widget.originalRequest.senderName}',
+            style: AppTextStyles.bodyMedium,
+          ),
+          SizedBox(height: AppSpacing.xs),
+          Text(
+            'Status: ${widget.originalRequest.status}',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
       ),
     );
   }
