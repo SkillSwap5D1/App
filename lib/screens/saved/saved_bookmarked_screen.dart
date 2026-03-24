@@ -122,7 +122,11 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
         itemCount: _savedListings.length,
         itemBuilder: (context, index) {
           final listing = _savedListings[index];
-          return _buildSavedCard(listing, index);
+          return AnimatedScale(
+            scale: 1.0,
+            duration: const Duration(milliseconds: 300),
+            child: _buildSavedCard(listing, index),
+          );
         },
       ),
     );
