@@ -61,25 +61,31 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   }
 
   void _showReportSheet() {
-    final reportBlocked = ReportBlockedScreen(
-      userName: widget.conversation.otherUserName,
-      userId: widget.conversation.otherUserId,
-      onBlock: () {
-        setState(() => _isUserBlocked = true);
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReportBlockedScreen(
+          userName: widget.conversation.otherUserName,
+          userId: widget.conversation.otherUserId,
+          onBlock: () {
+            setState(() => _isUserBlocked = true);
+          },
+        ),
+      ),
     );
-    reportBlocked._showReportForm();
   }
 
   void _showBlockDialog() {
-    final reportBlocked = ReportBlockedScreen(
-      userName: widget.conversation.otherUserName,
-      userId: widget.conversation.otherUserId,
-      onBlock: () {
-        setState(() => _isUserBlocked = true);
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReportBlockedScreen(
+          userName: widget.conversation.otherUserName,
+          userId: widget.conversation.otherUserId,
+          onBlock: () {
+            setState(() => _isUserBlocked = true);
+          },
+        ),
+      ),
     );
-    reportBlocked._showBlockConfirmation();
   }
 
   // Get category emoji
