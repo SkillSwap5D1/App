@@ -80,125 +80,165 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
   void _showBlockConfirmation() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-        ),
-        icon: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppColors.error.withOpacity(0.1),
-            shape: BoxShape.circle,
+      builder: (context) => ScaleTransition(
+        scale: AlwaysStoppedAnimation(1.0),
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
-          child: const Icon(
-            Icons.block,
-            color: AppColors.error,
-            size: 28,
-          ),
-        ),
-        title: Text(
-          'Block ${widget.userName}?',
-          style: AppTextStyles.h3,
-          textAlign: TextAlign.center,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Blocking this user will stop all communication.',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textMuted,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
+          icon: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 500),
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: value,
+                child: child,
+              );
+            },
+            child: Container(
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(
-                  color: AppColors.error.withOpacity(0.2),
+                color: AppColors.error.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.block,
+                color: AppColors.error,
+                size: 28,
+              ),
+            ),
+          ),
+          title: Text(
+            'Block ${widget.userName}?',
+            style: AppTextStyles.h3,
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Blocking this user will stop all communication.',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textMuted,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(
+                    color: AppColors.error.withOpacity(0.2),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'This action will:',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      '• Hide their messages',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '• Remove the conversation',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '• Prevent future contact',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'This action will:',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontWeight: FontWeight.w600,
+            ],
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.md,
+          ),
+          actionsPadding: const EdgeInsets.all(AppSpacing.md),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+              ),
+              child: Text(
+                'Cancel',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Add to MockData blocked list
+                MockData.blockUser(widget.userId);
+                Navigator.pop(context);
+                widget.onBlock();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: AppColors.surface,
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Text(
+                              '${widget.userName} has been blocked',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      duration: const Duration(seconds: 2),
+                      backgroundColor: AppColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.all(AppSpacing.md),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    '• Hide their messages',
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '• Remove the conversation',
-                    style: AppTextStyles.bodySmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '• Prevent future contact',
-                    style: AppTextStyles.bodySmall,
-                  ),
-                ],
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+              ),
+              child: Text(
+                'Block',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.surface,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
         ),
-        contentPadding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.md,
-        ),
-        actionsPadding: const EdgeInsets.all(AppSpacing.md),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-            ),
-            child: Text(
-              'Cancel',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textMuted,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Add to MockData blocked list
-              MockData.blockUser(widget.userId);
-              Navigator.pop(context);
-              widget.onBlock();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-            ),
-            child: Text(
-              'Block',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.surface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -223,27 +263,34 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
+              // Handle bar with animation
+              AnimatedOpacity(
+                opacity: 1.0,
+                duration: const Duration(milliseconds: 300),
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Title
-              Text(
-                'Report ${widget.userName}',
-                style: AppTextStyles.h3,
+              // Title with slide animation
+              SlideTransition(
+                position: AlwaysStoppedAnimation(const Offset(0, 0)),
+                child: Text(
+                  'Report ${widget.userName}',
+                  style: AppTextStyles.h3,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Category dropdown
+              // Category dropdown with enhanced styling
               Text(
                 'Category (required)',
                 style: AppTextStyles.bodyMedium.copyWith(
@@ -253,8 +300,14 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               const SizedBox(height: AppSpacing.sm),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(
+                    color: _selectedCategory != null
+                        ? AppColors.primary
+                        : AppColors.border,
+                    width: 1.5,
+                  ),
                   borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: AppColors.background,
                 ),
                 child: DropdownButton<String>(
                   value: _selectedCategory,
@@ -295,7 +348,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Description field
+              // Description field with enhanced validation
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -310,7 +363,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                     style: AppTextStyles.caption.copyWith(
                       color: _descriptionCharCount > 900
                           ? AppColors.error
-                          : AppColors.textMuted,
+                          : _descriptionCharCount > 800
+                              ? AppColors.warning
+                              : AppColors.textMuted,
                     ),
                   ),
                 ],
@@ -323,6 +378,26 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(
+                      color: _descriptionCharCount > 0
+                          ? AppColors.primary.withOpacity(0.5)
+                          : AppColors.border,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: BorderSide(
+                      color: _descriptionCharCount > 0
+                          ? AppColors.primary.withOpacity(0.5)
+                          : AppColors.border,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
                   ),
                   contentPadding: const EdgeInsets.all(AppSpacing.md),
                   hintText: 'Tell us what happened... (be specific)',
@@ -338,87 +413,94 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Submit button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selectedCategory != null && !_isSubmittingReport
-                      ? () {
-                          setState(() => _isSubmittingReport = true);
-                          Future.delayed(const Duration(seconds: 1), () {
-                            if (mounted) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle,
-                                        color: AppColors.surface,
-                                      ),
-                                      const SizedBox(width: AppSpacing.md),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              'Report submitted',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 4,
-                                            ),
-                                            Text(
-                                              'Our team will review it shortly.',
-                                              style: AppTextStyles.caption,
-                                            ),
-                                          ],
+              // Submit button with enhanced styling and animation
+              ScaleTransition(
+                scale: AlwaysStoppedAnimation(1.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _selectedCategory != null && !_isSubmittingReport
+                        ? () {
+                            setState(() => _isSubmittingReport = true);
+                            Future.delayed(const Duration(seconds: 1), () {
+                              if (mounted) {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: AppColors.surface,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: AppSpacing.md),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                'Report submitted',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              ),
+                                              Text(
+                                                'Our team will review it shortly.',
+                                                style: AppTextStyles.caption,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    duration: const Duration(seconds: 3),
+                                    backgroundColor: AppColors.success,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(
+                                        AppSpacing.md),
                                   ),
-                                  duration: const Duration(seconds: 3),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
-                              setState(() => _isSubmittingReport = false);
-                            }
-                          });
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.md,
+                                );
+                                setState(() => _isSubmittingReport = false);
+                              }
+                            });
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.md,
+                      ),
+                      backgroundColor: _selectedCategory != null
+                          ? AppColors.primary
+                          : AppColors.border,
+                      disabledBackgroundColor: AppColors.border,
+                      elevation: _selectedCategory != null ? 2 : 0,
                     ),
-                    backgroundColor: _selectedCategory != null
-                        ? AppColors.primary
-                        : AppColors.border,
-                    disabledBackgroundColor: AppColors.border,
-                  ),
-                  child: _isSubmittingReport
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.surface,
+                    child: _isSubmittingReport
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.surface,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            'Submit Report',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: _selectedCategory != null
+                                  ? AppColors.surface
+                                  : AppColors.textMuted,
                             ),
                           ),
-                        )
-                      : Text(
-                          'Submit Report',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _selectedCategory != null
-                                ? AppColors.surface
-                                : AppColors.textMuted,
-                          ),
-                        ),
+                  ),
                 ),
               ),
             ],
