@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
+import '../listings/listing_detail_screen.dart';
+import '../requests/send_request_screen.dart';
+import '../requests/requests_screen.dart';
+import '../requests/counter_offer_screen.dart';
+import '../chat/chat_list_screen.dart';
+import '../profile/profile_screen.dart';
+import '../saved/saved_bookmarked_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -59,6 +66,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text('Browse'),
+        elevation: 0,
+      ),
+      drawer: _buildNavigationDrawer(context),
       body: Column(
         children: [
           _buildHero(),
@@ -72,6 +84,204 @@ class _BrowseScreenState extends State<BrowseScreen> {
       ),
     );
   }
+
+  Widget _buildNavigationDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'SkillSwap',
+                  style: AppTextStyles.h2.copyWith(color: Colors.white),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'All Screens',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+            context,
+            number: 4,
+            title: 'Browse Skills',
+            icon: Icons.search,
+            onTap: () => Navigator.pop(context),
+          ),
+          _buildDrawerItem(
+            context,
+            number: 6,
+            title: 'Listing Detail',
+            icon: Icons.info,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ListingDetailScreen(
+                    listing: _sampleListing,
+                  ),
+                ),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 7,
+            title: 'Send Request',
+            icon: Icons.event,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SendRequestScreen(listing: _sampleListing),
+                ),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 8,
+            title: 'Requests',
+            icon: Icons.inbox,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => RequestsScreen()),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 10,
+            title: 'Counter Offer',
+            icon: Icons.schedule,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CounterOfferScreen(
+                    originalRequest: _sampleRequest,
+                  ),
+                ),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 11,
+            title: 'Chat',
+            icon: Icons.message,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ChatListScreen()),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 12,
+            title: 'Profile',
+            icon: Icons.person,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            number: 13,
+            title: 'Saved',
+            icon: Icons.bookmark,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SavedBookmarkedScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required int number,
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: AppColors.primaryLight,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Center(
+          child: Text(
+            'S$number',
+            style: AppTextStyles.caption.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      ),
+      title: Text(title),
+      onTap: onTap,
+    );
+  }
+
+  static final _sampleListing = MockListing(
+    id: 'skill_001',
+    ownerId: 'user_001',
+    ownerName: 'Sarah Anderson',
+    ownerRating: 4.8,
+    ownerReviewCount: 24,
+    title: 'Web Development Bootcamp',
+    description: 'Learn modern web development with React and Node.js.',
+    tags: ['React', 'JavaScript', 'Web Development'],
+    level: 'Intermediate',
+    modality: 'Online',
+    category: 'Programming',
+    nextAvailable: 'Tomorrow, 3 PM',
+    isBookmarked: false,
+  );
+
+  static final _sampleRequest = MockRequest(
+    id: 'req_001',
+    fromUserId: 'user_002',
+    fromUserName: 'John Doe',
+    listingId: 'skill_001',
+    skillName: 'Web Development Bootcamp',
+    message: 'Really interested in learning React. Can we schedule ASAP?',
+    status: 'pending',
+    timeAgo: '2 hours ago',
+    proposedTimes: ['Tomorrow 3 PM', 'Thursday 5 PM'],
+  );
 
   // ── LISTING GRID ────────────────────────────────────────────────────────────
   Widget _buildListingGrid() {
