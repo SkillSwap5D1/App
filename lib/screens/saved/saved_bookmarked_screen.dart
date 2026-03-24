@@ -123,17 +123,39 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   }
 
   Widget _buildSavedCard(MockListing listing, int index) {
-    return GestureDetector(
-      onLongPress: () {
-        _removeFromSaved(listing, index);
-      },
-      child: ListingCard(
-        listing: listing,
-        isSaved: true,
-        onSaveToggle: () {
-          _removeFromSaved(listing, index);
-        },
-      ),
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () {
+            // TODO: Navigate to listing detail
+          },
+          child: ListingCard(
+            listing: listing,
+            isSaved: true,
+            onSaveToggle: () {
+              _removeFromSaved(listing, index);
+            },
+          ),
+        ),
+        // Filled bookmark indicator
+        Positioned(
+          top: AppSpacing.md,
+          right: AppSpacing.md,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+              boxShadow: AppShadows.card,
+            ),
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: const Icon(
+              Icons.bookmark,
+              color: AppColors.surface,
+              size: 18,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
