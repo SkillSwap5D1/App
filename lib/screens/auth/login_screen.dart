@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String? _emailError;
@@ -38,17 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleSignIn() async {
     // Validate email field
     if (_emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email is required')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Email is required')));
       return;
     }
 
     // Validate password field
     if (_passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password is required')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Password is required')));
       return;
     }
 
@@ -67,10 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       setState(() => _isLoading = false);
-      // TODO: Navigate to home/dashboard after successful login
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sign in successful!')),
-      );
+      // Navigate to browse screen after successful login
+      Navigator.of(context).pushNamed('/browse');
     }
   }
 
@@ -89,14 +87,12 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           // Floating emoji decorations
           _buildFloatingEmojis(),
-          
+
           // Main content
           SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                color: AppColors.background,
-              ),
+              decoration: BoxDecoration(color: AppColors.background),
               child: Column(
                 children: [
                   // Logo and header section
@@ -106,10 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Graduation cap icon
-                        Text(
-                          '🎓',
-                          style: TextStyle(fontSize: 48),
-                        ),
+                        Text('🎓', style: TextStyle(fontSize: 48)),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           'SkillSwap',
@@ -163,10 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: AppSpacing.lg),
 
                                 // Email field
-                                Text(
-                                  'Email',
-                                  style: AppTextStyles.label,
-                                ),
+                                Text('Email', style: AppTextStyles.label),
                                 const SizedBox(height: AppSpacing.sm),
                                 _buildEmailField(),
                                 if (_emailError != null)
@@ -184,10 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: AppSpacing.md),
 
                                 // Password field
-                                Text(
-                                  'Password',
-                                  style: AppTextStyles.label,
-                                ),
+                                Text('Password', style: AppTextStyles.label),
                                 const SizedBox(height: AppSpacing.sm),
                                 _buildPasswordField(),
                                 const SizedBox(height: AppSpacing.lg),
@@ -213,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
+
                           // Demo mode hint
                           Text(
                             '● Demo mode — enter any email & password',
@@ -252,17 +239,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -300,10 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -328,29 +306,26 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           elevation: 0,
         ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
+        child:
+            _isLoading
+                ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.surface,
+                    ),
+                  ),
+                )
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Sign In', style: AppTextStyles.button),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Text('→', style: AppTextStyles.button),
+                  ],
                 ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Sign In',
-                    style: AppTextStyles.button,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  const Text(
-                    '→',
-                    style: AppTextStyles.button,
-                  ),
-                ],
-              ),
       ),
     );
   }
