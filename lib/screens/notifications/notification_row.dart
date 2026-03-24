@@ -52,7 +52,8 @@ class NotificationRow extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
             color: notification.isRead
                 ? AppColors.surface
