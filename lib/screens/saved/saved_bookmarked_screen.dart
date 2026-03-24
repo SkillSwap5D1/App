@@ -160,6 +160,9 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   }
 
   void _removeFromSaved(MockListing listing, int index) {
+    // Create a copy to restore later
+    final removedListing = listing;
+    
     setState(() {
       _savedListings.removeAt(index);
     });
@@ -171,7 +174,7 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
           label: 'Undo',
           onPressed: () {
             setState(() {
-              _savedListings.insert(index, listing);
+              _savedListings.insert(index, removedListing);
             });
           },
         ),
