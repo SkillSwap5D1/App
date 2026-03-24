@@ -11,12 +11,29 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _emailError;
 
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _emailController.dispose();
     super.dispose();
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _emailError = null;
+      } else if (!value.endsWith('@myport.ac.uk')) {
+        _emailError = 'Please use your @myport.ac.uk email';
+      } else {
+        _emailError = null;
+      }
+    });
   }
 
   @override
@@ -122,6 +139,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ],
                           ),
                           const SizedBox(height: AppSpacing.md),
+
+                          // Email field
+                          Text('University email', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.sm),
+                          _buildEmailField(),
+                          if (_emailError != null)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppSpacing.xs,
+                              ),
+                              child: Text(
+                                _emailError!,
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: AppSpacing.md),
                         ],
                       ),
                     ),
@@ -141,6 +176,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      onChanged: _validateEmail,
+      decoration: InputDecoration(
+        hintText: 'you@myport.ac.uk',
+        prefixIcon: const Icon(Icons.mail_outline),
+        prefixIconColor: AppColors.textMuted,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
     );
   }
 
