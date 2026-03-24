@@ -167,15 +167,25 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
       _savedListings.removeAt(index);
     });
 
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Removed from saved'),
+        backgroundColor: AppColors.surface,
+        duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: 'Undo',
+          textColor: AppColors.primary,
           onPressed: () {
             setState(() {
               _savedListings.insert(index, removedListing);
             });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Restored to saved'),
+                duration: Duration(milliseconds: 1500),
+              ),
+            );
           },
         ),
       ),
