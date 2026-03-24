@@ -165,7 +165,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Main content
           SingleChildScrollView(
             child: Container(
-              minHeight: MediaQuery.of(context).size.height,
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
               decoration: BoxDecoration(color: AppColors.background),
               child: Padding(
                 padding: EdgeInsets.symmetric(
