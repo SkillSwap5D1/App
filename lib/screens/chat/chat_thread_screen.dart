@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/message_bubble.dart';
+import '../safety/report_blocked_screen.dart';
 
 class ChatThreadScreen extends StatefulWidget {
   final MockConversation conversation;
@@ -19,6 +20,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final TextEditingController _messageController;
   late final ScrollController _scrollController;
   bool _isComposing = false;
+  bool _isUserBlocked = false;
 
   @override
   void initState() {
@@ -56,6 +58,28 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         curve: Curves.easeOut,
       );
     }
+  }
+
+  void _showReportSheet() {
+    final reportBlocked = ReportBlockedScreen(
+      userName: widget.conversation.otherUserName,
+      userId: widget.conversation.otherUserId,
+      onBlock: () {
+        setState(() => _isUserBlocked = true);
+      },
+    );
+    reportBlocked._showReportForm();
+  }
+
+  void _showBlockDialog() {
+    final reportBlocked = ReportBlockedScreen(
+      userName: widget.conversation.otherUserName,
+      userId: widget.conversation.otherUserId,
+      onBlock: () {
+        setState(() => _isUserBlocked = true);
+      },
+    );
+    reportBlocked._showBlockConfirmation();
   }
 
   // Get category emoji
@@ -174,7 +198,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         title: const Text('Report User'),
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: Open report sheet
+                          _showReportSheet();
                         },
                       ),
                       ListTile(
@@ -183,7 +207,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         title: const Text('Block User'),
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: Block user
+                          _showBlockDialog();
                         },
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -197,6 +221,40 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
       ),
       body: Column(
         children: [
+          // ── BLOCKED NOTIFICATION ───────────────────────────────────────
+          if (_isUserBlocked)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.error.withOpacity(0.3),
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.block,
+                    color: AppColors.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      'You have blocked ${widget.conversation.otherUserName}. Messages are hidden.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // ── MESSAGES LIST ──────────────────────────────────────────────
           Expanded(
             child: ListView.builder(
@@ -209,6 +267,36 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               addAutomaticKeepAlives: true,
               itemBuilder: (context, index) {
                 final message = widget.conversation.messages[index];
+                
+                // Check if user is blocked
+                if (_isUserBlocked) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.textMuted.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(
+                            color: AppColors.textMuted.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          'Message hidden',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textMuted,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                
                 return MessageBubble(
                   message: message,
                   showDeliveryStatus: true,
