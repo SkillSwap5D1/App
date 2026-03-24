@@ -8,6 +8,7 @@ class RequestCard extends StatelessWidget {
   final String timestamp;
   final String status;
   final String? message;
+  final List<String> proposedTimeSlots;
 
   const RequestCard({
     required this.senderName,
@@ -16,6 +17,7 @@ class RequestCard extends StatelessWidget {
     required this.timestamp,
     required this.status,
     this.message,
+    required this.proposedTimeSlots,
   });
 
   @override
@@ -35,8 +37,40 @@ class RequestCard extends StatelessWidget {
             SizedBox(height: 12.0),
             _buildMessage(),
           ],
+          SizedBox(height: 12.0),
+          _buildTimeSlots(),
         ],
       ),
+    );
+  }
+
+  Widget _buildTimeSlots() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Proposed times:',
+          style: AppTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 8.0),
+        ...proposedTimeSlots.map((slot) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 4.0),
+            child: Row(
+              children: [
+                Icon(Icons.schedule, size: 14, color: AppColors.textMuted),
+                SizedBox(width: 6.0),
+                Text(
+                  slot,
+                  style: AppTextStyles.caption,
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
     );
   }
 
