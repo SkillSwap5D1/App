@@ -65,12 +65,81 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   // Tag chips row
                   _buildTagsRow(isMobile),
                   SizedBox(height: AppSpacing.lg),
+
+                  // Level and modality info
+                  _buildLevelAndModality(),
+                  SizedBox(height: AppSpacing.lg),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLevelAndModality() {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _infoChip(
+              icon: Icons.trending_up,
+              label: 'Level',
+              value: widget.listing.level,
+            ),
+          ),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: _infoChip(
+              icon: widget.listing.modality == 'Online'
+                  ? Icons.video_call
+                  : Icons.location_on,
+              label: 'Format',
+              value: widget.listing.modality,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoChip({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: AppColors.primary),
+            SizedBox(width: AppSpacing.sm),
+            Text(
+              label,
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppSpacing.xs),
+        Text(
+          value,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
