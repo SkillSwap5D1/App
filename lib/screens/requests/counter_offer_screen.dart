@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../models/time_slot.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/time_slot_picker.dart';
 
 class CounterOfferScreen extends StatefulWidget {
   final MockRequest originalRequest;
@@ -44,7 +45,13 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
               SizedBox(height: AppSpacing.lg),
               _buildProposeHeading(),
               SizedBox(height: AppSpacing.md),
-              // Time slot picker will go here
+              TimeSlotPicker(
+                selectedSlots: _selectedTimeSlots,
+                onSlotsChanged: (slots) {
+                  setState(() => _selectedTimeSlots = slots);
+                },
+              ),
+              SizedBox(height: AppSpacing.lg),
               // Message field will go here
               // Submit button will go here
             ],
