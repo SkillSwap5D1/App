@@ -22,7 +22,10 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   // ── VALIDATION ─────────────────────────────────────────────────────────────
-  bool get _isValid => _selectedTimeSlots.isNotEmpty;
+  bool get _isValid {
+    if (_selectedTimeSlots.isEmpty) return false;
+    return _selectedTimeSlots.any((slot) => slot.isValid);
+  }
 
   void _handleSubmit() {
     // Show success message and navigate back
@@ -38,6 +41,12 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     Future.delayed(const Duration(milliseconds: 500), () {
       Navigator.pop(context);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTimeSlots = [TimeSlot()];
   }
 
   @override
@@ -65,12 +74,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
               SizedBox(height: AppSpacing.xl),
               _buildProposeHeading(),
               SizedBox(height: AppSpacing.md),
-              TimeSlotPicker(
-                selectedSlots: _selectedTimeSlots,
-                onSlotsChanged: (slots) {
-                  setState(() => _selectedTimeSlots = slots);
-                },
-              ),
+              _buildTimeSlotsSection(),
               SizedBox(height: AppSpacing.xl),
               _buildMessageField(),
               SizedBox(height: AppSpacing.lg),
@@ -126,7 +130,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
               ),
               SizedBox(width: AppSpacing.sm),
               Text(
-                'Requested by: ${widget.originalRequest.senderName}',
+                'Requested by: ${widget.originalRequest.fromUserName}',
                 style: AppTextStyles.bodyMedium,
               ),
             ],
@@ -157,6 +161,58 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     return Text(
       'Propose New Times',
       style: AppTextStyles.h3,
+    );
+  }
+
+  void _removeTimeSlot(int index) {
+    if (_selectedTimeSlots.length > 1) {
+      setState(() {
+        _selectedTimeSlots.removeAt(index);
+      });
+    }
+  }
+
+  void _addTimeSlot() {
+    if (_selectedTimeSlots.length < 3) {
+      setState(() {
+        _selectedTimeSlots.add(TimeSlot());
+      });
+    }
+  }
+
+  Widget _buildTimeSlotsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: List.generate(
+            _selectedTimeSlots.length,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: TimeSlotPicker(
+                slot: _selectedTimeSlots[index],
+                onRemove: () => _removeTimeSlot(index),
+                showRemove: _selectedTimeSlots.length > 1,
+              ),
+            ),
+          ),
+        ),
+        if (_selectedTimeSlots.length < 3)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _addTimeSlot,
+              icon: const Icon(Icons.add),
+              label: const Text('Add another time slot'),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
