@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
 import 'screens/chat/chat_list_screen.dart';
+import 'screens/browse/browse_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
+import 'screens/auth/onboarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +19,12 @@ class MyApp extends StatelessWidget {
       title: 'SkillSwap',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: const ChatListScreen(),
+      home: const LoginScreen(),
+      routes: {
+        '/register': (context) => const RegisterScreen(),
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/browse': (context) => const BrowseScreen(),
+      },
     );
   }
 }
