@@ -259,18 +259,46 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _selectedCategory != null
+                  onPressed: _selectedCategory != null && !_isSubmittingReport
                       ? () {
                           setState(() => _isSubmittingReport = true);
                           Future.delayed(const Duration(seconds: 1), () {
                             if (mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Report submitted. Our team will review it shortly.',
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: AppColors.surface,
+                                      ),
+                                      const SizedBox(width: AppSpacing.md),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text(
+                                              'Report submitted',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                              'Our team will review it shortly.',
+                                              style: AppTextStyles.caption,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  duration: Duration(seconds: 3),
+                                  duration: const Duration(seconds: 3),
                                   backgroundColor: AppColors.success,
                                 ),
                               );
@@ -283,6 +311,10 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                     padding: const EdgeInsets.symmetric(
                       vertical: AppSpacing.md,
                     ),
+                    backgroundColor: _selectedCategory != null
+                        ? AppColors.primary
+                        : AppColors.border,
+                    disabledBackgroundColor: AppColors.border,
                   ),
                   child: _isSubmittingReport
                       ? const SizedBox(
@@ -295,7 +327,15 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                             ),
                           ),
                         )
-                      : const Text('Submit Report'),
+                      : Text(
+                          'Submit Report',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: _selectedCategory != null
+                                ? AppColors.surface
+                                : AppColors.textMuted,
+                          ),
+                        ),
                 ),
               ),
             ],
