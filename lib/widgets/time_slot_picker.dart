@@ -115,7 +115,6 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
   }
 
   @override
-  void initState() {
   Widget build(BuildContext context) {
     final hasError = !_slot.isEmpty && !_slot.isValid;
     
