@@ -191,6 +191,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
+
+              // Privacy Settings section
+              Text('Privacy Settings', style: AppTextStyles.h3),
+              const SizedBox(height: AppSpacing.md),
+
+              // Show full name toggle
+              _buildPrivacyToggle(
+                title: 'Show my full name',
+                subtitle: 'Visible to other students',
+                value: _showFullName,
+                onChanged: (value) {
+                  setState(() => _showFullName = value);
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Show course toggle
+              _buildPrivacyToggle(
+                title: 'Show my course',
+                subtitle: 'Display your program info',
+                value: _showCourse,
+                onChanged: (value) {
+                  setState(() => _showCourse = value);
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Show profile picture toggle
+              _buildPrivacyToggle(
+                title: 'Show my profile picture',
+                subtitle: 'Avatar visible publicly',
+                value: _showProfilePicture,
+                onChanged: (value) {
+                  setState(() => _showProfilePicture = value);
+                },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Edit Profile button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Navigate to Edit Profile screen
+                    // Navigator.of(context).pushNamed('/edit-profile');
+                  },
+                  icon: const Icon(Icons.edit_outlined),
+                  label: const Text('Edit Profile'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),
@@ -222,4 +281,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-}
+
+  Widget _buildPrivacyToggle({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppTextStyles.body1.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: AppTextStyles.body2.copyWith(color: Colors.grey[600])),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: value ? AppColors.primary : Colors.grey[400]!,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(
+                Icons.check,
+                color: value ? AppColors.primary : Colors.grey[300],
+                size: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
