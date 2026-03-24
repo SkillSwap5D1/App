@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../browse/listing_card.dart';
+import 'saved_empty_state.dart';
 
 class SavedBookmarkedScreen extends StatefulWidget {
   const SavedBookmarkedScreen({super.key});
@@ -63,48 +64,15 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
 
             // ── CONTENT ────────────────────────────────────────────
             if (_savedListings.isEmpty)
-              _buildEmptyState()
+              Expanded(
+                child: SavedEmptyState(
+                  onBrowsePressed: () {
+                    // TODO: Navigate to Browse screen
+                  },
+                ),
+              )
             else
               _buildGridView(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Expanded(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.bookmark_outline,
-              size: 64,
-              color: AppColors.textMuted,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              'No saved skills yet',
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.textMuted,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Browse to find and save skills',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textMuted,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            ElevatedButton(
-              onPressed: () {
-                // TODO: Navigate to Browse screen
-              },
-              child: const Text('Browse Skills'),
-            ),
           ],
         ),
       ),
