@@ -57,7 +57,8 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
               SizedBox(height: AppSpacing.lg),
               _buildMessageField(),
               SizedBox(height: AppSpacing.lg),
-              // Submit button will go here
+              _buildSubmitButton(),
+              SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),
@@ -141,6 +142,31 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: _isValid ? _handleSubmit : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          disabledBackgroundColor: AppColors.textMuted.withOpacity(0.3),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'Send Counter Offer',
+          style: AppTextStyles.bodyLarge.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }
