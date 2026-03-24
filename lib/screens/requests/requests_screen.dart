@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:skillswap_app/data/mock_data.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
+import 'package:skillswap_app/widgets/request_card.dart';
 
 class RequestsScreen extends StatefulWidget {
   @override
@@ -9,6 +9,41 @@ class RequestsScreen extends StatefulWidget {
 
 class _RequestsScreenState extends State<RequestsScreen> {
   String _selectedTab = 'Incoming';
+
+  // Mock incoming requests
+  late final List<Map<String, dynamic>> _incomingRequests = [
+    {
+      'senderName': 'Sarah Chen',
+      'avatarInitial': 'S',
+      'skillToLearn': 'Web Development',
+      'timestamp': '2 hours ago',
+      'status': 'Pending',
+      'message':
+          'I\'m interested in learning web development. I can help you with graphic design in return!',
+      'proposedTimeSlots': ['Tomorrow, 3 PM', 'Friday, 6 PM', 'Saturday, 10 AM'],
+    },
+    {
+      'senderName': 'Alex Rivera',
+      'avatarInitial': 'A',
+      'skillToLearn': 'Python Programming',
+      'timestamp': '5 hours ago',
+      'status': 'Pending',
+      'message': 'Would love to learn Python. I can teach you Spanish!',
+      'proposedTimeSlots': ['Wednesday, 5 PM', 'Thursday, 6 PM'],
+    },
+  ];
+
+  // Mock outgoing requests
+  late final List<Map<String, dynamic>> _outgoingRequests = [
+    {
+      'senderName': 'John Doe',
+      'avatarInitial': 'J',
+      'skillToLearn': 'UI/UX Design',
+      'timestamp': '1 day ago',
+      'status': 'Accepted',
+      'proposedTimeSlots': ['Next Monday, 4 PM'],
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +170,61 @@ class _RequestsScreenState extends State<RequestsScreen> {
   }
 
   Widget _buildIncomingTab() {
-    return _buildEmptyState('No incoming requests',
-        'You don\'t have any pending requests yet.');
+    if (_incomingRequests.isEmpty) {
+      return _buildEmptyState('No incoming requests',
+          'You don\'t have any pending requests yet.');
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.all(AppSpacing.md),
+      itemCount: _incomingRequests.length,
+      itemBuilder: (context, index) {
+        final request = _incomingRequests[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: AppSpacing.md),
+          child: RequestCard(
+            senderName: request['senderName'],
+            skillToLearn: request['skillToLearn'],
+            avatarInitial: request['avatarInitial'],
+            timestamp: request['timestamp'],
+            status: request['status'],
+            message: request['message'],
+            proposedTimeSlots: request['proposedTimeSlots'],
+            onAccept: () => _handleAccept(index),
+            onDecline: () => _handleDecline(index),
+            onCounter: () => _handleCounter(index),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildOutgoingTab() {
-    return _buildEmptyState('No outgoing requests',
-        'You haven\'t sent any requests yet.');
+    if (_outgoingRequests.isEmpty) {
+      return _buildEmptyState(
+        'No outgoing requests',
+        'You haven\'t sent any lesson requests yet.',
+      );
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.all(AppSpacing.md),
+      itemCount: _outgoingRequests.length,
+      itemBuilder: (context, index) {
+        final request = _outgoingRequests[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: AppSpacing.md),
+          child: RequestCard(
+            senderName: request['senderName'],
+            skillToLearn: request['skillToLearn'],
+            avatarInitial: request['avatarInitial'],
+            timestamp: request['timestamp'],
+            status: request['status'],
+            proposedTimeSlots: request['proposedTimeSlots'],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildEmptyState(String title, String subtitle) {
@@ -167,6 +250,52 @@ class _RequestsScreenState extends State<RequestsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _handleAccept(int index) {
+    setState(() {
+      _incomingRequests[index]['status'] = 'Accepted';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Request accepted!')),
+    );
+  }
+
+  void _handleDecline(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Decline Request'),
+        content: Text('Are you sure you want to decline this request?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _incomingRequests[index]['status'] = 'Declined';
+              });
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Request declined.')),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            child: Text('Decline'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleCounter(int index) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Counter offer screen coming soon...')),
     );
   }
 }
