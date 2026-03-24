@@ -69,6 +69,14 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   // Level and modality info
                   _buildLevelAndModality(),
                   SizedBox(height: AppSpacing.lg),
+
+                  // Description section
+                  _buildDescription(),
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Availability section
+                  _buildAvailabilitySection(),
+                  SizedBox(height: AppSpacing.xl),
                 ],
               ),
             ),
@@ -76,6 +84,130 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildDescription() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'About this skill',
+          style: AppTextStyles.h2.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: AppSpacing.md),
+        Text(
+          widget.listing.description,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAvailabilitySection() {
+    // Parse availability from nextAvailable field
+    final availableSlots = _generateTimeSlots();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Availability',
+          style: AppTextStyles.h2.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: AppSpacing.md),
+        Column(
+          children: availableSlots
+              .map(
+                (slot) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                      border:
+                          Border.all(color: const Color(0xFFE5E7EB), width: 1),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
+                        SizedBox(width: AppSpacing.md),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              slot['day'] ?? 'Available',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              slot['time'] ?? widget.listing.nextAvailable,
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                            vertical: AppSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFECFDF5),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
+                          child: Text(
+                            'Available',
+                            style: AppTextStyles.caption.copyWith(
+                              color: const Color(0xFF059669),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  List<Map<String, String>> _generateTimeSlots() {
+    // Generate 3 sample time slots based on availability
+    return [
+      {
+        'day': 'Mondays & Wednesdays',
+        'time': '2:00 PM - 5:00 PM',
+      },
+      {
+        'day': 'Thursdays',
+        'time': '6:00 PM - 8:00 PM',
+      },
+      {
+        'day': 'Weekends',
+        'time': '10:00 AM - 4:00 PM',
+      },
+    ];
   }
 
   Widget _buildLevelAndModality() {
