@@ -24,6 +24,22 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
   // ── VALIDATION ─────────────────────────────────────────────────────────────
   bool get _isValid => _selectedTimeSlots.isNotEmpty;
 
+  void _handleSubmit() {
+    // Show success message and navigate back
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Counter offer sent successfully!'),
+        backgroundColor: AppColors.success,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    // Navigate back to Requests screen after a brief delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      Navigator.pop(context);
+    });
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
