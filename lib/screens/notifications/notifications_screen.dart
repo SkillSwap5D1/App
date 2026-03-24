@@ -86,6 +86,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  void _deleteNotification(int index) {
+    final notification = _notifications[index];
+    setState(() {
+      _notifications.removeAt(index);
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Notification deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _notifications.insert(index, notification);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,12 +152,34 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           const SizedBox(height: AppSpacing.sm),
                       itemBuilder: (context, index) {
                         final notification = _notifications[index];
-                        return NotificationRow(
-                          notification: notification,
-                          onTap: () {
-                            _markAsRead(index);
-                            _handleNotificationTap(notification);
+                        return Dismissible(
+                          key: Key(notification.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.error,
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.md),
+                            ),
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(
+                              right: AppSpacing.md,
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onDismissed: (_) {
+                            _deleteNotification(index);
                           },
+                          child: NotificationRow(
+                            notification: notification,
+                            onTap: () {
+                              _markAsRead(index);
+                              _handleNotificationTap(notification);
+                            },
+                          ),
                         );
                       },
                     ),
