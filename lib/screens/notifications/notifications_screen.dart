@@ -37,6 +37,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
   }
 
+  void _markAsRead(int index) {
+    if (!_notifications[index].isRead) {
+      setState(() {
+        final notification = _notifications[index];
+        _notifications[index] = MockNotification(
+          id: notification.id,
+          type: notification.type,
+          title: notification.title,
+          subtitle: notification.subtitle,
+          timeAgo: notification.timeAgo,
+          isRead: true,
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +101,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         return NotificationRow(
                           notification: notification,
                           onTap: () {
+                            _markAsRead(index);
                             // TODO: Navigate based on notification type
                           },
                         );
