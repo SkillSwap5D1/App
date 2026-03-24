@@ -42,6 +42,8 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
             children: [
               _buildOriginalRequestCard(),
               SizedBox(height: AppSpacing.lg),
+              _buildProposeHeading(),
+              SizedBox(height: AppSpacing.md),
               // Time slot picker will go here
               // Message field will go here
               // Submit button will go here
@@ -89,6 +91,13 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProposeHeading() {
+    return Text(
+      'Propose New Times',
+      style: AppTextStyles.h3,
     );
   }
 }
