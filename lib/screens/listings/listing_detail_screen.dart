@@ -61,12 +61,45 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   // Skill title
                   _buildSkillTitle(),
                   SizedBox(height: AppSpacing.md),
+
+                  // Tag chips row
+                  _buildTagsRow(isMobile),
+                  SizedBox(height: AppSpacing.lg),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTagsRow(bool isMobile) {
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: widget.listing.tags
+          .map(
+            (tag) => Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(AppRadius.full),
+                border: Border.all(color: AppColors.primary, width: 1),
+              ),
+              child: Text(
+                tag,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 
