@@ -77,6 +77,10 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   // Availability section
                   _buildAvailabilitySection(),
                   SizedBox(height: AppSpacing.xl),
+
+                  // Action buttons
+                  _buildActionButtons(isMobile),
+                  SizedBox(height: AppSpacing.lg),
                 ],
               ),
             ),
@@ -191,7 +195,128 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       ],
     );
   }
+  Widget _buildActionButtons(bool isMobile) {
+    if (_isOwner) {
+      // Owner sees Edit and Delete buttons
+      return Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigate to Create Listing in edit mode
+                Navigator.of(context).pushNamed(
+                  '/create-listing',
+                  arguments: {'listing': widget.listing, 'isEdit': true},
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+              ),
+              child: Text(
+                'Edit Listing',
+                style: AppTextStyles.button.copyWith(
+                  color: AppColors.surface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: AppSpacing.md),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton(
+              onPressed: () {
+                // Show delete confirmation dialog
+                _showDeleteConfirmation();
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.error, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+              ),
+              child: Text(
+                'Delete Listing',
+                style: AppTextStyles.button.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Non-owner sees Request Lesson button
+      return SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: ElevatedButton(
+          onPressed: () {
+            // Navigate to Send Request Form
+            Navigator.of(context).pushNamed(
+              '/send-request',
+              arguments: {'listing': widget.listing},
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+          ),
+          child: Text(
+            'Request Lesson',
+            style: AppTextStyles.button.copyWith(
+              color: AppColors.surface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+  }
 
+  void _showDeleteConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Listing?'),
+        content: const Text(
+          'Are you sure you want to delete this listing? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Delete listing logic here
+              Navigator.pop(context);
+              Navigator.pop(context);
+              // Show success message
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Listing deleted')),
+              );
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   List<Map<String, String>> _generateTimeSlots() {
     // Generate 3 sample time slots based on availability
     return [
