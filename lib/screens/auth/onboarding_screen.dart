@@ -9,6 +9,31 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  final List<String> _skillCategories = [
+    'Programming',
+    'Languages',
+    'Music',
+    'Design',
+    'Business',
+    'Mathematics',
+    'Writing',
+    'Fitness',
+    'Cooking',
+    'Photography',
+    'Art',
+    'Engineering',
+  ];
+
+  late Set<String> _selectedTeachSkills;
+  late Set<String> _selectedLearnSkills;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTeachSkills = {};
+    _selectedLearnSkills = {};
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -47,12 +72,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Teach skills placeholder
-              Container(
-                color: Colors.grey[100],
-                height: 200,
-                child: const Center(child: Text('Teach skills grid here')),
-              ),
+              // Teach skills grid
+              _buildSkillChipsGrid(_selectedTeachSkills),
               const SizedBox(height: AppSpacing.lg),
 
               // What do you want to learn section
@@ -64,12 +85,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Learn skills placeholder
-              Container(
-                color: Colors.grey[100],
-                height: 200,
-                child: const Center(child: Text('Learn skills grid here')),
-              ),
+              // Learn skills grid
+              _buildSkillChipsGrid(_selectedLearnSkills),
               const SizedBox(height: AppSpacing.lg),
 
               // Buttons
@@ -105,6 +122,51 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSkillChipsGrid(Set<String> selectedSkills) {
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children:
+          _skillCategories.map((skill) {
+            final isSelected = selectedSkills.contains(skill);
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedSkills.remove(skill);
+                  } else {
+                    selectedSkills.add(skill);
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : AppColors.surface,
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : AppColors.border,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  skill,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color:
+                        isSelected ? AppColors.surface : AppColors.textPrimary,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
     );
   }
 }
