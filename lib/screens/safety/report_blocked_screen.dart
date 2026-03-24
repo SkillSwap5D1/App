@@ -33,6 +33,24 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
     'Other',
   ];
 
+  // Get icon for category
+  IconData _getIconForCategory(String category) {
+    switch (category) {
+      case 'Harassment':
+        return Icons.warning;
+      case 'Spam':
+        return Icons.mail_outline;
+      case 'Inappropriate Content':
+        return Icons.flag;
+      case 'Fake Profile':
+        return Icons.person_off;
+      case 'Other':
+        return Icons.more_horiz;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -160,11 +178,27 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                   ),
-                  hint: const Text('Select a category'),
+                  hint: Row(
+                    children: [
+                      Icon(Icons.category, color: AppColors.textMuted),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Text('Select a category'),
+                    ],
+                  ),
                   items: _reportCategories
                       .map((category) => DropdownMenuItem(
                             value: category,
-                            child: Text(category),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _getIconForCategory(category),
+                                  size: 20,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                                Text(category),
+                              ],
+                            ),
                           ))
                       .toList(),
                   onChanged: (value) {
