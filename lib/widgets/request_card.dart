@@ -11,6 +11,7 @@ class RequestCard extends StatelessWidget {
   final List<String> proposedTimeSlots;
   final VoidCallback? onAccept;
   final VoidCallback? onDecline;
+  final VoidCallback? onCounter;
 
   const RequestCard({
     required this.senderName,
@@ -22,6 +23,7 @@ class RequestCard extends StatelessWidget {
     required this.proposedTimeSlots,
     this.onAccept,
     this.onDecline,
+    this.onCounter,
   });
 
   @override
@@ -46,6 +48,10 @@ class RequestCard extends StatelessWidget {
           if (onAccept != null && onDecline != null) ...[
             SizedBox(height: 12.0),
             _buildActionButtons(),
+            if (onCounter != null) ...[
+              SizedBox(height: 8.0),
+              _buildCounterLink(),
+            ],
           ],
         ],
       ),
@@ -111,6 +117,22 @@ class RequestCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCounterLink() {
+    return Center(
+      child: GestureDetector(
+        onTap: onCounter,
+        child: Text(
+          'Counter',
+          style: AppTextStyles.bodySmall.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w500,
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      ),
     );
   }
 
