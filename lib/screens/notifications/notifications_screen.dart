@@ -17,7 +17,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    _notifications = MockData.notifications;
+    _notifications = List.from(MockData.notifications);
+  }
+
+  void _markAllAsRead() {
+    setState(() {
+      for (var notification in _notifications) {
+        // Create a new notification with isRead = true
+        final index = _notifications.indexOf(notification);
+        _notifications[index] = MockNotification(
+          id: notification.id,
+          type: notification.type,
+          title: notification.title,
+          subtitle: notification.subtitle,
+          timeAgo: notification.timeAgo,
+          isRead: true,
+        );
+      }
+    });
   }
 
   @override
@@ -43,11 +60,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        for (var notif in _notifications) {
-                          // Mark all as read will be implemented
-                        }
-                      });
+                      _markAllAsRead();
                     },
                     child: const Text('Mark all as read'),
                   ),
