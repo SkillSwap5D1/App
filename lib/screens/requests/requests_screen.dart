@@ -106,7 +106,10 @@ class _RequestsScreenState extends State<RequestsScreen> {
 
   Widget _buildTabToggle() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
@@ -128,7 +131,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    'Incoming (2)',
+                    'Incoming (${_incomingRequests.length})',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: _selectedTab == 'Incoming'
                           ? Colors.white
@@ -152,7 +155,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    'Outgoing',
+                    'Outgoing (${_outgoingRequests.length})',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: _selectedTab == 'Outgoing'
                           ? Colors.white
