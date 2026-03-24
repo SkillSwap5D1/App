@@ -81,9 +81,76 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Block ${widget.userName}?'),
-        content: const Text(
-          'Blocking this user will stop all communication.',
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        icon: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppColors.error.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.block,
+            color: AppColors.error,
+            size: 28,
+          ),
+        ),
+        title: Text(
+          'Block ${widget.userName}?',
+          style: AppTextStyles.h3,
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Blocking this user will stop all communication.',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textMuted,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: AppColors.error.withOpacity(0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'This action will:',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    '• Hide their messages',
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '• Remove the conversation',
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '• Prevent future contact',
+                    style: AppTextStyles.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         contentPadding: const EdgeInsets.fromLTRB(
           AppSpacing.lg,
@@ -91,28 +158,67 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
           AppSpacing.lg,
           AppSpacing.md,
         ),
+        actionsPadding: const EdgeInsets.all(AppSpacing.md),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+            ),
+            child: Text(
+              'Cancel',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textMuted,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               widget.onBlock();
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('${widget.userName} has been blocked'),
+                    content: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: AppColors.surface,
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            '${widget.userName} has been blocked',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     duration: const Duration(seconds: 2),
                     backgroundColor: AppColors.error,
                   ),
                 );
               }
             },
-            child: const Text(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+            ),
+            child: Text(
               'Block',
-              style: TextStyle(color: AppColors.error),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.surface,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
