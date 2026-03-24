@@ -15,6 +15,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isLoading = false;
   String? _emailError;
+  String? _selectedCourse;
+
+  final List<String> _courses = [
+    'Computer Science',
+    'Business',
+    'Psychology',
+    'Engineering',
+    'Medicine',
+    'Law',
+    'Architecture',
+    'Nursing',
+    'Pharmacy',
+    'Economics',
+  ];
 
   @override
   void dispose() {
@@ -157,6 +171,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                           const SizedBox(height: AppSpacing.md),
+
+                          // Course dropdown
+                          Text('Course', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.sm),
+                          _buildCourseDropdown(),
+                          const SizedBox(height: AppSpacing.md),
                         ],
                       ),
                     ),
@@ -175,6 +195,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCourseDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
+          value: _selectedCourse,
+          hint: Padding(
+            padding: const EdgeInsets.only(left: AppSpacing.md),
+            child: Text(
+              'Select your course',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(right: AppSpacing.md),
+            child: Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+          ),
+          iconSize: 24,
+          elevation: 16,
+          style: AppTextStyles.bodyMedium,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedCourse = newValue;
+            });
+          },
+          items:
+              _courses.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: AppSpacing.md),
+                    child: Text(value),
+                  ),
+                );
+              }).toList(),
+        ),
       ),
     );
   }
