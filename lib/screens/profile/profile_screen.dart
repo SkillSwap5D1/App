@@ -112,6 +112,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
+
+              // About section
+              Text('About', style: AppTextStyles.h3),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'I\'m a passionate Computer Science student in my third year. I love teaching programming concepts and helping others understand code. I specialize in Python, JavaScript, and have experience with Flutter for mobile development.',
+                style: AppTextStyles.bodyMedium.copyWith(height: 1.6),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Contact section
+              Text('Contact', style: AppTextStyles.h3),
+              const SizedBox(height: AppSpacing.md),
+
+              // Email row
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.mail_outline,
+                      color: AppColors.textSecondary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Email', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            'sarah.johnson@myport.ac.uk',
+                            style: AppTextStyles.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Member since row
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      color: AppColors.textSecondary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Member Since', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            'January 15, 2024',
+                            style: AppTextStyles.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),
