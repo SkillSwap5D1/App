@@ -506,7 +506,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
               Row(
                 children: [
                   Icon(
-                    Icons.star,
+                    Icons.star_filled,
                     size: 16,
                     color: const Color(0xFFFCD34D), // Yellow star
                   ),
