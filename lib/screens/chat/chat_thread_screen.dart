@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/message_bubble.dart';
+import '../safety/report_blocked_screen.dart';
 
 class ChatThreadScreen extends StatefulWidget {
   final MockConversation conversation;
@@ -19,6 +20,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final TextEditingController _messageController;
   late final ScrollController _scrollController;
   bool _isComposing = false;
+  bool _isUserBlocked = false;
 
   @override
   void initState() {
@@ -56,6 +58,28 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         curve: Curves.easeOut,
       );
     }
+  }
+
+  void _showReportSheet() {
+    final reportBlocked = ReportBlockedScreen(
+      userName: widget.conversation.otherUserName,
+      userId: widget.conversation.otherUserId,
+      onBlock: () {
+        setState(() => _isUserBlocked = true);
+      },
+    );
+    reportBlocked._showReportForm();
+  }
+
+  void _showBlockDialog() {
+    final reportBlocked = ReportBlockedScreen(
+      userName: widget.conversation.otherUserName,
+      userId: widget.conversation.otherUserId,
+      onBlock: () {
+        setState(() => _isUserBlocked = true);
+      },
+    );
+    reportBlocked._showBlockConfirmation();
   }
 
   // Get category emoji
@@ -174,7 +198,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         title: const Text('Report User'),
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: Open report sheet
+                          _showReportSheet();
                         },
                       ),
                       ListTile(
@@ -183,7 +207,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         title: const Text('Block User'),
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: Block user
+                          _showBlockDialog();
                         },
                       ),
                       const SizedBox(height: AppSpacing.md),
