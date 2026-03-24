@@ -13,11 +13,22 @@ class SavedBookmarkedScreen extends StatefulWidget {
 class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
   // ── STATE ──────────────────────────────────────────────────────────
   late List<MockListing> _savedListings;
+  final Map<String, int> _removalHistory = {};
 
   @override
   void initState() {
     super.initState();
+    _loadSavedListings();
+  }
+
+  void _loadSavedListings() {
     _savedListings = List.from(MockData.savedListings);
+  }
+
+  int _getSavedCount() => _savedListings.length;
+
+  bool _isListingSaved(String listingId) {
+    return _savedListings.any((listing) => listing.id == listingId);
   }
 
   @override
