@@ -34,6 +34,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _selectedLearnSkills = {};
   }
 
+  void _handleGetStarted() {
+    // Navigate to Browse screen
+    Navigator.of(context).pushNamed('/browse');
+  }
+
+  void _handleSkipForNow() {
+    // Navigate to Browse screen without selections
+    Navigator.of(context).pushNamed('/browse');
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -94,7 +104,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: null,
+                  onPressed:
+                      (_selectedTeachSkills.isNotEmpty &&
+                              _selectedLearnSkills.isNotEmpty)
+                          ? _handleGetStarted
+                          : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
@@ -110,10 +124,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               // Skip link
               Center(
-                child: Text(
-                  'Skip for now',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textMuted,
+                child: GestureDetector(
+                  onTap: _handleSkipForNow,
+                  child: Text(
+                    'Skip for now',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textMuted,
+                    ),
                   ),
                 ),
               ),
