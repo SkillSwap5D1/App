@@ -9,6 +9,16 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -76,6 +86,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: AppTextStyles.bodySmall,
                           ),
                           const SizedBox(height: AppSpacing.lg),
+
+                          // First name and Last name (side by side)
+                          Row(
+                            children: [
+                              // First name field
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'First name',
+                                      style: AppTextStyles.label,
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    _buildFirstNameField(),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              // Last name field
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Last name',
+                                      style: AppTextStyles.label,
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    _buildLastNameField(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
                         ],
                       ),
                     ),
@@ -95,6 +141,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFirstNameField() {
+    return TextField(
+      controller: _firstNameController,
+      keyboardType: TextInputType.name,
+      decoration: InputDecoration(
+        hintText: 'John',
+        prefixIcon: const Icon(Icons.person_outline),
+        prefixIconColor: AppColors.textMuted,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return TextField(
+      controller: _lastNameController,
+      keyboardType: TextInputType.name,
+      decoration: InputDecoration(
+        hintText: 'Doe',
+        prefixIcon: const Icon(Icons.person_outline),
+        prefixIconColor: AppColors.textMuted,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
     );
   }
 
