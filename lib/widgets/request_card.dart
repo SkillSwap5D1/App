@@ -7,6 +7,7 @@ class RequestCard extends StatelessWidget {
   final String avatarInitial;
   final String timestamp;
   final String status;
+  final String? message;
 
   const RequestCard({
     required this.senderName,
@@ -14,6 +15,7 @@ class RequestCard extends StatelessWidget {
     required this.avatarInitial,
     required this.timestamp,
     required this.status,
+    this.message,
   });
 
   @override
@@ -29,7 +31,27 @@ class RequestCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
+          if (message != null) ...[
+            SizedBox(height: 12.0),
+            _buildMessage(),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildMessage() {
+    return Container(
+      padding: EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Text(
+        message!,
+        style: AppTextStyles.bodySmall,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
