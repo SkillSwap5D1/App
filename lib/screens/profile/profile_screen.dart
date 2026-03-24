@@ -235,8 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Navigate to Edit Profile screen
-                    // Navigator.of(context).pushNamed('/edit-profile');
+                    Navigator.of(context).pushNamed('/edit-profile');
                   },
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('Edit Profile'),

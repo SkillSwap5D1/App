@@ -5,6 +5,7 @@ import 'screens/browse/browse_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/onboarding_screen.dart';
+import 'screens/profile/edit_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
         '/browse': (context) => const BrowseScreen(),
+        '/edit-profile': (context) => const EditProfileScreen(),
       },
     );
   }
