@@ -577,6 +577,27 @@ class MockData {
     ),
   ];
 
+  // ── BLOCKED USERS ───────────────────────────────────────────────────────────
+  static final List<String> blockedUserIds = [
+    // Initially empty, users can be added to this list
+    // Example: 'user_002', 'user_005'
+  ];
+
+  // ── HELPER METHODS ───────────────────────────────────────────────────────────
+  static bool isUserBlocked(String userId) {
+    return blockedUserIds.contains(userId);
+  }
+
+  static void blockUser(String userId) {
+    if (!blockedUserIds.contains(userId)) {
+      blockedUserIds.add(userId);
+    }
+  }
+
+  static void unblockUser(String userId) {
+    blockedUserIds.remove(userId);
+  }
+
   // ── CATEGORIES ───────────────────────────────────────────────────────────────
   static const List<String> categories = [
     'All',

@@ -178,33 +178,10 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
           ),
           ElevatedButton(
             onPressed: () {
+              // Add to MockData blocked list
+              MockData.blockUser(widget.userId);
               Navigator.pop(context);
               widget.onBlock();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle,
-                          color: AppColors.surface,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Text(
-                            '${widget.userName} has been blocked',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    duration: const Duration(seconds: 2),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,
