@@ -12,9 +12,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
   String? _emailError;
+  String? _passwordError;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   String? _selectedCourse;
 
   final List<String> _courses = [
@@ -35,6 +40,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -46,6 +53,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailError = 'Please use your @myport.ac.uk email';
       } else {
         _emailError = null;
+      }
+    });
+  }
+
+  void _validatePasswords(String value) {
+    setState(() {
+      if (_passwordController.text.isEmpty ||
+          _confirmPasswordController.text.isEmpty) {
+        _passwordError = null;
+      } else if (_passwordController.text != _confirmPasswordController.text) {
+        _passwordError = 'Passwords do not match';
+      } else {
+        _passwordError = null;
       }
     });
   }
@@ -177,6 +197,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(height: AppSpacing.sm),
                           _buildCourseDropdown(),
                           const SizedBox(height: AppSpacing.md),
+
+                          // Password field
+                          Text('Password', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.sm),
+                          _buildPasswordField(),
+                          const SizedBox(height: AppSpacing.md),
+
+                          // Confirm password field
+                          Text('Confirm password', style: AppTextStyles.label),
+                          const SizedBox(height: AppSpacing.sm),
+                          _buildConfirmPasswordField(),
+                          if (_passwordError != null)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppSpacing.xs,
+                              ),
+                              child: Text(
+                                _passwordError!,
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: AppSpacing.lg),
                         ],
                       ),
                     ),
@@ -196,6 +240,86 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextField(
+      controller: _passwordController,
+      obscureText: !_isPasswordVisible,
+      onChanged: (_) => _validatePasswords(''),
+      decoration: InputDecoration(
+        hintText: '••••••',
+        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIconColor: AppColors.textMuted,
+        suffixIcon: GestureDetector(
+          onTap: () {
+            setState(() => _isPasswordVisible = !_isPasswordVisible);
+          },
+          child: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.textMuted,
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return TextField(
+      controller: _confirmPasswordController,
+      obscureText: !_isConfirmPasswordVisible,
+      onChanged: _validatePasswords,
+      decoration: InputDecoration(
+        hintText: '••••••',
+        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIconColor: AppColors.textMuted,
+        suffixIcon: GestureDetector(
+          onTap: () {
+            setState(
+              () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+            );
+          },
+          child: Icon(
+            _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.textMuted,
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      style: AppTextStyles.bodyMedium,
     );
   }
 
