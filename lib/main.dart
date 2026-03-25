@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
-import 'screens/chat/chat_list_screen.dart';
 import 'screens/browse/browse_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
