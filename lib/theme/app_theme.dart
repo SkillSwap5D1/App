@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 
 /// App colour palette
 class AppColors {
-  // Primary
-  static const Color primary = Color(0xFF2DD4BF);
-  static const Color primaryLight = Color(0xFFE6FAF8);
+  // Primary & Accent
+  static const Color primary = Color(0xFF0A0A0A); // Black
+  static const Color accent = Color(0xFF6B21A8); // Deep purple
+  static const Color accentLight = Color(0xFFF5F3FF); // Very light purple
 
   // Backgrounds
-  static const Color background = Color(0xFFF8F7F4);
-  static const Color surface = Color(0xFFFFFFFF);
+  static const Color background = Color(0xFFFAF8F5); // Warm near-white
+  static const Color surface = Color(0xFFFFFFFF); // Pure white
+  static const Color surfaceWarm = Color(0xFFF7F4EF); // Warm off-white
 
   // Text
-  static const Color textPrimary = Color(0xFF111827);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textMuted = Color(0xFF9CA3AF);
+  static const Color textPrimary = Color(0xFF0A0A0A); // Black
+  static const Color textSecondary = Color(0xFF6B6B6B); // Medium grey
+  static const Color textMuted = Color(0xFFAAAAAA); // Light grey
 
   // Borders
-  static const Color border = Color(0xFFE5E7EB);
+  static const Color border = Color(0xFFEDE9E3); // Warm beige
 
   // Status
-  static const Color success = Color(0xFF059669);
-  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF2D6A4F); // Dark green
+  static const Color error = Color(0xFFB91C1C); // Dark red
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
 }
@@ -125,7 +127,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.background,
     primaryColor: AppColors.primary,
     colorScheme: ColorScheme.light(
-      primary: AppColors.primary,
+      primary: AppColors.accent,
       surface: AppColors.surface,
       error: AppColors.error,
     ),
@@ -133,8 +135,8 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.surface,
       elevation: 0,
-      scrolledUnderElevation: 1,
-      shadowColor: AppColors.border,
+      scrolledUnderElevation: 0,
+      shadowColor: Colors.transparent,
       titleTextStyle: AppTextStyles.h3,
       iconTheme: IconThemeData(color: AppColors.textPrimary),
     ),
@@ -154,27 +156,27 @@ class AppTheme {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.error,
-        side: const BorderSide(color: AppColors.error, width: 1.5),
+        foregroundColor: AppColors.textPrimary,
+        side: const BorderSide(color: AppColors.textPrimary, width: 1.5),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        textStyle: AppTextStyles.button.copyWith(color: AppColors.error),
+        textStyle: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.primary,
+        foregroundColor: AppColors.accent,
         textStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.primary,
+          color: AppColors.accent,
           fontWeight: FontWeight.w500,
         ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.surface,
+      fillColor: AppColors.surfaceWarm,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -186,7 +188,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
-        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        borderSide: const BorderSide(color: AppColors.accent, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -207,7 +209,7 @@ class AppTheme {
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.surface,
-      selectedItemColor: AppColors.primary,
+      selectedItemColor: AppColors.accent,
       unselectedItemColor: AppColors.textMuted,
       elevation: 8,
       type: BottomNavigationBarType.fixed,
@@ -215,9 +217,9 @@ class AppTheme {
       unselectedLabelStyle: TextStyle(fontSize: 11),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: AppColors.accentLight,
       labelStyle: AppTextStyles.caption.copyWith(
-        color: AppColors.primary,
+        color: AppColors.accent,
         fontWeight: FontWeight.w500,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -236,7 +238,7 @@ class AppTheme {
       contentTextStyle: AppTextStyles.bodyMedium.copyWith(
         color: AppColors.surface,
       ),
-      actionTextColor: AppColors.primary,
+      actionTextColor: AppColors.accent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
