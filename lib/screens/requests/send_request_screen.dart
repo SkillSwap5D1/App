@@ -341,7 +341,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+              borderSide: const BorderSide(color: AppColors.border, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.lg),

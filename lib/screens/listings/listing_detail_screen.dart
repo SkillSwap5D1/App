@@ -139,7 +139,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(AppRadius.lg),
                       border:
-                          Border.all(color: const Color(0xFFE5E7EB), width: 1),
+                          Border.all(color: AppColors.border, width: 1),
                     ),
                     child: Row(
                       children: [
@@ -174,13 +174,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                             vertical: AppSpacing.xs,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFECFDF5),
+                            color: AppColors.accentLight,
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                           child: Text(
                             'Available',
                             style: AppTextStyles.caption.copyWith(
-                              color: const Color(0xFF059669),
+                              color: AppColors.success,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -341,7 +341,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         children: [
@@ -499,7 +499,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   Icon(
                     Icons.star,
                     size: 16,
-                    color: const Color(0xFFFCD34D), // Yellow star
+                    color: AppColors.accent, // Purple star
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
