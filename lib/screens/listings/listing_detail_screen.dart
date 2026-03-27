@@ -466,25 +466,14 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Row(
       children: [
         // Avatar with initials
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(AppRadius.full),
-          ),
-          child: Center(
-            child: Text(
-              widget.listing.ownerName
-                  .split(' ')
-                  .map((n) => n[0])
-                  .take(2)
-                  .join()
-                  .toUpperCase(),
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: AppColors.primary,
+          child: Text(
+            widget.listing.ownerName[0].toUpperCase(),
+            style: AppTextStyles.h3.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -501,6 +490,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
+
+                
               ),
               SizedBox(height: AppSpacing.xs),
               Row(
