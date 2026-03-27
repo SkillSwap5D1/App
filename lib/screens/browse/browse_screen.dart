@@ -321,7 +321,16 @@ class _BrowseScreenState extends State<BrowseScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SendRequestScreen(
+                            listing: listing,
+                          ),
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.send_rounded, size: 14),
                     label: const Text('Send Request'),
                     style: ElevatedButton.styleFrom(
