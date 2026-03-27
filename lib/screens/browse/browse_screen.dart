@@ -132,27 +132,30 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Widget _buildListingRow(List<MockListing> rowListings) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SizedBox(
-              height: 350,
-              child: _buildListingCard(rowListings[0]),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: SizedBox(
-              height: 350,
-              child:
-                  rowListings.length > 1
-                      ? _buildListingCard(rowListings[1])
-                      : const SizedBox.shrink(),
-            ),
-          ),
-        ],
-      ),
+      child:
+          rowListings.length > 1
+              ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 350,
+                      child: _buildListingCard(rowListings[0]),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 350,
+                      child: _buildListingCard(rowListings[1]),
+                    ),
+                  ),
+                ],
+              )
+              : SizedBox(
+                height: 350,
+                child: _buildListingCard(rowListings[0]),
+              ),
     );
   }
 
