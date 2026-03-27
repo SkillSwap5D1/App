@@ -654,11 +654,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
             decoration: InputDecoration(
               hintText: 'Search skills, topics, or people...',
               hintStyle: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textTertiary,
+                color: AppColors.textMuted,
               ),
               prefixIcon: const Icon(
                 Icons.search,
-                color: AppColors.textTertiary,
+                color: AppColors.textMuted,
                 size: 20,
               ),
               filled: true,
