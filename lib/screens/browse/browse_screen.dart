@@ -389,25 +389,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            _buildSidebarLabel('SEARCH'),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _searchController,
-              onChanged: (val) => setState(() => _searchQuery = val),
-              decoration: const InputDecoration(
-                hintText: 'Search skills...',
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: AppColors.textMuted,
-                  size: 18,
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
             _buildSidebarLabel('CATEGORY'),
             const SizedBox(height: 8),
             _buildDropdown(
