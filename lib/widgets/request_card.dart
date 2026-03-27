@@ -177,11 +177,11 @@ class RequestCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 24,
-          backgroundColor: AppColors.primaryLight,
+          backgroundColor: AppColors.primary,
           child: Text(
             avatarInitial,
             style: AppTextStyles.h3.copyWith(
-              color: AppColors.primary,
+              color: Colors.white,
             ),
           ),
         ),

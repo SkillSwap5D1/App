@@ -112,19 +112,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                       child: Column(
                         children: [
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primary.withOpacity(0.2),
-                              border: Border.all(
-                                color: AppColors.primary,
-                                width: 2,
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: AppColors.primary,
+                            child: Text(
+                              _firstNameController.text.isNotEmpty
+                                  ? _firstNameController.text[0].toUpperCase()
+                                  : '?',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                            child: Center(
-                              child: Text('👤', style: TextStyle(fontSize: 48)),
                             ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
