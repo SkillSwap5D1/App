@@ -107,19 +107,46 @@ class _BrowseScreenState extends State<BrowseScreen> {
             child:
                 listings.isEmpty
                     ? _buildEmptyState()
-                    : GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 0.75,
-                          ),
-                      itemCount: listings.length,
-                      itemBuilder:
-                          (context, index) =>
-                              _buildListingCard(listings[index]),
+                    : ListView.builder(
+                      itemCount: (listings.length / 2).ceil(),
+                      itemBuilder: (context, index) {
+                        final startIndex = index * 2;
+                        final endIndex = (startIndex + 2 < listings.length)
+                            ? startIndex + 2
+                            : listings.length;
+                        final rowListings =
+                            listings.sublist(startIndex, endIndex);
+                        return _buildListingRow(rowListings);
+                      },
                     ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── LISTING ROW ───────────────────────────────────────────────────────────
+  Widget _buildListingRow(List<MockListing> rowListings) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 350,
+              child: _buildListingCard(rowListings[0]),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: SizedBox(
+              height: 350,
+              child:
+                  rowListings.length > 1
+                      ? _buildListingCard(rowListings[1])
+                      : const SizedBox.shrink(),
+            ),
           ),
         ],
       ),
