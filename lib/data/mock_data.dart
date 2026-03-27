@@ -143,6 +143,26 @@ class MockNotification {
   });
 }
 
+class MockReview {
+  final String id;
+  final String reviewerId;
+  final String reviewerName;
+  final double rating;
+  final String comment;
+  final String skillName;
+  final String timeAgo;
+
+  const MockReview({
+    required this.id,
+    required this.reviewerId,
+    required this.reviewerName,
+    required this.rating,
+    required this.comment,
+    required this.skillName,
+    required this.timeAgo,
+  });
+}
+
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 
 class MockData {
