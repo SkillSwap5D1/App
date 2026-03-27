@@ -133,21 +133,15 @@ class _ConversationRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // ── AVATAR ──────────────────────────────────────────────────
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.border,
-                    width: 1.0,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    _getEmojiForCategory(conversation.category),
-                    style: const TextStyle(fontSize: 28),
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: AppColors.primary,
+                child: Text(
+                  conversation.otherUserName.isNotEmpty
+                      ? conversation.otherUserName[0].toUpperCase()
+                      : '?',
+                  style: AppTextStyles.h3.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               ),

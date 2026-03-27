@@ -74,11 +74,11 @@ class _ListingCardState extends State<ListingCard> {
       children: [
         CircleAvatar(
           radius: 20,
-          backgroundColor: AppColors.primaryLight,
+          backgroundColor: AppColors.primary,
           child: Text(
             widget.listing.ownerName[0].toUpperCase(),
             style: AppTextStyles.h3.copyWith(
-              color: AppColors.primary,
+              color: Colors.white,
             ),
           ),
         ),

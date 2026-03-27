@@ -120,18 +120,15 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         title: Row(
           children: [
             // Avatar
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Center(
-                child: Text(
-                  _getEmojiForCategory(widget.conversation.category),
-                  style: const TextStyle(fontSize: 20),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColors.primary,
+              child: Text(
+                widget.conversation.otherUserName.isNotEmpty
+                    ? widget.conversation.otherUserName[0].toUpperCase()
+                    : '?',
+                style: AppTextStyles.h3.copyWith(
+                  color: Colors.white,
                 ),
               ),
             ),

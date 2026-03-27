@@ -156,16 +156,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     // Avatar circle
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.primary.withOpacity(0.2),
-                        border: Border.all(color: AppColors.primary, width: 2),
-                      ),
-                      child: Center(
-                        child: Text('👤', style: TextStyle(fontSize: 48)),
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.primary,
+                      child: Text(
+                        _firstName.isNotEmpty ? _firstName[0].toUpperCase() : '?',
+                        style: AppTextStyles.h1.copyWith(
+                          color: Colors.white,
+                          fontSize: 48,
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
