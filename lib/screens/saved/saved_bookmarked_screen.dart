@@ -55,7 +55,7 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                       // Count badge
                       Container(
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: AppColors.accentLight,
                           borderRadius:
                               BorderRadius.circular(AppRadius.full),
                         ),

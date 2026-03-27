@@ -37,7 +37,7 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Color(0xFFE5E7EB),
+              color: AppColors.border,
               width: 1,
             ),
           ),
@@ -46,15 +46,15 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
           height: 64,
           onDestinationSelected: _onNavItemTapped,
           selectedIndex: _selectedIndex,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.surface,
           indicatorColor: Colors.transparent,
           destinations: [
             NavigationDestination(
               icon: Icon(
                 Icons.home_rounded,
                 color: _selectedIndex == 0
-                    ? const Color(0xFF2DD4BF)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.accent
+                    : AppColors.textMuted,
               ),
               label: 'Home',
             ),
@@ -62,8 +62,8 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
               icon: Icon(
                 Icons.search_rounded,
                 color: _selectedIndex == 1
-                    ? const Color(0xFF2DD4BF)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.accent
+                    : AppColors.textMuted,
               ),
               label: 'Search',
             ),
@@ -71,8 +71,8 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
               icon: Icon(
                 Icons.chat_bubble_rounded,
                 color: _selectedIndex == 2
-                    ? const Color(0xFF2DD4BF)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.accent
+                    : AppColors.textMuted,
               ),
               label: 'Chat',
             ),
@@ -80,8 +80,8 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
               icon: Icon(
                 Icons.person_rounded,
                 color: _selectedIndex == 3
-                    ? const Color(0xFF2DD4BF)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.accent
+                    : AppColors.textMuted,
               ),
               label: 'Profile',
             ),

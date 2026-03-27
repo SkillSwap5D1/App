@@ -121,7 +121,7 @@ class _ConversationRow extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryLight : AppColors.surface,
+            color: isSelected ? AppColors.accentLight : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.border,

@@ -39,7 +39,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             leading: Padding(
               padding: const EdgeInsets.all(AppSpacing.sm),
               child: CircleAvatar(
-                backgroundColor: AppColors.primaryLight,
+                backgroundColor: AppColors.accentLight,
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                   onPressed: () => Navigator.pop(context),
@@ -412,14 +412,14 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 vertical: AppSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                color: AppColors.accentLight,
                 borderRadius: BorderRadius.circular(AppRadius.full),
-                border: Border.all(color: AppColors.primary, width: 1),
+                border: Border.all(color: AppColors.accent, width: 1),
               ),
               child: Text(
                 tag,
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
+                  color: AppColors.accent,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -447,13 +447,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             vertical: AppSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primaryLight,
+            color: AppColors.accentLight,
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           child: Text(
             widget.listing.category,
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.primary,
+              color: AppColors.accent,
               fontWeight: FontWeight.w600,
             ),
           ),

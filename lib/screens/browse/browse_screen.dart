@@ -172,6 +172,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(color: AppColors.border),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 12,
+              offset: Offset(0, 2),
+            )
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -212,7 +219,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 children: [
                   const Icon(
                     Icons.star_rounded,
-                    color: Color(0xFFF59E0B),
+                    color: AppColors.accent,
                     size: 14,
                   ),
                   const SizedBox(width: 2),
@@ -249,13 +256,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: AppColors.accentLight,
                           borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                         child: Text(
                           tag,
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.primary,
+                            color: AppColors.accent,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -330,6 +337,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     icon: const Icon(Icons.send_rounded, size: 14),
                     label: const Text('Send Request'),
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.surface,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
@@ -369,7 +378,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       width: 220,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surfaceWarm,
         border: Border(right: BorderSide(color: AppColors.border)),
       ),
       child: SingleChildScrollView(
@@ -428,7 +437,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
           decoration: BoxDecoration(
             color: isSelected ? AppColors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(AppRadius.md),
-            boxShadow: isSelected ? AppShadows.card : null,
+            boxShadow: isSelected
+                ? [
+                    const BoxShadow(
+                      color: Color(0x08000000),
+                      blurRadius: 12,
+                      offset: Offset(0, 2),
+                    )
+                  ]
+                : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -436,14 +453,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
               Icon(
                 label == 'Available' ? Icons.search : Icons.grid_view,
                 size: 14,
-                color: isSelected ? AppColors.textPrimary : AppColors.textMuted,
+                color: isSelected ? AppColors.accent : AppColors.textMuted,
               ),
               const SizedBox(width: 4),
               Text(
                 label,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color:
-                      isSelected ? AppColors.textPrimary : AppColors.textMuted,
+                  color: isSelected ? AppColors.accent : AppColors.textMuted,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
@@ -457,7 +473,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Widget _buildSidebarLabel(String text) {
     return Text(
       text,
-      style: AppTextStyles.caption.copyWith(
+      style: TextStyle(
+        fontSize: 10,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
         color: AppColors.textMuted,
@@ -557,7 +574,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFF5F2EC), Color(0xFFFAF8F5)],
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -588,7 +611,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.08),
                         ),
                         child: const Icon(
                           Icons.chat_bubble_outline,
@@ -643,7 +666,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 size: 20,
               ),
               filled: true,
-              fillColor: AppColors.surface,
+              fillColor: AppColors.surfaceWarm,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
                 borderSide: const BorderSide(color: AppColors.border),
@@ -654,7 +677,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(color: AppColors.accent, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,

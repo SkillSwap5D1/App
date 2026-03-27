@@ -100,9 +100,9 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
         leading: Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
           child: CircleAvatar(
-            backgroundColor: AppColors.primaryLight,
+            backgroundColor: AppColors.accentLight,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+              icon: const Icon(Icons.arrow_back, color: AppColors.accent),
               onPressed: () => Navigator.pop(context),
               splashRadius: 20,
             ),
@@ -222,7 +222,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                 ),
               ),
               CircleAvatar(
-                backgroundColor: AppColors.primaryLight,
+                backgroundColor: AppColors.accentLight,
                 child: Text(
                   widget.listing.ownerName
                       .split(' ')
@@ -252,7 +252,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                       vertical: AppSpacing.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: AppColors.accentLight,
                       borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
                     child: Text(

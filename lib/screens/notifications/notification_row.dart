@@ -57,7 +57,7 @@ class NotificationRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: notification.isRead
                 ? AppColors.surface
-                : AppColors.primaryLight,
+                : AppColors.accentLight,
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(
               color: notification.isRead

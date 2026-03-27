@@ -31,7 +31,7 @@ class SavedEmptyState extends StatelessWidget {
                 width: 96,
                 height: 96,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: AppColors.accentLight,
                   shape: BoxShape.circle,
                 ),
                 child: Center(

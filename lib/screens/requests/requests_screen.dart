@@ -78,7 +78,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: AppColors.accentLight,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Icon(Icons.mail, color: AppColors.primary),

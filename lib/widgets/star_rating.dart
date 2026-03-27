@@ -17,7 +17,7 @@ class StarRating extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.star, color: AppColors.warning, size: size),
+        Icon(Icons.star, color: AppColors.accent, size: size),
         SizedBox(width: 4),
         Text(
           '$rating',
