@@ -66,13 +66,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Browse Skills'),
-        elevation: 0,
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-      ),
-      drawer: _buildNavigationDrawer(context),
       body: Column(
         children: [
           _buildHero(),
@@ -577,62 +570,117 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   // ── HERO SECTION ──────────────────────────────────────────────────────────
   Widget _buildHero() {
+    // Get current user's first initial
+    const currentUserName = 'You';
+    final userInitial = currentUserName.isNotEmpty ? currentUserName[0].toUpperCase() : '?';
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF0FDF9), Color(0xFFFFF7ED), Color(0xFFF8F7F4)],
-        ),
-      ),
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Bar: Logo + Icons
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(
-                Icons.auto_awesome,
-                color: AppColors.primary,
-                size: 16,
-              ),
-              const SizedBox(width: 6),
+              // SkillSwap Logo
               Text(
-                'Discover & Exchange',
-                style: AppTextStyles.label.copyWith(color: AppColors.primary),
+                'SkillSwap',
+                style: AppTextStyles.h2.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const Spacer(),
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/profile');
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primary.withOpacity(0.1),
-                    ),
-                    child: const Icon(
-                      Icons.person_outline,
-                      color: AppColors.primary,
-                      size: 20,
+              // Chat and Profile Icons
+              Row(
+                children: [
+                  // Chat Icon
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/chat');
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withOpacity(0.1),
+                        ),
+                        child: const Icon(
+                          Icons.chat_bubble_outline,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  // Profile Avatar
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/profile');
+                      },
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: AppColors.primary,
+                        child: Text(
+                          userInitial,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text('Find Skills to Learn', style: AppTextStyles.h1),
-          const SizedBox(height: 8),
-          Text(
-            'Browse skills offered by students at your university\nand start learning today.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+          const SizedBox(height: 16),
+          // Search Bar
+          TextFormField(
+            controller: _searchController,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search skills, topics, or people...',
+              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textTertiary,
+              ),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: AppColors.textTertiary,
+                size: 20,
+              ),
+              filled: true,
+              fillColor: AppColors.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
+            style: AppTextStyles.bodyMedium,
           ),
         ],
       ),
