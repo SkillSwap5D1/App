@@ -108,7 +108,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 listings.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
                       itemCount: (listings.length / 2).ceil(),
+                      addAutomaticKeepAlives: true,
+                      physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final startIndex = index * 2;
                         final endIndex = (startIndex + 2 < listings.length)
