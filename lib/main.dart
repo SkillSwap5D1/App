@@ -8,6 +8,7 @@ import 'screens/auth/onboarding_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/chat/chat_list_screen.dart';
+import 'screens/reviews/rate_review_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +32,12 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const ChatListScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/edit-profile': (context) => const EditProfileScreen(),
+        '/rate-review':
+            (context) => const RateReviewScreen(
+              skillTitle: 'Placeholder Skill',
+              otherUserName: 'Placeholder User',
+              sessionDate: 'Placeholder Date',
+            ),
       },
     );
   }
