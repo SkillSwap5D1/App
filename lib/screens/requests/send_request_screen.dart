@@ -138,7 +138,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFEE2E2),
+                    color: AppColors.errorLight,
                     borderRadius: BorderRadius.circular(AppRadius.lg),
                     border: Border.all(color: AppColors.error, width: 1),
                   ),
@@ -192,7 +192,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

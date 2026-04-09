@@ -274,20 +274,20 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  border: Border.all(color: Colors.blue[200]!),
+                  color: AppColors.info.withOpacity(0.1),
+                  border: Border.all(color: AppColors.info.withOpacity(0.3)),
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                    Icon(Icons.info_outline, color: AppColors.info, size: 20),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
                         'Your review will be published once both users have submitted',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: Colors.blue[900],
+                          color: AppColors.info,
                         ),
                       ),
                     ),
