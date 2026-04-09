@@ -11,6 +11,7 @@ class AppColors {
   static const Color background = Color(0xFFFAF8F5); // Warm near-white
   static const Color surface = Color(0xFFFFFFFF); // Pure white
   static const Color surfaceWarm = Color(0xFFF7F4EF); // Warm off-white
+  static const Color heroBgTop = Color(0xFFF5F2EC); // Hero gradient top
 
   // Text
   static const Color textPrimary = Color(0xFF0A0A0A); // Black
@@ -23,6 +24,7 @@ class AppColors {
   // Status
   static const Color success = Color(0xFF2D6A4F); // Dark green
   static const Color error = Color(0xFFB91C1C); // Dark red
+  static const Color errorLight = Color(0xFFFEE2E2); // Light error background
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
 }
