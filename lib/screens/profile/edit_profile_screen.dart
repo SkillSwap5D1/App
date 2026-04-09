@@ -120,7 +120,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ? _firstNameController.text[0].toUpperCase()
                                   : '?',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: AppColors.surface,
                                 fontSize: 48,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -224,18 +224,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   disabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   filled: true,
-                  fillColor: Colors.grey[100],
+                  fillColor: AppColors.background,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.md,
@@ -252,7 +252,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onPressed: _hasChanges ? _saveChanges : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: Colors.grey[300],
+                    disabledBackgroundColor: AppColors.border,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -261,7 +261,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Text(
                     'Save Changes',
                     style: AppTextStyles.button.copyWith(
-                      color: _hasChanges ? AppColors.surface : Colors.grey[600],
+                      color: _hasChanges ? AppColors.surface : AppColors.textMuted,
                     ),
                   ),
                 ),

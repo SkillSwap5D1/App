@@ -15,7 +15,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late String _lastName;
   late String _bio;
   late String _course;
-  bool _isUserBlocked = false;
 
   // Privacy settings state
   late bool _showFullName;
@@ -59,7 +58,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           userName: '$_firstName $_lastName',
           userId: 'user_sarah_001',
           onBlock: () {
-            setState(() => _isUserBlocked = true);
+            // TODO: Handle user blocked - update UI or navigate away
+            Navigator.pop(context);
           },
         ),
       ),
@@ -73,7 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           userName: '$_firstName $_lastName',
           userId: 'user_sarah_001',
           onBlock: () {
-            setState(() => _isUserBlocked = true);
+            // TODO: Handle user blocked - update UI or navigate away
+            Navigator.pop(context);
           },
         ),
       ),
@@ -162,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Text(
                         _firstName.isNotEmpty ? _firstName[0].toUpperCase() : '?',
                         style: AppTextStyles.h1.copyWith(
-                          color: Colors.white,
+                          color: AppColors.surface,
                           fontSize: 48,
                         ),
                       ),
@@ -234,8 +235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
                   children: [
@@ -267,8 +268,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
                   children: [
@@ -397,7 +398,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           vertical: AppSpacing.md,
         ),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
+          border: Border.all(color: AppColors.border),
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: Row(
@@ -416,7 +417,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -427,14 +428,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: value ? AppColors.primary : Colors.grey[400]!,
+                  color: value ? AppColors.primary : AppColors.border,
                   width: 2,
                 ),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Icon(
                 Icons.check,
-                color: value ? AppColors.primary : Colors.grey[300],
+                color: value ? AppColors.primary : AppColors.textMuted,
                 size: 16,
               ),
             ),
