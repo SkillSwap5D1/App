@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1035466103134",
+    "project_id": "cw-skillswap",
+    "storage_bucket": "cw-skillswap.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035466103134:android:44c263bd6095cb45a097cf",
+        "android_client_info": {
+          "package_name": "com.example.skillswap_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzq0QrV5xgbbQJVKE3czoWbUYUVFbiq1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
