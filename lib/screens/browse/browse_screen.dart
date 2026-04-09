@@ -3,11 +3,6 @@ import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../listings/listing_detail_screen.dart';
 import '../requests/send_request_screen.dart';
-import '../requests/requests_screen.dart';
-import '../requests/counter_offer_screen.dart';
-import '../chat/chat_list_screen.dart';
-import '../profile/profile_screen.dart';
-import '../saved/saved_bookmarked_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -158,33 +153,30 @@ class _BrowseScreenState extends State<BrowseScreen> {
     final initials =
         listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListingDetailScreen(listing: listing),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x08000000),
-              blurRadius: 12,
-              offset: Offset(0, 2),
-            )
-          ],
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListingDetailScreen(listing: listing),
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
@@ -193,7 +185,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 child: Text(
                   initials,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -290,6 +282,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
               Text(listing.modality, style: AppTextStyles.caption),
             ],
           ),
+          ],
+          ),
+          ),
           const Spacer(),
           if (isMySkills) ...[
             Row(
@@ -300,7 +295,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     ),
                     child: const Text('Edit'),
                   ),
@@ -312,7 +307,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.error,
                       side: const BorderSide(color: AppColors.error),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     ),
                     child: const Text('Delete'),
                   ),
@@ -339,7 +334,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.surface,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                     ),
                   ),
                 ),
@@ -367,7 +362,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
             ),
           ],
         ],
-      ),
       ),
     );
   }
@@ -433,7 +427,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       child: GestureDetector(
         onTap: () => setState(() => _selectedTab = label),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -551,7 +545,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       value: value,
       onChanged: onChanged,
       decoration: const InputDecoration(
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       ),
       style: AppTextStyles.bodyMedium,
       items:
@@ -578,10 +572,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFF5F2EC), Color(0xFFFAF8F5)],
+          colors: [AppColors.heroBgTop, AppColors.background],
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -680,8 +674,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 borderSide: const BorderSide(color: AppColors.accent, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
               ),
             ),
             style: AppTextStyles.bodyMedium,
