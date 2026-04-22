@@ -6,7 +6,7 @@ import '../requests/send_request_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
-
+  
   @override
   State<BrowseScreen> createState() => _BrowseScreenState();
 }
