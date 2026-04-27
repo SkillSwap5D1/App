@@ -60,4 +60,24 @@ class NotificationService {
       print('Error sending notification: $e');
     }
   }
+
+  // Get all notifications for a user — used on Notifications screen
+  // Query notifications where userId matches
+  // Order by createdAt descending
+  // Return as real-time stream
+  Stream<List<NotificationModel>> getNotifications(String userId) {
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => NotificationModel.fromMap({
+                ...doc.data(),
+                'id': doc.id,
+              }))
+          .toList();
+    });
+  }
 }
