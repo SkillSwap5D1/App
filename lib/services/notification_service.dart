@@ -104,4 +104,27 @@ class NotificationService {
       print('Error marking notification as read: $e');
     }
   }
+
+  // Mark all notifications as read
+  // Query all unread notifications for user
+  // Use a Firestore batch write to set isRead=true on all of them
+  Future<void> markAllRead(String userId) async {
+    try {
+      final unreadNotifications = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .get();
+
+      final batch = _firestore.batch();
+
+      for (var doc in unreadNotifications.docs) {
+        batch.update(doc.reference, {'isRead': true});
+      }
+
+      await batch.commit();
+    } catch (e) {
+      print('Error marking all notifications as read: $e');
+    }
+  }
 }
