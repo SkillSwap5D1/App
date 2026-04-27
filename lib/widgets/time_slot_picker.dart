@@ -7,12 +7,12 @@ class TimeSlotPicker extends StatefulWidget {
   final VoidCallback onRemove;
   final bool showRemove;
 
-  const TimeSlotPicker({super.key, 
+  const TimeSlotPicker({
     Key? key,
     required this.slot,
     required this.onRemove,
     this.showRemove = false,
-  });
+  }) : super(key: key);
 
   @override
   State<TimeSlotPicker> createState() => _TimeSlotPickerState();
