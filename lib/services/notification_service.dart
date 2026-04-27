@@ -127,4 +127,22 @@ class NotificationService {
       print('Error marking all notifications as read: $e');
     }
   }
+
+  // Get a single notification by ID
+  Future<NotificationModel?> getNotificationById(String notificationId) async {
+    try {
+      final doc =
+          await _firestore.collection('notifications').doc(notificationId).get();
+      if (doc.exists) {
+        return NotificationModel.fromMap({
+          ...doc.data()!,
+          'id': doc.id,
+        });
+      }
+      return null;
+    } catch (e) {
+      print('Error getting notification: $e');
+      return null;
+    }
+  }
 }
