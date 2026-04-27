@@ -46,6 +46,11 @@ class ModerationService {
   // Return true if targetUserId is in blockedUserIds array
   Future<bool> isBlocked(String currentUserId, String targetUserId) async {
     try {
+      final userDoc = await _firestore.collection('users').doc(currentUserId).get();
+      if (userDoc.exists) {
+        final blockedUserIds = List<String>.from(userDoc['blockedUserIds'] ?? []);
+        return blockedUserIds.contains(targetUserId);
+      }
       return false;
     } catch (e) {
       print('Error checking blocked status: $e');
