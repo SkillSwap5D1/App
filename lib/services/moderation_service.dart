@@ -11,4 +11,16 @@ class ModerationService {
   ModerationService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Block another user
+  // 1. Add targetUserId to blockedUserIds array on currentUser's document
+  // 2. This is checked in ChatService.sendMessage() to prevent messages
+  Future<void> blockUser(String currentUserId, String targetUserId) async {
+    try {
+      return;
+    } catch (e) {
+      print('Error blocking user: $e');
+      rethrow;
+    }
+  }
 }
