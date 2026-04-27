@@ -71,8 +71,45 @@ class ReviewService {
     }
   }
 
-  // ── Placeholder for recalculateRating ──────────────────────────────────────
+  // ── Recalculate and update a user's average rating ────────────────────────
+  // 1. Query all published reviews where revieweeId == userId
+  // 2. Calculate the average of all rating fields
+  // 3. Update averageRating and totalReviews on the user document
   Future<void> recalculateRating(String userId) async {
-    // TODO: Implement in next commit
+    try {
+      // 1. Query all published reviews for this user
+      final reviewsQuery =
+          await _db
+              .collection('reviews')
+              .where('revieweeId', isEqualTo: userId)
+              .where('isPublished', isEqualTo: true)
+              .get();
+
+      // 2. Calculate the average rating
+      if (reviewsQuery.docs.isEmpty) {
+        // No reviews yet, set rating to 0 and totalReviews to 0
+        await _db.collection('users').doc(userId).update({
+          'rating': 0.0,
+          'totalReviews': 0,
+        });
+        return;
+      }
+
+      double totalRating = 0;
+      for (final doc in reviewsQuery.docs) {
+        final rating = (doc['rating'] as num).toDouble();
+        totalRating += rating;
+      }
+
+      final averageRating = totalRating / reviewsQuery.docs.length;
+
+      // 3. Update the user document
+      await _db.collection('users').doc(userId).update({
+        'rating': averageRating,
+        'totalReviews': reviewsQuery.docs.length,
+      });
+    } catch (e) {
+      throw Exception('Failed to recalculate rating: $e');
+    }
   }
 }
