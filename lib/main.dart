@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'theme/app_theme.dart';
+import 'services/request_service.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/onboarding_screen.dart';
@@ -17,6 +19,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Check if any confirmed sessions are now due for review
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    await RequestService().checkSessionsDue(user.uid);
+  }
+
   runApp(const MyApp());
 }
 

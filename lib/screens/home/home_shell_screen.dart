@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../theme/app_theme.dart';
+import '../../services/request_service.dart';
 import '../browse/browse_screen.dart';
 import '../chat/chat_list_screen.dart';
 import '../profile/profile_screen.dart';
@@ -25,6 +27,16 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if any confirmed sessions are now due for review
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      RequestService().checkSessionsDue(user.uid);
+    }
   }
 
   @override
