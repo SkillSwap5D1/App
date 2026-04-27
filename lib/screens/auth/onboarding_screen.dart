@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/user_service.dart';
 import '../../theme/app_theme.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -9,181 +12,288 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final List<String> _skillCategories = [
+  late PageController _pageController;
+  int _currentPage = 0;
+  Set<String> _selectedTeachSkills = {};
+  Set<String> _selectedLearnSkills = {};
+  bool _isSaving = false;
+
+  final List<String> _skills = [
     'Programming',
     'Languages',
-    'Music',
     'Design',
+    'Music',
     'Business',
-    'Mathematics',
-    'Writing',
-    'Fitness',
-    'Cooking',
-    'Photography',
+    'Data Science',
     'Art',
-    'Engineering',
+    'Culture',
+    'Computer Science',
+    'Creative',
+    'Fitness',
+    'Other',
   ];
-
-  late Set<String> _selectedTeachSkills;
-  late Set<String> _selectedLearnSkills;
 
   @override
   void initState() {
     super.initState();
-    _selectedTeachSkills = {};
-    _selectedLearnSkills = {};
+    _pageController = PageController();
   }
 
-  void _handleGetStarted() {
-    // Navigate to Browse screen
-    Navigator.of(context).pushNamed('/browse');
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
-  void _handleSkipForNow() {
-    // Navigate to Browse screen without selections
-    Navigator.of(context).pushNamed('/browse');
+  Future<void> _saveTags() async {
+    final userService = UserService();
+    final authProvider = context.read<AuthProvider>();
+    final userId = authProvider.currentUser?.uid;
+
+    if (userId == null) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      // Update user document with teach and learn tags
+      await userService.updateUser(userId, {
+        'teachSkills': _selectedTeachSkills.toList(),
+        'learnSkills': _selectedLearnSkills.toList(),
+      });
+
+      if (mounted) {
+        // Navigate to HomeShellScreen
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/home',
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving preferences: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  void _skipOnboarding() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/home',
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? AppSpacing.md : 40,
-            vertical: AppSpacing.lg,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppSpacing.md),
-
-              // Header
-              Text(
-                'Tell us about you',
-                style: AppTextStyles.h1.copyWith(fontSize: isMobile ? 24 : 28),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'This helps us match you with the right people',
-                style: AppTextStyles.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-
-              // What can you teach section
-              Text('What can you teach?', style: AppTextStyles.h3),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Select the skills you\'re good at',
-                style: AppTextStyles.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // Teach skills grid
-              _buildSkillChipsGrid(_selectedTeachSkills),
-              const SizedBox(height: AppSpacing.lg),
-
-              // What do you want to learn section
-              Text('What do you want to learn?', style: AppTextStyles.h3),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Select the skills you\'re interested in',
-                style: AppTextStyles.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // Learn skills grid
-              _buildSkillChipsGrid(_selectedLearnSkills),
-              const SizedBox(height: AppSpacing.lg),
-
-              // Buttons
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed:
-                      (_selectedTeachSkills.isNotEmpty &&
-                              _selectedLearnSkills.isNotEmpty)
-                          ? _handleGetStarted
-                          : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text('Get Started', style: AppTextStyles.button),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // Skip link
-              Center(
-                child: GestureDetector(
-                  onTap: _handleSkipForNow,
-                  child: Text(
-                    'Skip for now',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.background,
+              const Color(0xFFF5F2EC),
             ],
           ),
+        ),
+        child: Column(
+          children: [
+            // Progress dots
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 32,
+                left: 24,
+                right: 24,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(2, (index) {
+                  final isActive = index == _currentPage;
+                  return Container(
+                    width: isActive ? 32 : 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: isActive ? AppColors.accent : AppColors.textMuted,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(height: 40),
+            // PageView
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() => _currentPage = index);
+                },
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildPage(
+                    title: 'What can you teach?',
+                    selectedSkills: _selectedTeachSkills,
+                  ),
+                  _buildPage(
+                    title: 'What do you want to learn?',
+                    selectedSkills: _selectedLearnSkills,
+                  ),
+                ],
+              ),
+            ),
+            // Buttons
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  // Next/Get Started button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: (_currentPage == 0 &&
+                              _selectedTeachSkills.isEmpty)
+                          ? null
+                          : (_isSaving
+                              ? null
+                              : () {
+                                  if (_currentPage == 0) {
+                                    _pageController.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  } else {
+                                    _saveTags();
+                                  }
+                                }),
+                      child: _isSaving
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation(
+                                  AppColors.surface,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              _currentPage == 0 ? 'Next →' : 'Get Started',
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Skip button
+                  TextButton(
+                    onPressed: _skipOnboarding,
+                    child: const Text('Skip for now'),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSkillChipsGrid(Set<String> selectedSkills) {
+  Widget _buildPage({
+    required String title,
+    required Set<String> selectedSkills,
+  }) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.h2,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select all that apply',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Skill chips grid (3 per row)
+            _buildSkillsGrid(selectedSkills),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkillsGrid(Set<String> selectedSkills) {
     return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children:
-          _skillCategories.map((skill) {
-            final isSelected = selectedSkills.contains(skill);
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    selectedSkills.remove(skill);
-                  } else {
-                    selectedSkills.add(skill);
-                  }
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.surface,
-                  border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
+      spacing: 12,
+      runSpacing: 12,
+      children: _skills.map((skill) {
+        final isSelected = selectedSkills.contains(skill);
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                selectedSkills.remove(skill);
+              } else {
+                selectedSkills.add(skill);
+              }
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.accentLight : AppColors.background,
+              border: Border.all(
+                color: isSelected ? AppColors.accent : AppColors.border,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
                   skill,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color:
-                        isSelected ? AppColors.surface : AppColors.textPrimary,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: isSelected
+                        ? AppColors.accent
+                        : AppColors.textPrimary,
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
-              ),
-            );
-          }).toList(),
+                if (isSelected) ...[
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.check_rounded,
+                    color: AppColors.accent,
+                    size: 16,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

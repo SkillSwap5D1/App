@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -73,77 +75,126 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _handleCreateAccount() async {
     // Validate first name
     if (_firstNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('First name is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('First name is required'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
 
     // Validate last name
     if (_lastNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Last name is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Last name is required'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
 
     // Validate email field
     if (_emailController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Email is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email is required'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
 
     // Validate email format
-    if (_emailError != null) {
+    if (!_emailController.text.contains('@myport.ac.uk')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please use your @myport.ac.uk email')),
+        const SnackBar(
+          content: Text('Please use your @myport.ac.uk email'),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
 
     // Validate password field
     if (_passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Password is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password is required'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
 
     // Validate confirm password field
     if (_confirmPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please confirm your password')),
+        const SnackBar(
+          content: Text('Please confirm your password'),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
 
     // Validate password match
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match'),
+          backgroundColor: AppColors.error,
+        ),
+      );
       return;
     }
 
     // Validate course selection
     if (_selectedCourse == null || _selectedCourse!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select your course')),
+        const SnackBar(
+          content: Text('Please select your course'),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
+    // Call AuthProvider.register()
     if (mounted) {
-      setState(() => _isLoading = false);
-      // Navigate to onboarding screen
-      Navigator.of(context).pushNamed('/onboarding');
+      await context.read<AuthProvider>().register(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+            firstName: _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim(),
+            course: _selectedCourse!,
+          );
+
+      if (mounted) {
+        final authProvider = context.read<AuthProvider>();
+        if (authProvider.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authProvider.errorMessage!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        } else if (authProvider.currentUser != null) {
+          // Navigate to onboarding screen
+          Navigator.of(context).pushNamed('/onboarding');
+        }
+      }
     }
   }
 
