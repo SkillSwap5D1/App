@@ -23,17 +23,17 @@ class StorageService {
     try {
       // Step 1: Create a reference at profile_photos/{userId}/avatar.jpg
       final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
-      
+
       // Step 2: Upload the file using FirebaseStorage.instance.ref().putFile()
       final uploadTask = ref.putFile(imageFile);
-      
+
       // Step 3: Get the download URL from the upload task snapshot
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
-      
-      // Step 4: Call UserService.updateProfile() to save the URL on the user doc
-      await UserService().updateProfile(userId, {'photoUrl': downloadUrl});
-      
+
+      // Step 4: Call UserService.updateUser() to save the URL on the user doc
+      await UserService().updateUser(userId, {'photoUrl': downloadUrl});
+
       // Step 5: Return the download URL
       return downloadUrl;
     } catch (e) {
@@ -44,13 +44,13 @@ class StorageService {
 
   // Delete a profile photo (when user hides photo or deletes account)
   // Delete the file at: profile_photos/{userId}/avatar.jpg
-  // Call UserService.updateProfile({'photoUrl': ''}) to clear the URL
+  // Call UserService.updateUser({'photoUrl': ''}) to clear the URL
   Future<void> deleteProfilePhoto(String userId) async {
     try {
       final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
       await ref.delete();
 
-      await UserService().updateProfile(userId, {'photoUrl': ''});
+      await UserService().updateUser(userId, {'photoUrl': ''});
     } catch (e) {
       print('Error deleting profile photo: $e');
       rethrow;

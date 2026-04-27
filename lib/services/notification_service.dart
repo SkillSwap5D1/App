@@ -20,13 +20,21 @@ class NotificationService {
 
     // Handle notification when app is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Handle foreground notification
+      _handleForegroundNotification(message);
     });
 
     // Handle notification tap when app is in background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // Handle background notification tap
+      _handleBackgroundNotificationTap(message);
     });
+  }
+
+  void _handleForegroundNotification(RemoteMessage message) {
+    // TODO: Implement foreground notification handling
+  }
+
+  void _handleBackgroundNotificationTap(RemoteMessage message) {
+    // TODO: Implement background notification tap handling
   }
 
   Future<String?> getDeviceToken() async {
@@ -44,8 +52,13 @@ class NotificationService {
   // Write a notification document for a user
   // Types: new_request | request_accepted | request_declined |
   // countered | new_message | review_due
-  Future<void> sendNotification(String userId, String type,
-      String title, String body, String relatedId) async {
+  Future<void> sendNotification(
+    String userId,
+    String type,
+    String title,
+    String body,
+    String relatedId,
+  ) async {
     try {
       await _firestore.collection('notifications').add({
         'userId': userId,
@@ -72,13 +85,13 @@ class NotificationService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => NotificationModel.fromMap({
-                ...doc.data(),
-                'id': doc.id,
-              }))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    NotificationModel.fromMap({...doc.data(), 'id': doc.id}),
+              )
+              .toList();
+        });
   }
 
   // Get unread count — used for badge on nav bar icon
@@ -110,11 +123,12 @@ class NotificationService {
   // Use a Firestore batch write to set isRead=true on all of them
   Future<void> markAllRead(String userId) async {
     try {
-      final unreadNotifications = await _firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: userId)
-          .where('isRead', isEqualTo: false)
-          .get();
+      final unreadNotifications =
+          await _firestore
+              .collection('notifications')
+              .where('userId', isEqualTo: userId)
+              .where('isRead', isEqualTo: false)
+              .get();
 
       final batch = _firestore.batch();
 
@@ -132,12 +146,12 @@ class NotificationService {
   Future<NotificationModel?> getNotificationById(String notificationId) async {
     try {
       final doc =
-          await _firestore.collection('notifications').doc(notificationId).get();
+          await _firestore
+              .collection('notifications')
+              .doc(notificationId)
+              .get();
       if (doc.exists) {
-        return NotificationModel.fromMap({
-          ...doc.data()!,
-          'id': doc.id,
-        });
+        return NotificationModel.fromMap({...doc.data()!, 'id': doc.id});
       }
       return null;
     } catch (e) {
