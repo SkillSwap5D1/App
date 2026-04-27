@@ -3,6 +3,8 @@ import 'package:skillswap_app/theme/app_theme.dart';
 import 'package:skillswap_app/widgets/request_card.dart';
 
 class RequestsScreen extends StatefulWidget {
+  const RequestsScreen({super.key});
+
   @override
   State<RequestsScreen> createState() => _RequestsScreenState();
 }

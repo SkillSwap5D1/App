@@ -8,9 +8,9 @@ class SendRequestScreen extends StatefulWidget {
   final MockListing listing;
 
   const SendRequestScreen({
-    Key? key,
+    super.key,
     required this.listing,
-  }) : super(key: key);
+  });
 
   @override
   State<SendRequestScreen> createState() => _SendRequestScreenState();

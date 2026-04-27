@@ -13,7 +13,7 @@ class RequestCard extends StatelessWidget {
   final VoidCallback? onDecline;
   final VoidCallback? onCounter;
 
-  const RequestCard({
+  const RequestCard({super.key, 
     required this.senderName,
     required this.skillToLearn,
     required this.avatarInitial,
@@ -90,7 +90,7 @@ class RequestCard extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

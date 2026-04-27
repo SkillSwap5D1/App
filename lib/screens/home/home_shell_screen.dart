@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../data/mock_data.dart';
 import '../browse/browse_screen.dart';
 import '../chat/chat_list_screen.dart';
 import '../profile/profile_screen.dart';

@@ -359,7 +359,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                     ),
                   ),
                   Text(
-                    '${_descriptionCharCount}/1000',
+                    '$_descriptionCharCount/1000',
                     style: AppTextStyles.caption.copyWith(
                       color: _descriptionCharCount > 900
                           ? AppColors.error

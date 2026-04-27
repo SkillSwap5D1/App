@@ -6,9 +6,9 @@ class ListingDetailScreen extends StatefulWidget {
   final MockListing listing;
 
   const ListingDetailScreen({
-    Key? key,
+    super.key,
     required this.listing,
-  }) : super(key: key);
+  });
 
   @override
   State<ListingDetailScreen> createState() => _ListingDetailScreenState();

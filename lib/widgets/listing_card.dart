@@ -12,7 +12,7 @@ class ListingCard extends StatefulWidget {
   final bool isOwner;
   final bool isBookmarked;
 
-  const ListingCard({
+  const ListingCard({super.key, 
     required this.listing,
     required this.onTap,
     required this.onBookmark,

@@ -115,7 +115,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           ),
           SizedBox(height: AppSpacing.md),
           Text(
-            '${widget.originalRequest.skillName}',
+            widget.originalRequest.skillName,
             style: AppTextStyles.h2.copyWith(
               color: AppColors.primary,
             ),

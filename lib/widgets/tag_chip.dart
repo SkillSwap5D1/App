@@ -6,7 +6,7 @@ class TagChip extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
 
-  const TagChip({
+  const TagChip({super.key, 
     required this.label,
     this.backgroundColor,
     this.textColor,
