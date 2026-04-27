@@ -11,4 +11,19 @@ class StorageService {
   StorageService._internal();
 
   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  // Upload a profile photo and return its download URL
+  // 1. Create a reference at: profile_photos/{userId}/avatar.jpg
+  // 2. Upload the file using FirebaseStorage.instance.ref().putFile()
+  // 3. Get the download URL from the upload task snapshot
+  // 4. Call UserService.updateProfile() to save the URL on the user doc
+  // 5. Return the download URL
+  Future<String> uploadProfilePhoto(String userId, File imageFile) async {
+    try {
+      return '';
+    } catch (e) {
+      print('Error uploading profile photo: $e');
+      rethrow;
+    }
+  }
 }
