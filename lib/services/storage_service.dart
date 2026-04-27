@@ -22,6 +22,9 @@ class StorageService {
     try {
       // Step 1: Create a reference at profile_photos/{userId}/avatar.jpg
       final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
+      
+      // Step 2: Upload the file using FirebaseStorage.instance.ref().putFile()
+      final uploadTask = ref.putFile(imageFile);
       return '';
     } catch (e) {
       print('Error uploading profile photo: $e');
