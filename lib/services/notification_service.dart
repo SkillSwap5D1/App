@@ -145,4 +145,13 @@ class NotificationService {
       return null;
     }
   }
+
+  // Delete a notification by ID
+  Future<void> deleteNotification(String notificationId) async {
+    try {
+      await _firestore.collection('notifications').doc(notificationId).delete();
+    } catch (e) {
+      print('Error deleting notification: $e');
+    }
+  }
 }
