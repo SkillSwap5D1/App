@@ -97,22 +97,6 @@ class _ConversationRow extends StatelessWidget {
     required this.onTap,
   });
 
-  // Get category emoji
-  static String _getEmojiForCategory(String category) {
-    switch (category) {
-      case 'Programming':
-        return '💻';
-      case 'Languages':
-        return '🗣️';
-      case 'Design':
-        return '🎨';
-      case 'Music':
-        return '🎵';
-      default:
-        return '👤';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
