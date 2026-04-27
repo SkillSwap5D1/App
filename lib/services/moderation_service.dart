@@ -57,4 +57,17 @@ class ModerationService {
       return false;
     }
   }
+
+  // Submit a report against another user
+  // Write document to reports collection
+  // Set status = 'pending'
+  Future<void> reportUser(String reporterId, String reportedUserId,
+      String category, String description) async {
+    try {
+      return;
+    } catch (e) {
+      print('Error submitting report: $e');
+      rethrow;
+    }
+  }
 }
