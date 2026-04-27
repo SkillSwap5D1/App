@@ -41,4 +41,19 @@ class StorageService {
       rethrow;
     }
   }
+
+  // Delete a profile photo (when user hides photo or deletes account)
+  // Delete the file at: profile_photos/{userId}/avatar.jpg
+  // Call UserService.updateProfile({'photoUrl': ''}) to clear the URL
+  Future<void> deleteProfilePhoto(String userId) async {
+    try {
+      final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
+      await ref.delete();
+
+      await UserService().updateProfile(userId, {'photoUrl': ''});
+    } catch (e) {
+      print('Error deleting profile photo: $e');
+      rethrow;
+    }
+  }
 }
