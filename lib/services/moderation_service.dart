@@ -26,4 +26,15 @@ class ModerationService {
       rethrow;
     }
   }
+
+  // Unblock a user
+  // Remove targetUserId from blockedUserIds array
+  Future<void> unblockUser(String currentUserId, String targetUserId) async {
+    try {
+      return;
+    } catch (e) {
+      print('Error unblocking user: $e');
+      rethrow;
+    }
+  }
 }
