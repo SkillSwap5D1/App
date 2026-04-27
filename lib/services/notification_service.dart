@@ -80,4 +80,16 @@ class NotificationService {
           .toList();
     });
   }
+
+  // Get unread count — used for badge on nav bar icon
+  // Query notifications where userId matches AND isRead == false
+  // Return count as a stream
+  Stream<int> getUnreadCount(String userId) {
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
 }
