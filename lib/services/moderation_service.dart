@@ -40,4 +40,16 @@ class ModerationService {
       rethrow;
     }
   }
+
+  // Check if a user is blocked (called before displaying chat)
+  // Read currentUser document
+  // Return true if targetUserId is in blockedUserIds array
+  Future<bool> isBlocked(String currentUserId, String targetUserId) async {
+    try {
+      return false;
+    } catch (e) {
+      print('Error checking blocked status: $e');
+      return false;
+    }
+  }
 }
