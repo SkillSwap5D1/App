@@ -14,6 +14,9 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/onboarding_screen.dart';
 import 'screens/home/home_shell_screen.dart';
 import 'screens/browse/browse_screen.dart';
+import 'screens/chat/chat_list_screen.dart';
+import 'screens/profile/profile_screen.dart';
+import 'screens/notifications/notifications_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +53,9 @@ class MyApp extends StatelessWidget {
           '/onboarding': (context) => const OnboardingScreen(),
           '/home': (context) => const HomeShellScreen(),
           '/browse': (context) => const BrowseScreen(),
+          '/chat': (context) => const ChatListScreen(),
+          '/profile': (context) => const ProfileScreen(),
+          '/notifications': (context) => const NotificationsScreen(),
         },
       ),
     );

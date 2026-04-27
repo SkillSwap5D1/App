@@ -616,6 +616,28 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Notifications Icon
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/notifications');
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                        ),
+                        child: const Icon(
+                          Icons.notifications_outlined,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   // Profile Avatar
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
