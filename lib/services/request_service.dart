@@ -37,11 +37,12 @@ class RequestService {
       );
 
       // 4. Send notification to provider
-      await _notificationService.createNotification(
-        userId:   request.toUserId,
-        type:     'request',
-        title:    'New lesson request from ${request.fromUserName}',
-        subtitle: 'wants to learn ${request.skillName}',
+      await _notificationService.sendNotification(
+        request.toUserId,
+        'request',
+        'New lesson request from ${request.fromUserName}',
+        'wants to learn ${request.skillName}',
+        request.listingId,
       );
 
       // 5. Return the new request ID
@@ -96,11 +97,12 @@ class RequestService {
           });
 
       // 2. Notify the requester
-      await _notificationService.createNotification(
-        userId:   requesterId,
-        type:     'accepted',
-        title:    'Your request was accepted!',
-        subtitle: '$skillName has been confirmed',
+      await _notificationService.sendNotification(
+        requesterId,
+        'accepted',
+        'Your request was accepted!',
+        '$skillName has been confirmed',
+        requestId,
       );
 
     } catch (e) {
@@ -125,11 +127,12 @@ class RequestService {
           });
 
       // 2. Notify the requester
-      await _notificationService.createNotification(
-        userId:   requesterId,
-        type:     'declined',
-        title:    'Your request was declined',
-        subtitle: '$skillName could not be confirmed',
+      await _notificationService.sendNotification(
+        requesterId,
+        'declined',
+        'Your request was declined',
+        '$skillName could not be confirmed',
+        requestId,
       );
 
     } catch (e) {
@@ -158,11 +161,12 @@ class RequestService {
           });
 
       // 2. Notify the requester
-      await _notificationService.createNotification(
-        userId:   requesterId,
-        type:     'countered',
-        title:    'New time slots proposed',
-        subtitle: '$skillName — check the new proposed times',
+      await _notificationService.sendNotification(
+        requesterId,
+        'countered',
+        'New time slots proposed',
+        '$skillName — check the new proposed times',
+        requestId,
       );
 
     } catch (e) {
@@ -207,18 +211,20 @@ class RequestService {
           await doc.reference.update({'reviewDue': true});
 
           // Send notification to both users
-          await _notificationService.createNotification(
-            userId:   data['fromUserId'],
-            type:     'reminder',
-            title:    'How was your session?',
-            subtitle: 'Leave a review for ${data['skillName']}',
+          await _notificationService.sendNotification(
+            data['fromUserId'],
+            'reminder',
+            'How was your session?',
+            'Leave a review for ${data['skillName']}',
+            doc.id,
           );
 
-          await _notificationService.createNotification(
-            userId:   data['toUserId'],
-            type:     'reminder',
-            title:    'How was your session?',
-            subtitle: 'Leave a review for ${data['skillName']}',
+          await _notificationService.sendNotification(
+            data['toUserId'],
+            'reminder',
+            'How was your session?',
+            'Leave a review for ${data['skillName']}',
+            doc.id,
           );
         }
       }
