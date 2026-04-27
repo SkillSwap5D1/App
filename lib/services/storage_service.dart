@@ -33,7 +33,9 @@ class StorageService {
       
       // Step 4: Call UserService.updateProfile() to save the URL on the user doc
       await UserService().updateProfile(userId, {'photoUrl': downloadUrl});
-      return '';
+      
+      // Step 5: Return the download URL
+      return downloadUrl;
     } catch (e) {
       print('Error uploading profile photo: $e');
       rethrow;
