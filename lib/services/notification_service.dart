@@ -92,4 +92,16 @@ class NotificationService {
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
+
+  // Mark a single notification as read
+  // Set isRead = true on the notification document
+  Future<void> markRead(String notificationId) async {
+    try {
+      await _firestore.collection('notifications').doc(notificationId).update({
+        'isRead': true,
+      });
+    } catch (e) {
+      print('Error marking notification as read: $e');
+    }
+  }
 }
