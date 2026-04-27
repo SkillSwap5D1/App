@@ -9,4 +9,6 @@ class StorageService {
   }
 
   StorageService._internal();
+
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 }
