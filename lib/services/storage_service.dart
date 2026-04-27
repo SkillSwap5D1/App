@@ -25,6 +25,10 @@ class StorageService {
       
       // Step 2: Upload the file using FirebaseStorage.instance.ref().putFile()
       final uploadTask = ref.putFile(imageFile);
+      
+      // Step 3: Get the download URL from the upload task snapshot
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
       return '';
     } catch (e) {
       print('Error uploading profile photo: $e');
