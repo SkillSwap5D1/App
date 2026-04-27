@@ -30,6 +30,9 @@ class StorageService {
       // Step 3: Get the download URL from the upload task snapshot
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
+      
+      // Step 4: Call UserService.updateProfile() to save the URL on the user doc
+      await UserService().updateProfile(userId, {'photoUrl': downloadUrl});
       return '';
     } catch (e) {
       print('Error uploading profile photo: $e');
