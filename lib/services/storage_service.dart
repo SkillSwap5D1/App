@@ -20,6 +20,8 @@ class StorageService {
   // 5. Return the download URL
   Future<String> uploadProfilePhoto(String userId, File imageFile) async {
     try {
+      // Step 1: Create a reference at profile_photos/{userId}/avatar.jpg
+      final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
       return '';
     } catch (e) {
       print('Error uploading profile photo: $e');
