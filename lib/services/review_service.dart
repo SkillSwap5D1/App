@@ -112,4 +112,41 @@ class ReviewService {
       throw Exception('Failed to recalculate rating: $e');
     }
   }
+
+  // ── Get all published reviews for a user (shown on their profile) ──────────
+  // Query reviews where revieweeId == userId AND isPublished == true
+  Future<List<ReviewModel>> getReviewsForUser(String userId) async {
+    try {
+      final query =
+          await _db
+              .collection('reviews')
+              .where('revieweeId', isEqualTo: userId)
+              .where('isPublished', isEqualTo: true)
+              .orderBy('createdAt', descending: true)
+              .get();
+
+      return query.docs.map((doc) => ReviewModel.fromMap(doc.data())).toList();
+    } catch (e) {
+      throw Exception('Failed to get reviews for user: $e');
+    }
+  }
+
+  // ── Check if current user still needs to review a specific request ────────
+  // Check if a review document exists for this requestId + reviewerId
+  // Returns true if no review found yet (user still needs to review)
+  Future<bool> reviewPending(String requestId, String userId) async {
+    try {
+      final query =
+          await _db
+              .collection('reviews')
+              .where('requestId', isEqualTo: requestId)
+              .where('reviewerId', isEqualTo: userId)
+              .get();
+
+      // Returns true if no review found (pending), false if already reviewed
+      return query.docs.isEmpty;
+    } catch (e) {
+      throw Exception('Failed to check review pending status: $e');
+    }
+  }
 }
