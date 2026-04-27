@@ -32,7 +32,7 @@ class StorageService {
       final downloadUrl = await snapshot.ref.getDownloadURL();
       
       // Step 4: Call UserService.updateProfile() to save the URL on the user doc
-      await UserService().updateProfile(userId, {'photoUrl': downloadUrl});
+      await UserService().updateUser(userId, {'photoUrl': downloadUrl});
       
       // Step 5: Return the download URL
       return downloadUrl;
@@ -50,7 +50,7 @@ class StorageService {
       final ref = _storage.ref().child('profile_photos/$userId/avatar.jpg');
       await ref.delete();
 
-      await UserService().updateProfile(userId, {'photoUrl': ''});
+      await UserService().updateUser(userId, {'photoUrl': ''});
     } catch (e) {
       print('Error deleting profile photo: $e');
       rethrow;
