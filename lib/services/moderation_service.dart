@@ -64,7 +64,16 @@ class ModerationService {
   Future<void> reportUser(String reporterId, String reportedUserId,
       String category, String description) async {
     try {
-      return;
+      // Write document to reports collection
+      // Set status = 'pending'
+      await _firestore.collection('reports').add({
+        'reporterId': reporterId,
+        'reportedUserId': reportedUserId,
+        'category': category,
+        'description': description,
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
       print('Error submitting report: $e');
       rethrow;
