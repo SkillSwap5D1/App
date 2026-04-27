@@ -79,4 +79,16 @@ class ModerationService {
       rethrow;
     }
   }
+
+  // Retrieve pending reports for moderation review
+  Future<List<Map<String, dynamic>>> getPendingReports() async {
+    try {
+      final snapshot =
+          await _firestore.collection('reports').where('status', isEqualTo: 'pending').get();
+      return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
+    } catch (e) {
+      print('Error fetching pending reports: $e');
+      return [];
+    }
+  }
 }
