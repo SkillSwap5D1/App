@@ -31,7 +31,10 @@ class ModerationService {
   // Remove targetUserId from blockedUserIds array
   Future<void> unblockUser(String currentUserId, String targetUserId) async {
     try {
-      return;
+      // Remove targetUserId from blockedUserIds array
+      await _firestore.collection('users').doc(currentUserId).update({
+        'blockedUserIds': FieldValue.arrayRemove([targetUserId]),
+      });
     } catch (e) {
       print('Error unblocking user: $e');
       rethrow;
