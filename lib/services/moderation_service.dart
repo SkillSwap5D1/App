@@ -17,7 +17,10 @@ class ModerationService {
   // 2. This is checked in ChatService.sendMessage() to prevent messages
   Future<void> blockUser(String currentUserId, String targetUserId) async {
     try {
-      return;
+      // Add targetUserId to blockedUserIds array on currentUser's document
+      await _firestore.collection('users').doc(currentUserId).update({
+        'blockedUserIds': FieldValue.arrayUnion([targetUserId]),
+      });
     } catch (e) {
       print('Error blocking user: $e');
       rethrow;
