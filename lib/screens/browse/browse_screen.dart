@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
+import '../../models/listing_model.dart';
 import '../listings/listing_detail_screen.dart';
 import '../requests/send_request_screen.dart';
 
@@ -166,10 +167,24 @@ class _BrowseScreenState extends State<BrowseScreen> {
         children: [
           GestureDetector(
             onTap: () {
+              final listingModel = ListingModel(
+                id: listing.id,
+                ownerId: listing.ownerId,
+                ownerName: listing.ownerName,
+                title: listing.title,
+                description: listing.description,
+                tags: listing.tags,
+                level: listing.level,
+                modality: listing.modality,
+                category: listing.category,
+                nextAvailable: listing.nextAvailable,
+                isActive: true,
+                createdAt: DateTime.now(),
+              );
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ListingDetailScreen(listing: listing),
+                  builder: (context) => ListingDetailScreen(listing: listingModel),
                 ),
               );
             },
