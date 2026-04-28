@@ -51,8 +51,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       if (value.isEmpty) {
         _emailError = null;
-      } else if (!value.endsWith('@myport.ac.uk')) {
-        _emailError = 'Please use your @myport.ac.uk email';
+      } else if (!value.endsWith('@port.ac.uk')) {
+        _emailError = 'Please use your @port.ac.uk email (University of Portsmouth)';
       } else {
         _emailError = null;
       }
@@ -107,10 +107,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // Validate email format
-    if (!_emailController.text.contains('@myport.ac.uk')) {
+    if (!_emailController.text.contains('@port.ac.uk')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please use your @myport.ac.uk email'),
+          content: Text('Please use your @port.ac.uk email (University of Portsmouth)'),
           backgroundColor: AppColors.error,
         ),
       );
