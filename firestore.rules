@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function for university user verification
+    function isUniversityUser() {
+      return request.auth != null && 
+             request.auth.token.isUniversityUser == true &&
+             request.auth.token.emailDomain == 'port.ac.uk';
+    }
+
+    // Users collection - Profile management
+    match /users/{userId} {
+      allow read: if isUniversityUser();
+      allow write: if isUniversityUser() && userId == request.auth.uid;
+      allow delete: if isUniversityUser() && userId == request.auth.uid;
+    }
+
+    // Listings - Skill offerings
+    match /listings/{listingId} {
+      allow read: if isUniversityUser();
+      allow create: if isUniversityUser();
+      allow update, delete: if isUniversityUser() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Requests - Lesson requests between users
+    match /requests/{requestId} {
+      allow read: if isUniversityUser() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.providerId == request.auth.uid
+      );
+      allow create: if isUniversityUser();
+      allow update, delete: if isUniversityUser() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.providerId == request.auth.uid
+      );
+    }
+
+    // Messages - Private messaging
+    match /messages/{messageId} {
+      allow read: if isUniversityUser() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.recipientId == request.auth.uid
+      );
+      allow create: if isUniversityUser() && request.resource.data.senderId == request.auth.uid;
+      allow update: if false;
+      allow delete: if isUniversityUser() && resource.data.senderId == request.auth.uid;
+    }
+
+    // Reviews - Skill provider ratings
+    match /reviews/{reviewId} {
+      allow read: if isUniversityUser();
+      allow create: if isUniversityUser();
+      allow update: if isUniversityUser() && resource.data.reviewerId == request.auth.uid;
+      allow delete: if isUniversityUser() && resource.data.reviewerId == request.auth.uid;
+    }
+
+    // Blocks - User blocking
+    match /blocks/{blockId} {
+      allow read: if isUniversityUser() && blockId == request.auth.uid;
+      allow create, delete: if isUniversityUser();
+    }
+
+    // Reports - Content moderation
+    match /reports/{reportId} {
+      allow read: if isUniversityUser() && resource.data.reporterId == request.auth.uid;
+      allow create: if isUniversityUser();
+    }
+
+    // Notifications - User alerts
+    match /notifications/{notificationId} {
+      allow read, update: if isUniversityUser() && notificationId == request.auth.uid;
+      allow delete: if isUniversityUser() && notificationId == request.auth.uid;
+    }
+
+    // Availability - User availability slots
+    match /availability/{availabilityId} {
+      allow read: if isUniversityUser();
+      allow write: if isUniversityUser() && availabilityId == request.auth.uid;
+    }
+
+    // Sessions - Completed lessons
+    match /sessions/{sessionId} {
+      allow read: if isUniversityUser() && (
+        resource.data.providerId == request.auth.uid ||
+        resource.data.studentId == request.auth.uid
+      );
+      allow create: if isUniversityUser();
+      allow update: if isUniversityUser() && (
+        resource.data.providerId == request.auth.uid ||
+        resource.data.studentId == request.auth.uid
+      );
+    }
+
+    // Conversations - Chat threads
+    match /conversations/{conversationId} {
+      allow read: if isUniversityUser();
+      allow create, update: if isUniversityUser();
+    }
+
+    // Catch-all deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
