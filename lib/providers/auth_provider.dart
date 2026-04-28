@@ -47,12 +47,58 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await _authService.signIn(email, password);
+      // Verify custom claims after authentication
+      final verified = await _verifyUniversityClaims();
+      if (!verified) {
+        await _authService.signOut();
+        errorMessage = 'University verification failed. Please use your @port.ac.uk email.';
+      }
       // User fetch happens automatically via authStateChanges listener
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // ── Verify University Claims ──────────────────────────────────────────────
+  Future<bool> _verifyUniversityClaims() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return false;
+
+      // Get ID token result with custom claims
+      final tokenResult = await user.getIdTokenResult();
+      final claims = tokenResult.claims;
+      
+      final isUniversityUser = claims?['isUniversityUser'] == true;
+      final emailDomain = claims?['emailDomain'] as String?;
+
+      if (!isUniversityUser || emailDomain != 'port.ac.uk') {
+        print('❌ Custom claims verification failed');
+        return false;
+      }
+
+      print('✓ University claims verified');
+      return true;
+    } catch (e) {
+      print('Error verifying claims: $e');
+      return false;
+    }
+  }
+
+  // ── Get User Custom Claims ────────────────────────────────────────────────
+  Future<Map<String, dynamic>?> getUserCustomClaims() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return null;
+
+      final tokenResult = await user.getIdTokenResult();
+      return tokenResult.claims;
+    } catch (e) {
+      print('Error getting custom claims: $e');
+      return null;
     }
   }
 
