@@ -15,8 +15,136 @@ import 'screens/auth/onboarding_screen.dart';
 import 'screens/home/home_shell_screen.dart';
 import 'screens/browse/browse_screen.dart';
 import 'screens/chat/chat_list_screen.dart';
-import 'screens/profile/profile_screen.dart';
+import 'screens/chat/chat_thread_screen.dart';
+import 'screens/listings/create_listing_screen.dart';
+import 'screens/listings/listing_detail_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
+import 'screens/profile/edit_profile_screen.dart';
+import 'screens/profile/profile_screen.dart';
+import 'screens/requests/counter_offer_screen.dart';
+import 'screens/requests/requests_screen.dart';
+import 'screens/requests/send_request_screen.dart';
+import 'screens/reviews/rate_review_screen.dart';
+import 'screens/saved/saved_bookmarked_screen.dart';
+import 'screens/safety/report_blocked_screen.dart';
+import 'data/mock_data.dart';
+import 'core/app_routes.dart';
+import 'models/listing_model.dart';
+
+ListingModel _listingFromMock(MockListing listing) {
+  return ListingModel(
+    id: listing.id,
+    ownerId: listing.ownerId,
+    ownerName: listing.ownerName,
+    title: listing.title,
+    description: listing.description,
+    tags: listing.tags,
+    level: listing.level,
+    modality: listing.modality,
+    category: listing.category,
+    nextAvailable: listing.nextAvailable,
+    isActive: true,
+    createdAt: DateTime.now(),
+  );
+}
+
+Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case AppRoutes.listingDetail:
+      final args = settings.arguments;
+      final listing = args is ListingModel
+          ? args
+          : args is MockListing
+              ? _listingFromMock(args)
+              : ListingModel(
+                  id: '',
+                  ownerId: '',
+                  ownerName: 'Unknown',
+                  title: 'Listing',
+                  description: 'No listing data provided.',
+                  tags: const [],
+                  level: 'Beginner',
+                  modality: 'Online',
+                  category: 'General',
+                  nextAvailable: '',
+                  isActive: true,
+                  createdAt: DateTime.now(),
+                );
+      return MaterialPageRoute(
+        builder: (_) => ListingDetailScreen(listing: listing),
+      );
+    case AppRoutes.createListing:
+      final args = settings.arguments;
+      final listing = args is ListingModel
+          ? args
+          : args is MockListing
+              ? _listingFromMock(args)
+              : null;
+      return MaterialPageRoute(
+        builder: (_) => CreateListingScreen(listing: listing),
+      );
+    case AppRoutes.sendRequest:
+      final args = settings.arguments;
+      final listing = args is ListingModel
+          ? args
+          : args is MockListing
+              ? _listingFromMock(args)
+              : ListingModel(
+                  id: '',
+                  ownerId: '',
+                  ownerName: 'Unknown',
+                  title: 'Request',
+                  description: 'No listing data provided.',
+                  tags: const [],
+                  level: 'Beginner',
+                  modality: 'Online',
+                  category: 'General',
+                  nextAvailable: '',
+                  isActive: true,
+                  createdAt: DateTime.now(),
+                );
+      return MaterialPageRoute(
+        builder: (_) => SendRequestScreen(listing: listing),
+      );
+    case AppRoutes.requests:
+      return MaterialPageRoute(builder: (_) => const RequestsScreen());
+    case AppRoutes.saved:
+      return MaterialPageRoute(builder: (_) => const SavedBookmarkedScreen());
+    case AppRoutes.editProfile:
+      return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+    case AppRoutes.rateReview:
+      return MaterialPageRoute(
+        builder: (_) => const RateReviewScreen(
+          skillTitle: 'Session',
+          otherUserName: 'User',
+          sessionDate: 'Today',
+        ),
+      );
+    case AppRoutes.counterOffer:
+      final request = settings.arguments is MockRequest
+          ? settings.arguments as MockRequest
+          : MockData.incomingRequests.first;
+      return MaterialPageRoute(
+        builder: (_) => CounterOfferScreen(originalRequest: request),
+      );
+    case AppRoutes.chatThread:
+      final conversation = settings.arguments is MockConversation
+          ? settings.arguments as MockConversation
+          : MockData.conversations.first;
+      return MaterialPageRoute(
+        builder: (_) => ChatThreadScreen(conversation: conversation),
+      );
+    case AppRoutes.report:
+      return MaterialPageRoute(
+        builder: (_) => ReportBlockedScreen(
+          userName: 'User',
+          userId: '',
+          onBlock: () {},
+        ),
+      );
+  }
+  return null;
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +185,7 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => const ProfileScreen(),
           '/notifications': (context) => const NotificationsScreen(),
         },
+        onGenerateRoute: _onGenerateRoute,
       ),
     );
   }
