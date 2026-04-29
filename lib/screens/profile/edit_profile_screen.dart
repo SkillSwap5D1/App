@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/user_service.dart';
 import '../../theme/app_theme.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -15,7 +18,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final String _originalBio =
       'Passionate about computer science and teaching others. Love problem-solving and innovation.';
   final String _originalCourse = 'Computer Science';
-  final String _originalEmail = 'sarah.johnson@myport.ac.uk';
+  final String _originalEmail = 'sarah.johnson@port.ac.uk';
 
   // Form controllers
   late TextEditingController _firstNameController;
@@ -66,16 +69,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.pop(context);
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
     // Prepare updated data
     final updatedData = {
-      'firstName': _firstNameController.text,
-      'lastName': _lastNameController.text,
-      'bio': _bioController.text,
-      'course': _courseController.text,
+      'firstName': _firstNameController.text.trim(),
+      'lastName': _lastNameController.text.trim(),
+      'bio': _bioController.text.trim(),
+      'course': _courseController.text.trim(),
     };
 
-    // TODO: Call API to save changes
+    final userId = context.read<AuthProvider>().currentUser?.uid;
+    if (userId != null) {
+      await UserService().updateUser(userId, updatedData);
+    }
+
     // Return to Profile Screen with updated data
     Navigator.pop(context, updatedData);
   }
