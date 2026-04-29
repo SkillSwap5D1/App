@@ -253,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Text('Email', style: AppTextStyles.label),
                           const SizedBox(height: AppSpacing.xs),
                           Text(
-                            'sarah.johnson@myport.ac.uk',
+                            'sarah.johnson@port.ac.uk',
                             style: AppTextStyles.bodySmall,
                           ),
                         ],
