@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../data/mock_data.dart';
+import 'package:provider/provider.dart';
+import '../../models/request_model.dart';
 import '../../models/time_slot.dart';
+import '../../models/listing_model.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/request_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/time_slot_picker.dart';
 
 class SendRequestScreen extends StatefulWidget {
-  final MockListing listing;
+  final ListingModel listing;
 
   const SendRequestScreen({
     super.key,
@@ -68,12 +72,48 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
       return;
     }
 
-    // Clear error message
-    setState(() {
-      _errorMessage = '';
-    });
+    _sendRequestToBackend(validSlots);
+  }
 
-    // Show success toast
+  Future<void> _sendRequestToBackend(List<TimeSlot> validSlots) async {
+    final authProvider = context.read<AuthProvider>();
+    final currentUser = authProvider.currentUser;
+
+    if (currentUser == null) {
+      setState(() {
+        _errorMessage = 'You must be signed in to send a request';
+      });
+      return;
+    }
+
+    final proposedTimes = validSlots.map(_formatTimeSlot).toList();
+
+    final request = RequestModel(
+      id: '',
+      fromUserId: currentUser.uid,
+      fromUserName: currentUser.fullName,
+      toUserId: widget.listing.ownerId,
+      listingId: widget.listing.id,
+      skillName: widget.listing.title,
+      message: _noteController.text.trim(),
+      status: 'pending',
+      proposedTimes: proposedTimes,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    final requestProvider = context.read<RequestProvider>();
+    final requestId = await requestProvider.sendRequest(request);
+
+    if (!mounted) return;
+
+    if (requestId == null) {
+      setState(() {
+        _errorMessage = requestProvider.errorMessage ?? 'Failed to send request';
+      });
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Request sent successfully'),
@@ -81,10 +121,25 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
       ),
     );
 
-    // Simulate success and navigate back
     Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     });
+  }
+
+  String _formatTimeSlot(TimeSlot slot) {
+    final date = slot.date!;
+    final start = _formatTime(slot.startTime!);
+    final end = _formatTime(slot.endTime!);
+    return '${date.month}/${date.day}/${date.year} $start - $end';
+  }
+
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return '$hour:$minute $period';
   }
 
   @override
