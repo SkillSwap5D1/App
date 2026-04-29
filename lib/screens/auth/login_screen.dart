@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,10 +27,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _validateEmail(String value) {
     setState(() {
-      if (value.isEmpty) {
+      final normalized = value.trim().toLowerCase();
+      if (normalized.isEmpty) {
         _emailError = null;
-      } else if (!value.endsWith('@myport.ac.uk')) {
-        _emailError = 'Please use your @myport.ac.uk email';
+      } else if (!normalized.endsWith('@port.ac.uk')) {
+        _emailError = 'Please use your @port.ac.uk email (University of Portsmouth)';
       } else {
         _emailError = null;
       }
@@ -37,7 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSignIn() async {
     // Validate email field
-    if (_emailController.text.isEmpty) {
+    final email = _emailController.text.trim().toLowerCase();
+
+    if (email.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Email is required')));
@@ -53,22 +58,30 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     // Validate email format
-    if (_emailError != null) {
+    if (!email.endsWith('@port.ac.uk')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please use your @myport.ac.uk email')),
+        const SnackBar(content: Text('Please use your @port.ac.uk email')),
       );
       return;
     }
 
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    await context.read<AuthProvider>().signIn(
+          email,
+          _passwordController.text,
+        );
 
     if (mounted) {
       setState(() => _isLoading = false);
-      // Navigate to browse screen after successful login
-      Navigator.of(context).pushNamed('/browse');
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.errorMessage!)),
+        );
+      } else if (authProvider.currentUser != null) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
     }
   }
 
@@ -201,9 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
-                          // Demo mode hint
+                          // Sign-in guidance
                           Text(
-                            '● Demo mode — enter any email & password',
+                            'Sign in with your University of Portsmouth account (ends with @port.ac.uk) or use Google.',
                             style: AppTextStyles.caption,
                             textAlign: TextAlign.center,
                           ),
@@ -226,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       onChanged: _validateEmail,
       decoration: InputDecoration(
-        hintText: 'you@myport.ac.uk',
+        hintText: 'you@port.ac.uk',
         prefixIcon: const Icon(Icons.mail_outline),
         prefixIconColor: AppColors.textMuted,
         border: OutlineInputBorder(
