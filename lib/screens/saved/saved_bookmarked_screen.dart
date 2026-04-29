@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/listing_card.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/listing_provider.dart';
 import 'saved_empty_state.dart';
+import '../../models/listing_model.dart';
 
 class SavedBookmarkedScreen extends StatefulWidget {
   const SavedBookmarkedScreen({super.key});
@@ -12,59 +16,55 @@ class SavedBookmarkedScreen extends StatefulWidget {
 }
 
 class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
-  // ── STATE ──────────────────────────────────────────────────────────
-  late List<MockListing> _savedListings;
-
   @override
   void initState() {
     super.initState();
-    _loadSavedListings();
   }
-
-  void _loadSavedListings() {
-    _savedListings = List.from(MockData.savedListings);
-  }
-
-  int _getSavedCount() => _savedListings.length;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── HEADER ──────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+    return Consumer2<ListingProvider, AuthProvider>(
+      builder: (context, listingProvider, authProvider, _) {
+        final uid = authProvider.currentUser?.uid;
+        final savedIds = listingProvider.savedListingIds;
+        final savedListings = listingProvider.listings
+            .where((listing) => savedIds.contains(listing.id))
+            .toList();
+
+        if (uid != null && savedIds.isEmpty && !listingProvider.isLoading) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.read<ListingProvider>().loadListings();
+            context.read<ListingProvider>().loadSavedListings(uid);
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.md,
+                  ),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Saved Skills',
-                        style: AppTextStyles.h2,
-                      ),
-                      // Count badge
+                      Text('Saved Skills', style: AppTextStyles.h2),
                       Container(
                         decoration: BoxDecoration(
                           color: AppColors.accentLight,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
                           vertical: AppSpacing.xs,
                         ),
                         child: Text(
-                          '${_getSavedCount()}',
+                          '${savedListings.length}',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
@@ -73,61 +73,60 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                ],
-              ),
-            ),
-
-            // ── CONTENT ────────────────────────────────────────────
-            if (_savedListings.isEmpty)
-              Expanded(
-                child: SavedEmptyState(
-                  onBrowsePressed: () {
-                    // TODO: Navigate to Browse screen
-                    // Uses Navigator to push Browse screen
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const BrowseScreen(),
-                    //   ),
-                    // );
-                  },
                 ),
-              )
-            else
-              _buildGridView(),
-          ],
-        ),
-      ),
+                if (savedListings.isEmpty)
+                  Expanded(
+                    child: SavedEmptyState(
+                      onBrowsePressed: () {
+                        Navigator.of(context).pushNamed('/browse');
+                      },
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md,
+                      ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.85,
+                        crossAxisSpacing: AppSpacing.md,
+                        mainAxisSpacing: AppSpacing.md,
+                      ),
+                      itemCount: savedListings.length,
+                      itemBuilder: (context, index) {
+                        final listing = savedListings[index];
+                        return _buildSavedCard(listing);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildGridView() {
-    return Expanded(
-      child: GridView.builder(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.85,
-          crossAxisSpacing: AppSpacing.md,
-          mainAxisSpacing: AppSpacing.md,
-        ),
-        itemCount: _savedListings.length,
-        itemBuilder: (context, index) {
-          final listing = _savedListings[index];
-          return AnimatedScale(
-            scale: 1.0,
-            duration: const Duration(milliseconds: 300),
-            child: _buildSavedCard(listing, index),
-          );
-        },
-      ),
+  Widget _buildSavedCard(ListingModel listing) {
+    final mockListing = MockListing(
+      id: listing.id,
+      ownerId: listing.ownerId,
+      ownerName: listing.ownerName,
+      ownerRating: 4.8,
+      ownerReviewCount: 24,
+      title: listing.title,
+      description: listing.description,
+      tags: listing.tags,
+      level: listing.level,
+      modality: listing.modality,
+      category: listing.category,
+      nextAvailable: listing.nextAvailable,
+      isBookmarked: true,
     );
-  }
 
-  Widget _buildSavedCard(MockListing listing, int index) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -137,7 +136,7 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
         );
       },
       child: ListingCard(
-        listing: listing,
+        listing: mockListing,
         isBookmarked: true,
         onTap: () {
           Navigator.pushNamed(
@@ -147,7 +146,10 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
           );
         },
         onBookmark: () {
-          _removeFromSaved(listing, index);
+          final uid = context.read<AuthProvider>().currentUser?.uid;
+          if (uid != null) {
+            context.read<ListingProvider>().toggleSaved(uid, listing.id);
+          }
         },
         onSendRequest: () {
           Navigator.pushNamed(
@@ -156,39 +158,6 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
             arguments: listing,
           );
         },
-      ),
-    );
-  }
-
-  void _removeFromSaved(MockListing listing, int index) {
-    // Create a copy to restore later
-    final removedListing = listing;
-    
-    setState(() {
-      _savedListings.removeAt(index);
-    });
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Removed from saved'),
-        backgroundColor: AppColors.surface,
-        duration: const Duration(seconds: 4),
-        action: SnackBarAction(
-          label: 'Undo',
-          textColor: AppColors.primary,
-          onPressed: () {
-            setState(() {
-              _savedListings.insert(index, removedListing);
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Restored to saved'),
-                duration: Duration(milliseconds: 1500),
-              ),
-            );
-          },
-        ),
       ),
     );
   }
