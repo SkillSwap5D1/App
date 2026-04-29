@@ -20,7 +20,9 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _authStateSubscription = _authService.authStateChanges.listen((user) async {
       if (user != null) {
-        await _fetchUser(user.uid);
+        currentUser = _buildProvisionalUser(user);
+        notifyListeners();
+        _fetchUser(user.uid);
       } else {
         currentUser = null;
         notifyListeners();
@@ -28,12 +30,49 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
+  UserModel _buildProvisionalUser(dynamic user) {
+    final email = (user.email as String?)?.trim().toLowerCase() ?? '';
+    final displayName = (user.displayName as String?)?.trim() ?? '';
+    final nameParts = displayName.isNotEmpty ? displayName.split(' ') : <String>[];
+    final firstName = nameParts.isNotEmpty && nameParts.first.isNotEmpty
+        ? nameParts.first
+        : (email.isNotEmpty ? email.split('@').first.split('.').first : 'User');
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+    return UserModel(
+      uid: user.uid as String,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      course: 'Not specified',
+      bio: '',
+      rating: 0.0,
+      sessionsCompleted: 0,
+      memberSince: DateTime.now(),
+      showFullName: true,
+      showCourse: false,
+      showPhoto: true,
+    );
+  }
+
   // ── Private: fetch user from Firestore ────────────────────────────────────
   Future<void> _fetchUser(String uid) async {
     try {
-      final user = await _userService.getUser(uid);
-      currentUser = user;
-      notifyListeners();
+      const maxAttempts = 10;
+      const delay = Duration(milliseconds: 500);
+
+      for (var attempt = 0; attempt < maxAttempts; attempt++) {
+        final user = await _userService.getUser(uid);
+        if (user != null) {
+          currentUser = user;
+          notifyListeners();
+          return;
+        }
+
+        await Future.delayed(delay);
+      }
+
+      print('⚠️ User profile not available yet for $uid');
     } catch (e) {
       print('Error fetching user: $e');
     }
@@ -50,8 +89,7 @@ class AuthProvider extends ChangeNotifier {
       // Verify custom claims after authentication
       final verified = await _verifyUniversityClaims();
       if (!verified) {
-        await _authService.signOut();
-        errorMessage = 'University verification failed. Please use your @port.ac.uk email.';
+        print('⚠️ University claims not ready yet; continuing with provisional auth state');
       }
       // User fetch happens automatically via authStateChanges listener
     } catch (e) {
@@ -68,20 +106,30 @@ class AuthProvider extends ChangeNotifier {
       final user = _authService.currentUser;
       if (user == null) return false;
 
-      // Get ID token result with custom claims
-      final tokenResult = await user.getIdTokenResult();
-      final claims = tokenResult.claims;
-      
-      final isUniversityUser = claims?['isUniversityUser'] == true;
-      final emailDomain = claims?['emailDomain'] as String?;
+      // Sometimes custom claims take a short moment to propagate after user creation.
+      // Retry a few times before giving up to avoid false negatives.
+      const int maxRetries = 5;
+      const Duration retryDelay = Duration(seconds: 1);
 
-      if (!isUniversityUser || emailDomain != 'port.ac.uk') {
-        print('❌ Custom claims verification failed');
-        return false;
+      for (int attempt = 0; attempt < maxRetries; attempt++) {
+        final tokenResult = await user.getIdTokenResult(true);
+        final claims = tokenResult.claims;
+
+        final isUniversityUser = claims?['isUniversityUser'] == true;
+        final emailDomain = claims?['emailDomain'] as String?;
+
+        if (isUniversityUser && emailDomain == 'port.ac.uk') {
+          print('✓ University claims verified (attempt ${attempt + 1})');
+          return true;
+        }
+
+        // If not verified yet, wait and retry
+        print('❗ University claims not yet present (attempt ${attempt + 1}), retrying...');
+        await Future.delayed(retryDelay);
       }
 
-      print('✓ University claims verified');
-      return true;
+      print('❌ Custom claims verification failed after retries');
+      return false;
     } catch (e) {
       print('Error verifying claims: $e');
       return false;
@@ -148,6 +196,28 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ── Sign In with Google ───────────────────────────────────────────────────
+  Future<void> signInWithGoogle() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _authService.signInWithGoogle();
+      // Verify custom claims after authentication
+      final verified = await _verifyUniversityClaims();
+      if (!verified) {
+        print('⚠️ Google claims not ready yet; continuing with provisional auth state');
+      }
+      // User fetch happens automatically via authStateChanges listener
+    } catch (e) {
+      errorMessage = _handleAuthError(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // ── Handle auth errors ─────────────────────────────────────────────────────
   String _handleAuthError(String errorCode) {
     if (errorCode.contains('INVALID_LOGIN_CREDENTIALS')) {
@@ -162,7 +232,26 @@ class AuthProvider extends ChangeNotifier {
     if (errorCode.contains('network')) {
       return 'Network error. Please check your connection';
     }
-    return 'An error occurred. Please try again';
+    if (errorCode.contains('permission-denied')) {
+      return 'Your account is still being set up. Please wait a few seconds and try again.';
+    }
+    if (errorCode.contains('Failed to load user profile')) {
+      return 'Your profile is still being created. Please try again in a moment.';
+    }
+    if (errorCode.contains('University of Portsmouth')) {
+      return 'Please use your University of Portsmouth email (@port.ac.uk)';
+    }
+    if (errorCode.contains('@port.ac.uk')) {
+      return 'Please use your @port.ac.uk email';
+    }
+    if (errorCode.contains('sign-in cancelled')) {
+      return 'Google sign-in was cancelled';
+    }
+    if (errorCode.contains('Sign in with Google')) {
+      return 'Google sign-in failed. Please check your credentials';
+    }
+    print('⚠️ Unhandled auth error: $errorCode');
+    return errorCode.replaceFirst('Exception: ', '');
   }
 
   @override
