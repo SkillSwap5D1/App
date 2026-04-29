@@ -49,6 +49,35 @@ class UserService {
     }
   }
 
+  // ── Update saved listings for a user ─────────────────────────────────────
+  Future<void> updateSavedListings(
+    String uid,
+    String listingId,
+    bool save,
+  ) async {
+    try {
+      await _db.collection('users').doc(uid).update({
+        'savedListingIds': save
+            ? FieldValue.arrayUnion([listingId])
+            : FieldValue.arrayRemove([listingId]),
+      });
+    } catch (e) {
+      throw Exception('Failed to update saved listings: $e');
+    }
+  }
+
+  // ── Load saved listings for a user ────────────────────────────────────────
+  Future<List<String>> getSavedListingIds(String uid) async {
+    try {
+      final doc = await _db.collection('users').doc(uid).get();
+      if (!doc.exists) return [];
+      final data = doc.data() ?? {};
+      return List<String>.from(data['savedListingIds'] ?? const []);
+    } catch (e) {
+      throw Exception('Failed to load saved listings: $e');
+    }
+  }
+
   // ── Update privacy settings ───────────────────────────────────────────────
   Future<void> updatePrivacySettings(
     String uid, {

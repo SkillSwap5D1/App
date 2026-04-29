@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/listing_model.dart';
 import '../services/listing_service.dart';
+import '../services/user_service.dart';
 
 class ListingProvider extends ChangeNotifier {
   final ListingService _listingService = ListingService();
+  final UserService _userService = UserService();
 
   // ── State ─────────────────────────────────────────────────────────────────
   List<ListingModel> listings    = [];
@@ -61,6 +63,23 @@ class ListingProvider extends ChangeNotifier {
     }
   }
 
+  // ── Update a listing ─────────────────────────────────────────────────────
+  Future<void> updateListing(String id, Map<String, dynamic> data) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _listingService.updateListing(id, data);
+      await loadListings();
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // ── Delete a listing ──────────────────────────────────────────────────────
   Future<void> deleteListing(String id) async {
     try {
@@ -74,16 +93,6 @@ class ListingProvider extends ChangeNotifier {
     }
   }
 
-  // ── Toggle saved/bookmarked ───────────────────────────────────────────────
-  void toggleSaved(String listingId) {
-    if (savedListingIds.contains(listingId)) {
-      savedListingIds.remove(listingId);
-    } else {
-      savedListingIds.add(listingId);
-    }
-    notifyListeners();
-  }
-
   // ── Check if listing is saved ─────────────────────────────────────────────
   bool isSaved(String listingId) {
     return savedListingIds.contains(listingId);
@@ -94,6 +103,41 @@ class ListingProvider extends ChangeNotifier {
     return listings
         .where((l) => savedListingIds.contains(l.id))
         .toList();
+  }
+
+  // ── Load saved listings for a user ───────────────────────────────────────
+  Future<void> loadSavedListings(String uid) async {
+    try {
+      savedListingIds = await _userService.getSavedListingIds(uid);
+      notifyListeners();
+    } catch (e) {
+      errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  // ── Toggle saved/bookmarked and persist to Firestore ────────────────────
+  Future<void> toggleSaved(String uid, String listingId) async {
+    final shouldSave = !savedListingIds.contains(listingId);
+
+    if (shouldSave) {
+      savedListingIds.add(listingId);
+    } else {
+      savedListingIds.remove(listingId);
+    }
+    notifyListeners();
+
+    try {
+      await _userService.updateSavedListings(uid, listingId, shouldSave);
+    } catch (e) {
+      errorMessage = e.toString();
+      if (shouldSave) {
+        savedListingIds.remove(listingId);
+      } else {
+        savedListingIds.add(listingId);
+      }
+      notifyListeners();
+    }
   }
 
   // ── Search listings ───────────────────────────────────────────────────────

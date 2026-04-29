@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 import 'login_screen.dart';
+import 'register_screen.dart';
 import '../home/home_shell_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -30,8 +31,8 @@ class AuthWrapper extends StatelessWidget {
           return const HomeShellScreen();
         }
 
-        // User is not logged in
-        return const LoginScreen();
+        // User is not logged in - show RegisterScreen first
+        return const RegisterScreen();
       },
     );
   }

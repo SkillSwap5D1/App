@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
+import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -49,9 +50,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _validateEmail(String value) {
     setState(() {
-      if (value.isEmpty) {
+      final normalized = value.trim().toLowerCase();
+      if (normalized.isEmpty) {
         _emailError = null;
-      } else if (!value.endsWith('@port.ac.uk')) {
+      } else if (!normalized.endsWith('@port.ac.uk')) {
         _emailError = 'Please use your @port.ac.uk email (University of Portsmouth)';
       } else {
         _emailError = null;
@@ -96,7 +98,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // Validate email field
-    if (_emailController.text.isEmpty) {
+    final email = _emailController.text.trim().toLowerCase();
+
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Email is required'),
@@ -107,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // Validate email format
-    if (!_emailController.text.contains('@port.ac.uk')) {
+    if (!email.endsWith('@port.ac.uk')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please use your @port.ac.uk email (University of Portsmouth)'),
@@ -174,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Call AuthProvider.register()
     if (mounted) {
       await context.read<AuthProvider>().register(
-            email: _emailController.text.trim(),
+        email: email,
             password: _passwordController.text,
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
@@ -191,15 +195,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           );
         } else if (authProvider.currentUser != null) {
-          // Navigate to onboarding screen
-          Navigator.of(context).pushNamed('/onboarding');
+          // Navigate straight to browse after successful account creation
+          Navigator.of(context).pushReplacementNamed('/browse');
         }
       }
     }
   }
 
   void _navigateToSignIn() {
-    Navigator.of(context).pop();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
   @override
@@ -360,6 +366,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _buildCreateAccountButton(),
                           const SizedBox(height: AppSpacing.md),
 
+                          // Divider
+                          Row(
+                            children: [
+                              Expanded(child: Divider(color: AppColors.border)),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                                child: Text('OR', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary)),
+                              ),
+                              Expanded(child: Divider(color: AppColors.border)),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+
+                          // Google Sign-In button
+                          _buildGoogleSignInButton(),
+                          const SizedBox(height: AppSpacing.md),
+
                           // Sign in link
                           Center(
                             child: GestureDetector(
@@ -379,9 +402,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     const SizedBox(height: AppSpacing.lg),
 
-                    // Demo mode hint
+                    // Sign-up guidance
                     Text(
-                      '● Demo mode — use any details with @myport.ac.uk email',
+                      'Please sign up using your University of Portsmouth email (ending in @port.ac.uk) or use Google.',
                       style: AppTextStyles.caption,
                       textAlign: TextAlign.center,
                     ),
@@ -431,6 +454,72 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
       ),
     );
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: OutlinedButton(
+        onPressed: _isLoading ? null : _handleGoogleSignIn,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: AppColors.border),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.account_circle_outlined, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'Sign up with Google',
+              style: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    print('🔵 Starting Google Sign-In...');
+    if (mounted) {
+      try {
+        final authProvider = context.read<AuthProvider>();
+        print('🔵 Calling signInWithGoogle()...');
+        await authProvider.signInWithGoogle();
+        print('🔵 signInWithGoogle() completed');
+        
+        // Check for errors
+        if (mounted) {
+          print('🔵 Error message: ${authProvider.errorMessage}');
+          if (authProvider.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(authProvider.errorMessage!),
+                backgroundColor: AppColors.error,
+                duration: const Duration(seconds: 5),
+              ),
+            );
+          } else {
+            print('✅ Google Sign-In successful!');
+          }
+        }
+      } catch (e) {
+        print('❌ Google Sign-In exception: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+      }
+    }
   }
 
   Widget _buildPasswordField() {
@@ -565,7 +654,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       keyboardType: TextInputType.emailAddress,
       onChanged: _validateEmail,
       decoration: InputDecoration(
-        hintText: 'you@myport.ac.uk',
+        hintText: 'you@port.ac.uk',
         prefixIcon: const Icon(Icons.mail_outline),
         prefixIconColor: AppColors.textMuted,
         border: OutlineInputBorder(
