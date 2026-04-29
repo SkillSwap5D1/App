@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 import 'package:skillswap_app/providers/listing_provider.dart';
+import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/models/listing_model.dart';
 import 'package:skillswap_app/widgets/snackbar_helper.dart';
 
@@ -64,9 +65,29 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
         'tags': _tags,
       };
 
+      final provider = context.read<ListingProvider>();
       if (widget.listing != null) {
+        await provider.updateListing(widget.listing!.id, listingData);
         SnackBarHelper.success(context, 'Listing updated');
       } else {
+        final currentUser = context.read<AuthProvider>().currentUser;
+        final newListing = ListingModel(
+          id: '',
+          ownerId: currentUser?.uid ?? 'unknown',
+          ownerName: currentUser != null
+              ? '${currentUser.firstName} ${currentUser.lastName}'.trim()
+              : 'You',
+          title: _titleController.text,
+          description: _descriptionController.text,
+          tags: _tags,
+          level: _selectedLevel,
+          modality: _selectedModality,
+          category: _selectedCategory,
+          nextAvailable: 'Flexible',
+          isActive: true,
+          createdAt: DateTime.now(),
+        );
+        await provider.createListing(newListing);
         SnackBarHelper.success(context, 'Listing created');
       }
 
