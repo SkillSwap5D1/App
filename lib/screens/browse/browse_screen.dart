@@ -298,7 +298,14 @@ class _BrowseScreenState extends State<BrowseScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ListingDetailScreen(listing: listing),
+                        ),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border),
@@ -547,9 +554,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
   }
 
   Widget _buildHero() {
-    const currentUserName = 'You';
-    final userInitial = currentUserName.isNotEmpty ? currentUserName[0].toUpperCase() : '?';
-
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -563,36 +567,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'SkillSwap',
-                style: AppTextStyles.h2.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                children: [
-                  _buildHeaderIcon(Icons.chat_bubble_outline, 20, () {}),
-                  const SizedBox(width: 12),
-                  _buildHeaderIcon(Icons.notifications_outlined, 20, () {}),
-                  const SizedBox(width: 12),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: AppColors.primary,
-                    child: Text(
-                      userInitial,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          Text(
+            'SkillSwap',
+            style: AppTextStyles.h2.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -628,20 +608,4 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Widget _buildHeaderIcon(IconData icon, double size, VoidCallback onTap) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primary.withValues(alpha: 0.08),
-          ),
-          child: Icon(icon, color: AppColors.primary, size: size),
-        ),
-      ),
-    );
-  }
 }
