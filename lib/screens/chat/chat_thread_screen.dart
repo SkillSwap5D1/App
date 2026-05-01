@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../data/mock_data.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/message_bubble.dart';
+import '../../providers/chat_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/user_service.dart';
 import '../safety/report_blocked_screen.dart';
 
 class ChatThreadScreen extends StatefulWidget {
-  final MockConversation conversation;
+  final String conversationId;
+  final String otherUserId;
 
   const ChatThreadScreen({
     super.key,
-    required this.conversation,
+    required this.conversationId,
+    required this.otherUserId,
   });
 
   @override
@@ -21,6 +25,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final ScrollController _scrollController;
   bool _isComposing = false;
   bool _isUserBlocked = false;
+  final UserService _userService = UserService();
 
   @override
   void initState() {
@@ -31,8 +36,9 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     // Listen for text changes to enable/disable send button
     _messageController.addListener(_handleTextChanged);
     
-    // Scroll to bottom after build
+    // Load messages
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatProvider>().openConversation(widget.conversationId);
       _scrollToBottom();
     });
   }
@@ -60,12 +66,33 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     }
   }
 
-  void _showReportSheet() {
+  Future<void> _sendMessage() async {
+    if (!_isComposing) return;
+
+    final text = _messageController.text.trim();
+    final currentUid = context.read<AuthProvider>().currentUser?.uid;
+
+    if (currentUid == null) return;
+
+    _messageController.clear();
+    setState(() => _isComposing = false);
+
+    await context.read<ChatProvider>().sendMessage(
+          conversationId: widget.conversationId,
+          senderId: currentUid,
+          text: text,
+        );
+
+    // Scroll to bottom after sending
+    Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
+  }
+
+  void _showReportSheet(String otherUserName) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ReportBlockedScreen(
-          userName: widget.conversation.otherUserName,
-          userId: widget.conversation.otherUserId,
+          userName: otherUserName,
+          userId: widget.otherUserId,
           onBlock: () {
             setState(() => _isUserBlocked = true);
           },
@@ -74,12 +101,12 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     );
   }
 
-  void _showBlockDialog() {
+  void _showBlockDialog(String otherUserName) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ReportBlockedScreen(
-          userName: widget.conversation.otherUserName,
-          userId: widget.conversation.otherUserId,
+          userName: otherUserName,
+          userId: widget.otherUserId,
           onBlock: () {
             setState(() => _isUserBlocked = true);
           },
@@ -90,297 +117,332 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        elevation: 1,
-        shadowColor: AppColors.border,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            // Avatar
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: AppColors.primary,
-              child: Text(
-                widget.conversation.otherUserName.isNotEmpty
-                    ? widget.conversation.otherUserName[0].toUpperCase()
-                    : '?',
-                style: AppTextStyles.h3.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            // Name and Online Status
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.conversation.otherUserName,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: widget.conversation.isOnline
-                              ? AppColors.success
-                              : AppColors.textMuted,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.conversation.isOnline ? 'Online' : 'Offline',
-                        style: AppTextStyles.caption,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, size: 24),
-            onPressed: () {
-              // Open menu for Report/Block
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(AppRadius.lg),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: AppSpacing.sm),
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: AppColors.border,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
-                        ),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.flag, color: AppColors.error),
-                        title: const Text('Report User'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showReportSheet();
-                        },
-                      ),
-                      ListTile(
-                        leading:
-                            const Icon(Icons.block, color: AppColors.error),
-                        title: const Text('Block User'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showBlockDialog();
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // ── BLOCKED NOTIFICATION ───────────────────────────────────────
-          if (_isUserBlocked)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.error.withOpacity(0.3),
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.block,
-                    color: AppColors.error,
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Text(
-                      'You have blocked ${widget.conversation.otherUserName}. Messages are hidden.',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.error,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    return FutureBuilder(
+      future: _userService.getUser(widget.otherUserId),
+      builder: (context, snapshot) {
+        final otherUser = snapshot.data;
+        final otherUserName = otherUser?.displayName ?? 'Unknown';
+        final otherUserInitial = otherUserName.isNotEmpty
+            ? otherUserName[0].toUpperCase()
+            : '?';
 
-          // ── MESSAGES LIST ──────────────────────────────────────────────
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
-              itemCount: widget.conversation.messages.length,
-              addAutomaticKeepAlives: true,
-              itemBuilder: (context, index) {
-                final message = widget.conversation.messages[index];
-                
-                // Check if user is blocked
-                if (_isUserBlocked) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: AppSpacing.sm,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.textMuted.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          border: Border.all(
-                            color: AppColors.textMuted.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Text(
-                          'Message hidden',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textMuted,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                
-                return MessageBubble(
-                  message: message,
-                  showDeliveryStatus: true,
-                );
-              },
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.surface,
+            elevation: 1,
+            shadowColor: AppColors.border,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
             ),
-          ),
-
-          // ── MESSAGE INPUT ──────────────────────────────────────────────
-          Container(
-            color: AppColors.surface,
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md + MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Row(
+            title: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: _isComposing ? (_) {
-                      _messageController.clear();
-                      _scrollToBottom();
-                    } : null,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: const TextStyle(
-                        color: AppColors.textMuted,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        borderSide: const BorderSide(
-                          color: AppColors.border,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        borderSide: const BorderSide(
-                          color: AppColors.border,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
-                          width: 1.5,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm,
-                      ),
+                // Avatar
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: AppColors.primary,
+                  child: Text(
+                    otherUserInitial,
+                    style: AppTextStyles.h3.copyWith(
+                      color: Colors.white,
                     ),
-                    maxLines: null,
-                    minLines: 1,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                SizedBox(
-                  width: 48,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: _isComposing
-                        ? () {
-                            // Clear and scroll to bottom
-                            _messageController.clear();
-                            _scrollToBottom();
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
+                // Name and Online Status
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        otherUserName,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      backgroundColor: AppColors.primary,
-                      disabledBackgroundColor: AppColors.border,
-                      elevation: _isComposing ? 2 : 0,
-                    ),
-                    child: Icon(
-                      Icons.send,
-                      color: _isComposing
-                          ? AppColors.surface
-                          : AppColors.textMuted,
-                      size: 20,
-                    ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppColors.textMuted,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Offline',
+                            style: AppTextStyles.caption,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.more_vert, size: 24),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      decoration: const BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(AppRadius.lg),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: AppSpacing.sm),
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.border,
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.full),
+                            ),
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.flag,
+                                color: AppColors.error),
+                            title: const Text('Report User'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _showReportSheet(otherUserName);
+                            },
+                          ),
+                          ListTile(
+                            leading:
+                                const Icon(Icons.block, color: AppColors.error),
+                            title: const Text('Block User'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _showBlockDialog(otherUserName);
+                            },
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+          body: Column(
+            children: [
+              // ── BLOCKED NOTIFICATION 
+              if (_isUserBlocked)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withOpacity(0.1),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: AppColors.error.withOpacity(0.3),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.block,
+                        color: AppColors.error,
+                        size: 20,
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Text(
+                          'You have blocked $otherUserName. Messages are hidden.',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.error,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // ── MESSAGES LIST
+              Expanded(
+                child: Consumer<ChatProvider>(
+                  builder: (context, chatProvider, _) {
+                    final messages = chatProvider.currentMessages;
+                    final currentUid =
+                        context.read<AuthProvider>().currentUser?.uid ?? '';
+
+                    if (messages.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.mail_outline_rounded,
+                                size: 48, color: AppColors.textMuted),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No messages yet',
+                              style: AppTextStyles.h3
+                                  .copyWith(color: AppColors.textSecondary),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Start a conversation with $otherUserName',
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.textMuted),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md,
+                      ),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        final isCurrentUser = message.senderId == currentUid;
+
+                        return Align(
+                          alignment: isCurrentUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.sm,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isCurrentUser
+                                  ? AppColors.primary
+                                  : AppColors.surface,
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: isCurrentUser
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message.text,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: isCurrentUser
+                                        ? AppColors.surface
+                                        : AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _formatTime(message.timestamp),
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: isCurrentUser
+                                        ? AppColors.surface.withOpacity(0.7)
+                                        : AppColors.textMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+
+              // ── MESSAGE INPUT ──────────────────────────────────────────
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  border: Border(
+                    top: BorderSide(color: AppColors.border),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    // Text field
+                    Expanded(
+                      child: TextFormField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message...',
+                          hintStyle: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textMuted),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                            vertical: AppSpacing.sm,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderSide:
+                                const BorderSide(color: AppColors.border),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderSide:
+                                const BorderSide(color: AppColors.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: AppColors.background,
+                        ),
+                        style: AppTextStyles.bodyMedium,
+                        minLines: 1,
+                        maxLines: 3,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    // Send button
+                    Container(
+                      decoration: BoxDecoration(
+                        color: _isComposing
+                            ? AppColors.primary
+                            : AppColors.textMuted.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.send_rounded, size: 20),
+                        color: _isComposing
+                            ? AppColors.surface
+                            : AppColors.textMuted,
+                        onPressed: _isComposing ? _sendMessage : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
