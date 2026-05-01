@@ -15,7 +15,6 @@ import 'screens/auth/onboarding_screen.dart';
 import 'screens/home/home_shell_screen.dart';
 import 'screens/browse/browse_screen.dart';
 import 'screens/chat/chat_list_screen.dart';
-import 'screens/chat/chat_thread_screen.dart';
 import 'screens/listings/create_listing_screen.dart';
 import 'screens/listings/listing_detail_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
@@ -128,11 +127,9 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
         builder: (_) => CounterOfferScreen(originalRequest: request),
       );
     case AppRoutes.chatThread:
-      final conversation = settings.arguments is MockConversation
-          ? settings.arguments as MockConversation
-          : MockData.conversations.first;
+      // Chat thread is handled via Navigator.push in chat_list_screen
       return MaterialPageRoute(
-        builder: (_) => ChatThreadScreen(conversation: conversation),
+        builder: (_) => const SizedBox.shrink(),
       );
     case AppRoutes.report:
       return MaterialPageRoute(
