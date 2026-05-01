@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 import '../safety/report_blocked_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -344,6 +346,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   label: const Text('Edit Profile'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Logout button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    // Sign out
+                    await context.read<AuthProvider>().signOut();
+                    
+                    // Navigate to login/registration page
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/auth',
+                        (route) => false,
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.logout_outlined),
+                  label: const Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.error,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
