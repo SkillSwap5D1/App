@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
-import '../safety/report_blocked_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -53,35 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _showReportSheet() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ReportBlockedScreen(
-          userName: '$_firstName $_lastName',
-          userId: 'user_sarah_001',
-          onBlock: () {
-            // TODO: Handle user blocked - update UI or navigate away
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
 
-  void _showBlockDialog() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ReportBlockedScreen(
-          userName: '$_firstName $_lastName',
-          userId: 'user_sarah_001',
-          onBlock: () {
-            // TODO: Handle user blocked - update UI or navigate away
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,59 +61,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Profile', style: AppTextStyles.h3),
+        title: Text('My Profile', style: AppTextStyles.h3),
         centerTitle: true,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(AppRadius.lg),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: AppSpacing.sm),
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: AppColors.border,
-                          borderRadius: BorderRadius.circular(AppRadius.full),
-                        ),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.flag, color: AppColors.error),
-                        title: const Text('Report User'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showReportSheet();
-                        },
-                      ),
-                      ListTile(
-                        leading:
-                            const Icon(Icons.block, color: AppColors.error),
-                        title: const Text('Block User'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _showBlockDialog();
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -184,9 +105,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          '⭐ 4.8 (24 reviews)',
-                          style: AppTextStyles.bodySmall,
+                        const Icon(Icons.star_rounded, color: AppColors.accentLight, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          '4.8 (24 reviews)',
+                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
                     ),

@@ -97,9 +97,10 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.05),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                  color: AppColors.surfaceElevated,
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(AppRadius.lg),
+                  boxShadow: AppShadows.card,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,17 +137,23 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: AppColors.surfaceElevated,
                         borderRadius: BorderRadius.circular(AppRadius.md),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: AppColors.primary,
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: AppColors.accentGradient,
+                                ),
+                                alignment: Alignment.center,
                                 child: Text(
                                   widget.otherUserName.isNotEmpty
                                       ? widget.otherUserName[0].toUpperCase()
@@ -274,8 +281,8 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: AppColors.info.withOpacity(0.1),
-                  border: Border.all(color: AppColors.info.withOpacity(0.3)),
+                  color: AppColors.surfaceElevated,
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
@@ -287,7 +294,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                       child: Text(
                         'Your review will be published once both users have submitted',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.info,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
@@ -304,7 +311,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                   onPressed: _selectedRating > 0 ? _submitReview : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: Colors.grey[300],
+                    disabledBackgroundColor: AppColors.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -313,10 +320,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                   child: Text(
                     'Submit Review',
                     style: AppTextStyles.button.copyWith(
-                      color:
-                          _selectedRating > 0
-                              ? AppColors.surface
-                              : Colors.grey[600],
+                      color: _selectedRating > 0 ? AppColors.surface : AppColors.textMuted,
                     ),
                   ),
                 ),

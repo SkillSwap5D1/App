@@ -119,9 +119,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                       child: Column(
                         children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: AppColors.primary,
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: AppColors.accentGradient,
+                              boxShadow: AppShadows.hover,
+                            ),
+                            alignment: Alignment.center,
                             child: Text(
                               _firstNameController.text.isNotEmpty
                                   ? _firstNameController.text[0].toUpperCase()
@@ -137,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Text(
                             'Change photo',
                             style: AppTextStyles.label.copyWith(
-                              color: AppColors.primary,
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -242,7 +248,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     borderSide: const BorderSide(color: AppColors.border),
                   ),
                   filled: true,
-                  fillColor: AppColors.background,
+                  fillColor: AppColors.surfaceElevated,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.md,
@@ -259,7 +265,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onPressed: _hasChanges ? _saveChanges : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.border,
+                    disabledBackgroundColor: AppColors.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
