@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -216,8 +218,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // Floating emoji decorations
-          _buildFloatingEmojis(),
+          Positioned.fill(
+            child: Container(decoration: const BoxDecoration(gradient: AppColors.backgroundGradient)),
+          ),
+
+          // Subtle decorative glow accents
+          _buildDecorativeGlow(),
 
           // Main content
           SingleChildScrollView(
@@ -225,7 +231,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height,
               ),
-              decoration: BoxDecoration(color: AppColors.background),
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: isMobile ? AppSpacing.md : 40,
@@ -236,7 +241,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Logo and header section
-                    Text('🎓', style: TextStyle(fontSize: 48)),
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.accentGradient,
+                        boxShadow: AppShadows.hover,
+                      ),
+                      child: const Icon(
+                        Icons.school_rounded,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       'SkillSwap',
@@ -247,156 +265,142 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: AppSpacing.lg),
 
                     // Form card
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Create account heading
-                          Text(
-                            'Create account',
-                            style: AppTextStyles.h2.copyWith(
-                              fontSize: isMobile ? 18 : 22,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            'Join SkillSwap to start learning and sharing',
-                            style: AppTextStyles.bodySmall,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-
-                          // First name and Last name (side by side)
-                          Row(
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: Container(
+                          decoration: AppColors.glassCard(borderRadius: 28),
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // First name field
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'First name',
-                                      style: AppTextStyles.label,
-                                    ),
-                                    const SizedBox(height: AppSpacing.sm),
-                                    _buildFirstNameField(),
-                                  ],
+                              Text(
+                                'Create account',
+                                style: AppTextStyles.h2.copyWith(
+                                  fontSize: isMobile ? 22 : 24,
                                 ),
                               ),
-                              const SizedBox(width: AppSpacing.md),
-                              // Last name field
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Last name',
-                                      style: AppTextStyles.label,
-                                    ),
-                                    const SizedBox(height: AppSpacing.sm),
-                                    _buildLastNameField(),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Email field
-                          Text('University email', style: AppTextStyles.label),
-                          const SizedBox(height: AppSpacing.sm),
-                          _buildEmailField(),
-                          if (_emailError != null)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppSpacing.xs,
-                              ),
-                              child: Text(
-                                _emailError!,
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.error,
-                                ),
-                              ),
-                            ),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Course dropdown
-                          Text('Course', style: AppTextStyles.label),
-                          const SizedBox(height: AppSpacing.sm),
-                          _buildCourseDropdown(),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Password field
-                          Text('Password', style: AppTextStyles.label),
-                          const SizedBox(height: AppSpacing.sm),
-                          _buildPasswordField(),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Confirm password field
-                          Text('Confirm password', style: AppTextStyles.label),
-                          const SizedBox(height: AppSpacing.sm),
-                          _buildConfirmPasswordField(),
-                          if (_passwordError != null)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppSpacing.xs,
-                              ),
-                              child: Text(
-                                _passwordError!,
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.error,
-                                ),
-                              ),
-                            ),
-                          const SizedBox(height: AppSpacing.lg),
-
-                          // Create account button
-                          _buildCreateAccountButton(),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Divider
-                          Row(
-                            children: [
-                              Expanded(child: Divider(color: AppColors.border)),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                                child: Text('OR', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary)),
-                              ),
-                              Expanded(child: Divider(color: AppColors.border)),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Google Sign-In button
-                          _buildGoogleSignInButton(),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Sign in link
-                          Center(
-                            child: GestureDetector(
-                              onTap: _navigateToSignIn,
-                              child: Text(
-                                'Already have an account? Sign in',
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                'Join SkillSwap to start learning and sharing',
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: AppSpacing.md),
+                              Divider(color: AppColors.borderLight),
+                              const SizedBox(height: AppSpacing.lg),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('First name', style: AppTextStyles.label),
+                                        const SizedBox(height: AppSpacing.sm),
+                                        _buildFirstNameField(),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Last name', style: AppTextStyles.label),
+                                        const SizedBox(height: AppSpacing.sm),
+                                        _buildLastNameField(),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Text('University email', style: AppTextStyles.label),
+                              const SizedBox(height: AppSpacing.sm),
+                              _buildEmailField(),
+                              if (_emailError != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                                  child: Text(
+                                    _emailError!,
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Text('Course', style: AppTextStyles.label),
+                              const SizedBox(height: AppSpacing.sm),
+                              _buildCourseDropdown(),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Text('Password', style: AppTextStyles.label),
+                              const SizedBox(height: AppSpacing.sm),
+                              _buildPasswordField(),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Text('Confirm password', style: AppTextStyles.label),
+                              const SizedBox(height: AppSpacing.sm),
+                              _buildConfirmPasswordField(),
+                              if (_passwordError != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                                  child: Text(
+                                    _passwordError!,
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: AppSpacing.lg),
+
+                              _buildCreateAccountButton(),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Row(
+                                children: [
+                                  Expanded(child: Divider(color: AppColors.borderLight)),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                                    child: Text('or', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                                  ),
+                                  Expanded(child: Divider(color: AppColors.borderLight)),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+
+                              _buildGoogleSignInButton(),
+                              const SizedBox(height: AppSpacing.md),
+
+                              Center(
+                                child: GestureDetector(
+                                  onTap: _navigateToSignIn,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                                      children: [
+                                        const TextSpan(text: 'Already have an account? '),
+                                        TextSpan(
+                                          text: 'Sign in',
+                                          style: AppTextStyles.bodySmall.copyWith(
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
 
@@ -421,37 +425,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildCreateAccountButton() {
     return SizedBox(
       width: double.infinity,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleCreateAccount,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 0,
+      height: 56,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: _isLoading ? null : AppColors.accentGradient,
+          color: _isLoading ? AppColors.accentUltraLight : null,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          boxShadow: _isLoading ? null : AppShadows.hover,
         ),
-        child:
-            _isLoading
-                ? const SizedBox(
+        child: ElevatedButton(
+          onPressed: _isLoading ? null : _handleCreateAccount,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            disabledBackgroundColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            elevation: 0,
+          ),
+          child: _isLoading
+              ? const SizedBox(
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.surface,
-                    ),
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-                : Row(
+              : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Create Account', style: AppTextStyles.button),
                     const SizedBox(width: AppSpacing.xs),
-                    const Text('→', style: AppTextStyles.button),
+                    const Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white),
                   ],
                 ),
+        ),
       ),
     );
   }
@@ -459,11 +469,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildGoogleSignInButton() {
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 56,
       child: OutlinedButton(
         onPressed: _isLoading ? null : _handleGoogleSignIn,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.border),
+          side: const BorderSide(color: AppColors.borderLight),
+          backgroundColor: AppColors.accentUltraLight,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -471,7 +482,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.account_circle_outlined, size: 20),
+            const Icon(Icons.account_circle_outlined, size: 20, color: AppColors.accentLight),
             const SizedBox(width: AppSpacing.sm),
             Text(
               'Sign up with Google',
@@ -530,7 +541,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: '••••••',
         prefixIcon: const Icon(Icons.lock_outline),
-        prefixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.accentLight,
         suffixIcon: GestureDetector(
           onTap: () {
             setState(() => _isPasswordVisible = !_isPasswordVisible);
@@ -541,23 +552,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
     );
   }
 
@@ -569,7 +580,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: '••••••',
         prefixIcon: const Icon(Icons.lock_outline),
-        prefixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.accentLight,
         suffixIcon: GestureDetector(
           onTap: () {
             setState(
@@ -582,31 +593,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
     );
   }
 
   Widget _buildCourseDropdown() {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xCCFFFFFF),
+        border: Border.all(color: AppColors.borderLight),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -623,11 +635,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           icon: const Padding(
             padding: EdgeInsets.only(right: AppSpacing.md),
-            child: Icon(Icons.keyboard_arrow_down, color: AppColors.textMuted),
+            child: Icon(Icons.keyboard_arrow_down, color: AppColors.accentLight),
           ),
           iconSize: 24,
           elevation: 16,
-          style: AppTextStyles.bodyMedium,
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           onChanged: (String? newValue) {
             setState(() {
               _selectedCourse = newValue;
@@ -639,7 +651,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   value: value,
                   child: Padding(
                     padding: const EdgeInsets.only(left: AppSpacing.md),
-                    child: Text(value),
+                    child: Text(value, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
                   ),
                 );
               }).toList(),
@@ -656,29 +668,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: 'you@port.ac.uk',
         prefixIcon: const Icon(Icons.mail_outline),
-        prefixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.accentLight,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
     );
   }
 
@@ -689,25 +701,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: 'John',
         prefixIcon: const Icon(Icons.person_outline),
-        prefixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.accentLight,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
     );
   }
 
@@ -718,66 +730,102 @@ class _RegisterScreenState extends State<RegisterScreen> {
       decoration: InputDecoration(
         hintText: 'Doe',
         prefixIcon: const Icon(Icons.person_outline),
-        prefixIconColor: AppColors.textMuted,
+        prefixIconColor: AppColors.accentLight,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
     );
   }
 
-  Widget _buildFloatingEmojis() {
+  Widget _buildDecorativeGlow() {
     return Positioned.fill(
       child: Stack(
         children: [
-          // Top left - Handshake
+          // Top left glow
           Positioned(
             top: 60,
             left: 20,
-            child: Opacity(
-              opacity: 0.15,
-              child: Text('🤝', style: TextStyle(fontSize: 48)),
+            child: Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.accentVeryLight.withOpacity(0.95),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
           ),
-          // Top right - Rocket
+          // Top right glow
           Positioned(
             top: 80,
             right: 30,
-            child: Opacity(
-              opacity: 0.15,
-              child: Text('🚀', style: TextStyle(fontSize: 40)),
+            child: Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.accentLight.withOpacity(0.45),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
           ),
-          // Bottom left - Star
+          // Bottom left glow
           Positioned(
             bottom: 200,
             left: 30,
-            child: Opacity(
-              opacity: 0.15,
-              child: Text('⭐', style: TextStyle(fontSize: 44)),
+            child: Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.accentUltraLight.withOpacity(0.95),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
           ),
-          // Bottom right - Sparkles
+          // Bottom right glow
           Positioned(
             bottom: 250,
             right: 20,
-            child: Opacity(
-              opacity: 0.15,
-              child: Text('✨', style: TextStyle(fontSize: 48)),
+            child: Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.accentVeryLight.withOpacity(0.75),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
           ),
         ],
