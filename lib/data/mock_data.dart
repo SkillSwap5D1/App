@@ -482,7 +482,7 @@ class MockData {
         MockMessage(
           id: 'msg_002',
           senderId: 'user_003',
-          text: 'Hola! That\'s great 😊 What level are you at?',
+          text: 'Hola! That\'s great. What level are you at?',
           timestamp: '10:32 AM',
           isMe: false,
         ),

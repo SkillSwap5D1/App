@@ -39,8 +39,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               style: AppTextStyles.h2,
             ),
             const SizedBox(height: AppSpacing.md),
-            const Text(
+            Text(
               'You can report this user for review or block them to stop future contact.',
+              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
             ),
             const Spacer(),
             SizedBox(
@@ -48,10 +49,18 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               child: OutlinedButton(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Report submitted')),
+                    SnackBar(
+                      content: Text('Report submitted', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
+                      backgroundColor: AppColors.surfaceElevated,
+                      behavior: SnackBarBehavior.floating,
+                    ),
                   );
                   Navigator.of(context).pop();
                 },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: AppColors.border),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                ),
                 child: const Text('Report user'),
               ),
             ),
@@ -62,6 +71,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                 onPressed: _handleBlock,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.error,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
                 ),
                 child: const Text('Block user'),
               ),
