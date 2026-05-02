@@ -20,7 +20,6 @@ class HomeShellScreen extends StatefulWidget {
 
 class _HomeShellScreenState extends State<HomeShellScreen> {
   int _selectedIndex = 0;
-  late PageController _pageController;
 
   final List<Widget> _screens = [
     const BrowseScreen(),
@@ -32,8 +31,6 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
-
     // Initialize all data streams on first load
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
@@ -48,19 +45,10 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   }
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(
