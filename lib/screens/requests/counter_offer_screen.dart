@@ -91,16 +91,10 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     return Container(
       padding: EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surfaceElevated,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: AppColors.border, width: 1.0),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,12 +108,12 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
             ),
           ),
           SizedBox(height: AppSpacing.md),
-          Text(
-            widget.originalRequest.skillName,
-            style: AppTextStyles.h2.copyWith(
-              color: AppColors.primary,
-            ),
-          ),
+                        Text(
+                          widget.originalRequest.skillName,
+                          style: AppTextStyles.h2.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
           SizedBox(height: AppSpacing.md),
           Row(
             children: [
@@ -202,13 +196,14 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _addTimeSlot,
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add, color: AppColors.primary),
               label: const Text('Add another time slot'),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                side: BorderSide(color: AppColors.border, width: 1.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
+                foregroundColor: AppColors.textPrimary,
               ),
             ),
           ),
@@ -256,7 +251,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
         onPressed: _isValid ? _handleSubmit : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.textMuted.withOpacity(0.3),
+          disabledBackgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -265,7 +260,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
         child: Text(
           'Send Counter Offer',
           style: AppTextStyles.bodyLarge.copyWith(
-            color: Colors.white,
+            color: AppColors.surface,
             fontWeight: FontWeight.w600,
           ),
         ),
