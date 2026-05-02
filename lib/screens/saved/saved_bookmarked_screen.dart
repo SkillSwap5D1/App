@@ -56,8 +56,9 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                       Text('Saved Skills', style: AppTextStyles.h2),
                       Container(
                         decoration: BoxDecoration(
-                          color: AppColors.accentLight,
+                          gradient: AppColors.accentGradient,
                           borderRadius: BorderRadius.circular(AppRadius.full),
+                          boxShadow: AppShadows.hover,
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
@@ -66,8 +67,8 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                         child: Text(
                           '${savedListings.length}',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),

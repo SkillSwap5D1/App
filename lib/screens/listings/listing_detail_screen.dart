@@ -107,18 +107,25 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: AppColors.surfaceElevated,
                   border: Border(top: BorderSide(color: AppColors.border)),
+                  boxShadow: AppShadows.card,
                 ),
                 padding: const EdgeInsets.all(AppSpacing.md),
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _sendRequest,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                    elevation: 0,
+                  ),
                   child: SizedBox(
                     width: double.infinity,
                     child: Center(
                       child: _isLoading
-                          ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : Text('Request Lesson'),
+                          ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2))
+                          : Text('Request Lesson', style: AppTextStyles.button),
                     ),
                   ),
                 ),
@@ -132,12 +139,23 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
   Widget _buildProviderSection() {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(AppRadius.md)),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
+      ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: AppColors.accent,
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: AppColors.accentGradient,
+              boxShadow: AppShadows.hover,
+            ),
+            alignment: Alignment.center,
             child: Text(widget.listing.ownerName[0].toUpperCase(), style: TextStyle(color: AppColors.surface, fontSize: 20, fontWeight: FontWeight.bold)),
           ),
           SizedBox(width: AppSpacing.md),
@@ -145,13 +163,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.listing.ownerName, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                Text(widget.listing.ownerName, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.star, size: 16, color: AppColors.accent),
                     SizedBox(width: 4),
-                    Text('4.5 (12 reviews)', style: AppTextStyles.bodySmall),
+                    Text('4.5 (12 reviews)', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
                   ],
                 ),
               ],
@@ -203,7 +221,11 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         SizedBox(height: AppSpacing.sm),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(AppRadius.md)),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.border),
+          ),
           child: Column(
             children: [
               ListTile(
@@ -227,14 +249,19 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
   Widget _buildProviderStatsCard() {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(AppRadius.md), border: Border.all(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatColumn('42', 'Sessions'),
-          VerticalDivider(),
+          VerticalDivider(color: AppColors.border),
           _buildStatColumn('4.5', 'Rating'),
-          VerticalDivider(),
+          VerticalDivider(color: AppColors.border),
           _buildStatColumn('12', 'Reviews'),
         ],
       ),
