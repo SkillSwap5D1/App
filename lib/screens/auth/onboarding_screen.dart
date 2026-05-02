@@ -123,110 +123,122 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // Skip button + progress
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: _isLoading ? null : _skipOnboarding,
-                    child: Text(
-                      'Skip',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+        child: Container(
+          decoration: BoxDecoration(gradient: AppColors.editorialGradient),
+          child: Column(
+            children: [
+              // Skip button + progress
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: _isLoading ? null : _skipOnboarding,
+                      child: Text(
+                        'Skip',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    'Step ${_currentPage + 1}/2',
-                    style: AppTextStyles.bodyMedium,
-                  ),
-                  const SizedBox(width: 60),
-                ],
-              ),
-            ),
-            // PageView
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (page) {
-                  setState(() => _currentPage = page);
-                },
-                children: [
-                  _buildPage(
-                    title: 'What can you teach?',
-                    subtitle: 'Select the skills you\'d like to share',
-                    selectedItems: _canTeach,
-                    onChanged: (items) {
-                      setState(() => _canTeach = items);
-                    },
-                  ),
-                  _buildPage(
-                    title: 'What do you want to learn?',
-                    subtitle: 'Select the skills you\'d like to develop',
-                    selectedItems: _wantsToLearn,
-                    onChanged: (items) {
-                      setState(() => _wantsToLearn = items);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // Buttons
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            if (_currentPage == 0) {
-                              if (_canTeach.isEmpty) {
-                                SnackBarHelper.error(
-                                  context,
-                                  'Please select at least one skill',
-                                );
-                              } else {
-                                _pageController.nextPage(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              }
-                            } else {
-                              _completeOnboarding();
-                            }
-                          },
-                    child: Text(
-                      _currentPage == 0 ? 'Next' : 'Get Started',
-                      style: _isLoading
-                          ? AppTextStyles.button.copyWith(
-                              color: AppColors.textMuted,
-                            )
-                          : AppTextStyles.button,
+                    Text(
+                      'Step ${_currentPage + 1}/2',
+                      style: AppTextStyles.bodyMedium,
                     ),
-                  ),
-                  if (_currentPage > 0) SizedBox(height: AppSpacing.sm),
-                  if (_currentPage > 0)
-                    TextButton(
+                    const SizedBox(width: 60),
+                  ],
+                ),
+              ),
+
+              // PageView
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (page) {
+                    setState(() => _currentPage = page);
+                  },
+                  children: [
+                    _buildPage(
+                      title: 'What can you teach?',
+                      subtitle: 'Select the skills you\'d like to share',
+                      selectedItems: _canTeach,
+                      onChanged: (items) {
+                        setState(() => _canTeach = items);
+                      },
+                    ),
+                    _buildPage(
+                      title: 'What do you want to learn?',
+                      subtitle: 'Select the skills you\'d like to develop',
+                      selectedItems: _wantsToLearn,
+                      onChanged: (items) {
+                        setState(() => _wantsToLearn = items);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Buttons
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    ElevatedButton(
                       onPressed: _isLoading
                           ? null
                           : () {
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
+                              if (_currentPage == 0) {
+                                if (_canTeach.isEmpty) {
+                                  SnackBarHelper.error(
+                                    context,
+                                    'Please select at least one skill',
+                                  );
+                                } else {
+                                  _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                }
+                              } else {
+                                _completeOnboarding();
+                              }
                             },
-                      child: const Text('Back'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        _currentPage == 0 ? 'Next' : 'Get Started',
+                        style: AppTextStyles.button,
+                      ),
                     ),
-                ],
+
+                    if (_currentPage > 0) const SizedBox(height: AppSpacing.sm),
+
+                    if (_currentPage > 0)
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                _pageController.previousPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                        child: Text(
+                          'Back',
+                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
