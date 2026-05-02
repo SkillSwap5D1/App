@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
@@ -5,6 +7,7 @@ import '../../models/listing_model.dart';
 import '../../providers/listing_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../listings/listing_detail_screen.dart';
+import '../listings/create_listing_screen.dart';
 import '../requests/send_request_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
@@ -32,7 +35,14 @@ class _BrowseScreenState extends State<BrowseScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<ListingProvider>().loadListings();
+        final authProvider = context.read<AuthProvider>();
+        final currentUid = authProvider.currentUser?.uid;
+        final listingProvider = context.read<ListingProvider>();
+        
+        listingProvider.loadListings();
+        if (currentUid != null) {
+          listingProvider.loadMyListings(currentUid);
+        }
       }
     });
   }
@@ -56,33 +66,41 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  List<ListingModel> _getListings(ListingProvider provider) {
-    return _selectedTab == 'Available' ? provider.listings : provider.myListings;
+  List<ListingModel> _getListings(ListingProvider provider, AuthProvider authProvider) {
+    if (_selectedTab == 'Available') {
+      // Filter out current user's listings from available
+      final currentUid = authProvider.currentUser?.uid ?? '';
+      return provider.listings.where((listing) => listing.ownerId != currentUid).toList();
+    }
+    return provider.myListings;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ListingProvider>(
-      builder: (context, listingProvider, _) {
-        final listings = _getListings(listingProvider);
+    return Consumer2<ListingProvider, AuthProvider>(
+      builder: (context, listingProvider, authProvider, _) {
+        final listings = _getListings(listingProvider, authProvider);
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: Column(
-            children: [
-              _buildHero(),
-              Expanded(
-                child: listings.isEmpty && !listingProvider.isLoading
-                    ? _buildEmptyState()
-                    : Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSidebar(),
-                          Expanded(child: _buildListingGrid(listings, listingProvider)),
-                        ],
-                      ),
-              ),
-            ],
+          body: Container(
+            decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+            child: Column(
+              children: [
+                _buildHero(),
+                Expanded(
+                  child: listings.isEmpty && !listingProvider.isLoading
+                      ? _buildEmptyState()
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSidebar(),
+                            Expanded(child: _buildListingGrid(listings, listingProvider)),
+                          ],
+                        ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -99,7 +117,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             const Expanded(
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               ),
             )
@@ -180,210 +198,260 @@ class _BrowseScreenState extends State<BrowseScreen> {
     final isMySkills = _selectedTab == 'My Skills';
     final initials = listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppShadows.card,
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ListingDetailScreen(listing: listing),
-                ),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: AppColors.glassCard(borderRadius: 20),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ListingDetailScreen(listing: listing),
+                    ),
+                  );
+                },
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: AppColors.primary,
-                      child: Text(
-                        initials,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.surface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            listing.title,
-                            style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: AppColors.accentGradient,
+                            boxShadow: AppShadows.hover,
                           ),
-                          Text(listing.ownerName, style: AppTextStyles.bodySmall),
-                        ],
-                      ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            initials,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                listing.title,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                listing.ownerName,
+                                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
+                            const SizedBox(width: 2),
+                            Text(
+                              '4.8',
+                              style: AppTextStyles.caption.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 10),
+                    Text(
+                      listing.description,
+                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: listing.tags
+                          .take(3)
+                          .map(
+                            (tag) => Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentVeryLight,
+                                borderRadius: BorderRadius.circular(AppRadius.full),
+                              ),
+                              child: Text(
+                                tag,
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded, color: AppColors.accent, size: 14),
-                        const SizedBox(width: 2),
-                        Text(
-                          '4.8 (24)',
-                          style: AppTextStyles.caption.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
+                        const Icon(Icons.access_time_rounded, size: 12, color: AppColors.textMuted),
+                        const SizedBox(width: 4),
+                        Text('Flexible', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                        const SizedBox(width: 12),
+                        const Icon(Icons.location_on_outlined, size: 12, color: AppColors.textMuted),
+                        const SizedBox(width: 4),
+                        Text(listing.modality, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  listing.description,
-                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: listing.tags
-                      .map(
-                        (tag) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              ),
+              const Spacer(),
+              if (isMySkills)
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListingDetailScreen(listing: listing),
+                            ),
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          backgroundColor: AppColors.accentUltraLight,
+                          side: const BorderSide(color: AppColors.borderLight),
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                          minimumSize: const Size.fromHeight(42),
+                        ),
+                        child: const Text('Edit'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          await context.read<ListingProvider>().deleteListing(listing.id);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Listing deleted')),
+                            );
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.error,
+                          backgroundColor: const Color(0xFFFEE2E2),
+                          side: const BorderSide(color: Color(0x33DC2626)),
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                          minimumSize: const Size.fromHeight(42),
+                        ),
+                        child: const Text('Delete'),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, _) {
+                    final currentUid = authProvider.currentUser?.uid;
+                    final isOwnListing = listing.ownerId == currentUid;
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: isOwnListing
+                              ? OutlinedButton(
+                                  onPressed: null,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppColors.textMuted,
+                                    backgroundColor: AppColors.accentUltraLight,
+                                    side: const BorderSide(color: AppColors.borderLight),
+                                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                    minimumSize: const Size.fromHeight(42),
+                                  ),
+                                  child: const Text('Your Listing'),
+                                )
+                              : SizedBox(
+                                  height: 42,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.accentGradient,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: AppShadows.hover,
+                                    ),
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SendRequestScreen(listing: listing),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.send_rounded, size: 14, color: Colors.white),
+                                      label: const Text('Send Request'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shadowColor: Colors.transparent,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
                           decoration: BoxDecoration(
-                            color: AppColors.accentLight,
-                            borderRadius: BorderRadius.circular(AppRadius.full),
+                            border: Border.all(color: AppColors.borderLight),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            color: AppColors.accentUltraLight,
                           ),
-                          child: Text(
-                            tag,
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w500,
+                          child: IconButton(
+                            onPressed: () {
+                              final uid = authProvider.currentUser?.uid;
+                              if (uid != null) {
+                                context.read<ListingProvider>().toggleSaved(uid, listing.id);
+                              }
+                            },
+                            icon: Icon(
+                              context.read<ListingProvider>().isSaved(listing.id)
+                                  ? Icons.bookmark_rounded
+                                  : Icons.bookmark_outline_rounded,
+                              color: context.read<ListingProvider>().isSaved(listing.id)
+                                  ? AppColors.primary
+                                  : Color(0xFFC4B5FD),
+                              size: 18,
                             ),
                           ),
                         ),
-                      )
-                      .toList(),
+                      ],
+                    );
+                  },
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time_rounded, size: 12, color: AppColors.textMuted),
-                    const SizedBox(width: 4),
-                    Text('Flexible', style: AppTextStyles.caption),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.location_on_outlined, size: 12, color: AppColors.textMuted),
-                    const SizedBox(width: 4),
-                    Text(listing.modality, style: AppTextStyles.caption),
-                  ],
-                ),
-              ],
-            ),
+            ],
           ),
-          const Spacer(),
-          if (isMySkills)
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ListingDetailScreen(listing: listing),
-                        ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border),
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    ),
-                    child: const Text('Edit'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      await context.read<ListingProvider>().deleteListing(listing.id);
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Listing deleted')),
-                        );
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.error,
-                      side: const BorderSide(color: AppColors.error),
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    ),
-                    child: const Text('Delete'),
-                  ),
-                ),
-              ],
-            )
-          else
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SendRequestScreen(listing: listing),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.send_rounded, size: 14),
-                    label: const Text('Send Request'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.surface,
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      final uid = context.read<AuthProvider>().currentUser?.uid;
-                      if (uid != null) {
-                        context.read<ListingProvider>().toggleSaved(uid, listing.id);
-                      }
-                    },
-                    icon: Icon(
-                      context.read<ListingProvider>().isSaved(listing.id)
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_outline_rounded,
-                      color: context.read<ListingProvider>().isSaved(listing.id)
-                          ? AppColors.primary
-                          : AppColors.textMuted,
-                      size: 18,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-        ],
+        ),
       ),
     );
   }
@@ -393,8 +461,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
       width: 220,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        color: AppColors.surfaceWarm,
-        border: Border(right: BorderSide(color: AppColors.border)),
+        color: Colors.transparent,
+        border: Border(right: BorderSide(color: AppColors.borderLight)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -402,8 +470,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: AppColors.background,
+                color: AppColors.surfaceGlass,
                 borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(color: AppColors.borderLight),
               ),
               child: Row(
                 children: [
@@ -469,10 +538,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.surface : Colors.transparent,
+            gradient: isSelected ? AppColors.accentGradient : null,
+            color: isSelected ? null : AppColors.surfaceGlass,
             borderRadius: BorderRadius.circular(AppRadius.md),
             boxShadow: isSelected
-                ? [const BoxShadow(color: Color(0x08000000), blurRadius: 12, offset: Offset(0, 2))]
+                ? AppShadows.hover
                 : null,
           ),
           child: Row(
@@ -481,13 +551,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
               Icon(
                 label == 'Available' ? Icons.search : Icons.grid_view,
                 size: 14,
-                color: isSelected ? AppColors.accent : AppColors.textMuted,
+                color: isSelected ? Colors.white : AppColors.textMuted,
               ),
               const SizedBox(width: 4),
               Text(
                 label,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: isSelected ? AppColors.accent : AppColors.textMuted,
+                  color: isSelected ? Colors.white : AppColors.textMuted,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
@@ -505,7 +575,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
         fontSize: 10,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
-        color: AppColors.textMuted,
+        color: AppColors.textSecondary,
       ),
     );
   }
@@ -515,20 +585,28 @@ class _BrowseScreenState extends State<BrowseScreen> {
     required List<String> items,
     required Function(String?) onChanged,
   }) {
-    return DropdownButton<String>(
-      value: value,
-      items: items.map<DropdownMenuItem<String>>((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item, style: AppTextStyles.bodySmall),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      isExpanded: true,
-      underline: Container(height: 1, color: AppColors.border),
-      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
-      dropdownColor: AppColors.surface,
-      iconEnabledColor: AppColors.accent,
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGlass,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: DropdownButton<String>(
+        value: value,
+        items: items.map<DropdownMenuItem<String>>((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary)),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        isExpanded: true,
+        underline: const SizedBox.shrink(),
+        style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+        dropdownColor: AppColors.surface,
+        iconEnabledColor: AppColors.accentLight,
+      ),
     );
   }
 
@@ -537,11 +615,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.search_off_rounded, size: 48, color: AppColors.textMuted),
+          const Icon(Icons.search_off_rounded, size: 48, color: AppColors.accentLight),
           const SizedBox(height: 16),
           Text(
             'No skills found',
-            style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Text(
@@ -556,25 +634,57 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Widget _buildHero() {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.heroBgTop, AppColors.background],
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'SkillSwap',
-            style: AppTextStyles.h2.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'SkillSwap',
+                style: AppTextStyles.h2.copyWith(
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.8,
+                ),
+              ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: AppColors.accentGradient,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  boxShadow: AppShadows.hover,
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CreateListingScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Create'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+          Text(
+            'A curated marketplace for premium peer-to-peer learning.',
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 14),
           TextFormField(
             controller: _searchController,
             onChanged: (value) {
@@ -584,24 +694,24 @@ class _BrowseScreenState extends State<BrowseScreen> {
             decoration: InputDecoration(
               hintText: 'Search skills, topics, or people...',
               hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-              prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
+              prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted, size: 20),
               filled: true,
-              fillColor: AppColors.surfaceWarm,
+              fillColor: const Color(0xCCFFFFFF),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: const BorderSide(color: AppColors.borderLight),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: const BorderSide(color: AppColors.borderLight),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             ),
-            style: AppTextStyles.bodyMedium,
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           ),
         ],
       ),
