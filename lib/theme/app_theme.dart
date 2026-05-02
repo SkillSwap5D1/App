@@ -56,21 +56,21 @@ class AppColors {
 
   static BoxDecoration glassCard({double borderRadius = 24}) {
     return BoxDecoration(
-      color: Colors.white.withOpacity(0.65),
+      color: Colors.white.withValues(alpha: 0.65),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withValues(alpha: 0.8),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF7C3AED).withOpacity(0.06),
+          color: const Color(0xFF7C3AED).withValues(alpha: 0.06),
           blurRadius: 24,
           spreadRadius: 0,
           offset: const Offset(0, 8),
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           blurRadius: 0,
           spreadRadius: 0,
           offset: const Offset(0, 0),
@@ -223,8 +223,6 @@ class AppTheme {
       secondary: AppColors.accentLight,
       surface: AppColors.surface,
       onSurface: AppColors.textPrimary,
-      background: AppColors.background,
-      onBackground: AppColors.textPrimary,
       error: AppColors.error,
     ),
     textTheme: GoogleFonts.interTextTheme().apply(
