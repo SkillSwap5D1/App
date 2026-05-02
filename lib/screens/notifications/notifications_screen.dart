@@ -98,80 +98,75 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── HEADER ──────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Notifications',
-                    style: AppTextStyles.h2,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _markAllAsRead();
-                    },
-                    child: const Text('Mark all as read'),
-                  ),
-                ],
-              ),
-            ),
-
-            // ── NOTIFICATIONS LIST ──────────────────────────────────
-            Expanded(
-              child: _notifications.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.md,
-                      ),
-                      itemCount: _notifications.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: AppSpacing.sm),
-                      itemBuilder: (context, index) {
-                        final notification = _notifications[index];
-                        return Dismissible(
-                          key: Key(notification.id),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.error,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.md),
-                            ),
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(
-                              right: AppSpacing.md,
-                            ),
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
-                          onDismissed: (_) {
-                            _deleteNotification(index);
-                          },
-                          child: NotificationRow(
-                            notification: notification,
-                            onTap: () {
-                              _markAsRead(index);
-                              _handleNotificationTap(notification);
-                            },
-                          ),
-                        );
-                      },
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.editorialGradient),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.md,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Notifications',
+                      style: AppTextStyles.h2,
                     ),
-            ),
-          ],
+                    TextButton(
+                      onPressed: _markAllAsRead,
+                      child: const Text('Mark all as read'),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: _notifications.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.separated(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.md,
+                        ),
+                        itemCount: _notifications.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: AppSpacing.sm),
+                        itemBuilder: (context, index) {
+                          final notification = _notifications[index];
+                          return Dismissible(
+                            key: Key(notification.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.error,
+                                borderRadius: BorderRadius.circular(AppRadius.lg),
+                              ),
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(
+                                right: AppSpacing.md,
+                              ),
+                              child: const Icon(
+                                Icons.delete_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onDismissed: (_) => _deleteNotification(index),
+                            child: NotificationRow(
+                              notification: notification,
+                              onTap: () {
+                                _markAsRead(index);
+                                _handleNotificationTap(notification);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -183,7 +178,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.notifications_none,
+            Icons.notifications_none_rounded,
             size: 64,
             color: AppColors.textMuted,
           ),
@@ -191,7 +186,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Text(
             'No notifications yet',
             style: AppTextStyles.h3.copyWith(
-              color: AppColors.textMuted,
+              color: AppColors.textSecondary,
             ),
           ),
         ],

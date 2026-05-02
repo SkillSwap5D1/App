@@ -130,28 +130,35 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: AppColors.background,
           appBar: AppBar(
-            backgroundColor: AppColors.surface,
-            elevation: 1,
-            shadowColor: AppColors.border,
+            backgroundColor: AppColors.background,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            shadowColor: Colors.transparent,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => Navigator.pop(context),
             ),
             title: Row(
               children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: AppColors.primary,
-                  child: Text(
-                    otherUserInitial,
-                    style: AppTextStyles.h3.copyWith(
-                      color: Colors.white,
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.accentGradient,
+                    shape: BoxShape.circle,
+                    boxShadow: AppShadows.card,
+                  ),
+                  child: Center(
+                    child: Text(
+                      otherUserInitial,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                // Name and Online Status
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,17 +173,19 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       Row(
                         children: [
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 6,
+                            height: 6,
                             decoration: BoxDecoration(
-                              color: AppColors.textMuted,
+                              color: AppColors.success,
                               shape: BoxShape.circle,
                             ),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Offline',
-                            style: AppTextStyles.caption,
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -187,7 +196,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.more_vert, size: 24),
+                icon: const Icon(Icons.more_vert_rounded, size: 24),
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -195,7 +204,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       decoration: const BoxDecoration(
                         color: AppColors.surface,
                         borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(AppRadius.lg),
+                          top: Radius.circular(24),
                         ),
                       ),
                       child: Column(
@@ -246,7 +255,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: AppColors.error.withOpacity(0.1),
+                    color: AppColors.error.withOpacity(0.08),
                     border: Border(
                       bottom: BorderSide(
                         color: AppColors.error.withOpacity(0.3),
@@ -322,16 +331,26 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                               ? Alignment.centerRight
                               : Alignment.centerLeft,
                           child: Container(
-                            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                            margin: const EdgeInsets.only(bottom: 8),
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.md,
                               vertical: AppSpacing.sm,
                             ),
                             decoration: BoxDecoration(
-                              color: isCurrentUser
-                                  ? AppColors.primary
-                                  : AppColors.surface,
-                              borderRadius: BorderRadius.circular(AppRadius.md),
+                              gradient: isCurrentUser ? AppColors.accentGradient : null,
+                              color: isCurrentUser ? null : AppColors.surfaceElevated,
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(16),
+                                topRight: const Radius.circular(16),
+                                bottomLeft: Radius.circular(isCurrentUser ? 16 : 4),
+                                bottomRight: Radius.circular(isCurrentUser ? 4 : 16),
+                              ),
+                              border: Border.all(
+                                color: isCurrentUser
+                                    ? Colors.transparent
+                                    : AppColors.border,
+                              ),
+                              boxShadow: isCurrentUser ? AppShadows.card : null,
                             ),
                             child: Column(
                               crossAxisAlignment: isCurrentUser
@@ -342,7 +361,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                                   message.text,
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     color: isCurrentUser
-                                        ? AppColors.surface
+                                        ? Colors.white
                                         : AppColors.textPrimary,
                                   ),
                                 ),
@@ -351,7 +370,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                                   _formatTime(message.timestamp),
                                   style: AppTextStyles.caption.copyWith(
                                     color: isCurrentUser
-                                        ? AppColors.surface.withOpacity(0.7)
+                                        ? AppColors.textSecondary
                                         : AppColors.textMuted,
                                   ),
                                 ),
@@ -389,24 +408,24 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                             vertical: AppSpacing.sm,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
                             borderSide:
                                 const BorderSide(color: AppColors.border),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
                             borderSide:
                                 const BorderSide(color: AppColors.border),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
                             borderSide: const BorderSide(
                               color: AppColors.primary,
                               width: 2,
                             ),
                           ),
                           filled: true,
-                          fillColor: AppColors.background,
+                          fillColor: AppColors.surfaceElevated,
                         ),
                         style: AppTextStyles.bodyMedium,
                         minLines: 1,
@@ -414,19 +433,21 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
-                    // Send button
                     Container(
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
-                        color: _isComposing
-                            ? AppColors.primary
-                            : AppColors.textMuted.withOpacity(0.2),
+                        gradient: _isComposing ? AppColors.accentGradient : null,
+                        color: _isComposing ? null : AppColors.surfaceElevated,
                         shape: BoxShape.circle,
+                        boxShadow: _isComposing ? AppShadows.card : null,
+                        border: Border.all(
+                          color: _isComposing ? Colors.transparent : AppColors.border,
+                        ),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.send_rounded, size: 20),
-                        color: _isComposing
-                            ? AppColors.surface
-                            : AppColors.textMuted,
+                        icon: const Icon(Icons.send_rounded, size: 18),
+                        color: _isComposing ? Colors.white : AppColors.textMuted,
                         onPressed: _isComposing ? _sendMessage : null,
                       ),
                     ),

@@ -57,21 +57,21 @@ class NotificationRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: notification.isRead
                 ? AppColors.surface
-                : AppColors.accentLight,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+                : AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
               color: notification.isRead
                   ? AppColors.border
-                  : AppColors.primary,
-              width: 0.5,
+                  : AppColors.borderActive,
+              width: 1,
             ),
             boxShadow: notification.isRead
-                ? []
+                ? AppShadows.card
                 : [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      color: AppColors.accentGlow,
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
                     ),
                   ],
           ),
@@ -79,17 +79,14 @@ class NotificationRow extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ── ICON ────────────────────────────────────────────
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: _getColorForType(notification.type)
-                      .withOpacity(0.1),
+                  color: _getColorForType(notification.type).withOpacity(0.12),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: _getColorForType(notification.type)
-                        .withOpacity(0.3),
+                    color: _getColorForType(notification.type).withOpacity(0.24),
                     width: 1,
                   ),
                 ),
@@ -97,14 +94,13 @@ class NotificationRow extends StatelessWidget {
                   child: Icon(
                     _getIconForType(notification.type),
                     color: _getColorForType(notification.type),
-                    size: 24,
+                    size: 22,
                   ),
                 ),
               ),
 
               const SizedBox(width: AppSpacing.md),
 
-              // ── CONTENT ────────────────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +117,7 @@ class NotificationRow extends StatelessWidget {
                     Text(
                       notification.subtitle,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textMuted,
+                        color: AppColors.textSecondary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -132,7 +128,6 @@ class NotificationRow extends StatelessWidget {
 
               const SizedBox(width: AppSpacing.md),
 
-              // ── TIMESTAMP ────────────────────────────────────
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
