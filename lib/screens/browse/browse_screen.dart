@@ -80,6 +80,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
     return Consumer2<ListingProvider, AuthProvider>(
       builder: (context, listingProvider, authProvider, _) {
         final listings = _getListings(listingProvider, authProvider);
+        final isCompact = MediaQuery.of(context).size.width < 980;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -91,13 +92,32 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 Expanded(
                   child: listings.isEmpty && !listingProvider.isLoading
                       ? _buildEmptyState()
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSidebar(),
-                            Expanded(child: _buildListingGrid(listings, listingProvider)),
-                          ],
-                        ),
+                      : isCompact
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSidebar(isCompact: true),
+                                Expanded(
+                                  child: _buildListingGrid(
+                                    listings,
+                                    listingProvider,
+                                    isCompact: true,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSidebar(),
+                                Expanded(
+                                  child: _buildListingGrid(
+                                    listings,
+                                    listingProvider,
+                                  ),
+                                ),
+                              ],
+                            ),
                 ),
               ],
             ),
@@ -107,7 +127,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Widget _buildListingGrid(List<ListingModel> listings, ListingProvider provider) {
+  Widget _buildListingGrid(
+    List<ListingModel> listings,
+    ListingProvider provider, {
+    bool isCompact = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -162,7 +186,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: row.length > 1
+                    child: !isCompact && row.length > 1
                         ? Row(
                             children: [
                               Expanded(
@@ -456,65 +480,71 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Widget _buildSidebar() {
+  Widget _buildSidebar({bool isCompact = false}) {
     return Container(
-      width: 220,
+      width: isCompact ? double.infinity : 220,
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border(right: BorderSide(color: AppColors.borderLight)),
+        border: isCompact
+            ? const Border(bottom: BorderSide(color: AppColors.borderLight))
+            : const Border(right: BorderSide(color: AppColors.borderLight)),
       ),
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.surfaceGlass,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(color: AppColors.borderLight),
+        scrollDirection: isCompact ? Axis.horizontal : Axis.vertical,
+        child: SizedBox(
+          width: isCompact ? 900 : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceGlass,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(color: AppColors.borderLight),
+                ),
+                child: Row(
+                  children: [
+                    _buildTabButton('Available'),
+                    _buildTabButton('My Skills'),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  _buildTabButton('Available'),
-                  _buildTabButton('My Skills'),
-                ],
+              const SizedBox(height: 24),
+              _buildSidebarLabel('CATEGORY'),
+              const SizedBox(height: 8),
+              _buildDropdown(
+                value: _selectedCategory,
+                items: categories,
+                onChanged: (val) {
+                  setState(() => _selectedCategory = val!);
+                  _performSearch();
+                },
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildSidebarLabel('CATEGORY'),
-            const SizedBox(height: 8),
-            _buildDropdown(
-              value: _selectedCategory,
-              items: categories,
-              onChanged: (val) {
-                setState(() => _selectedCategory = val!);
-                _performSearch();
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildSidebarLabel('LEVEL'),
-            const SizedBox(height: 8),
-            _buildDropdown(
-              value: _selectedLevel,
-              items: levels,
-              onChanged: (val) {
-                setState(() => _selectedLevel = val!);
-                _performSearch();
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildSidebarLabel('FORMAT'),
-            const SizedBox(height: 8),
-            _buildDropdown(
-              value: _selectedFormat,
-              items: formats,
-              onChanged: (val) {
-                setState(() => _selectedFormat = val!);
-                _performSearch();
-              },
-            ),
-          ],
+              const SizedBox(height: 20),
+              _buildSidebarLabel('LEVEL'),
+              const SizedBox(height: 8),
+              _buildDropdown(
+                value: _selectedLevel,
+                items: levels,
+                onChanged: (val) {
+                  setState(() => _selectedLevel = val!);
+                  _performSearch();
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildSidebarLabel('FORMAT'),
+              const SizedBox(height: 8),
+              _buildDropdown(
+                value: _selectedFormat,
+                items: formats,
+                onChanged: (val) {
+                  setState(() => _selectedFormat = val!);
+                  _performSearch();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
