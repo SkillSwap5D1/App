@@ -73,8 +73,9 @@ void main() {
       await tester.enterText(fields.at(4), 'password123');
       await tester.pump();
 
+      await tester.ensureVisible(find.text('Create Account'));
       await tester.tap(find.text('Create Account'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('Please select your course'), findsOneWidget);
     });
@@ -99,11 +100,13 @@ void main() {
       await tester.enterText(fields.at(4), 'password123');
       await tester.pump();
 
+      await tester.ensureVisible(find.byType(DropdownButton<String>));
       await tester.tap(find.byType(DropdownButton<String>));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Computer Science').last);
       await tester.pumpAndSettle();
 
+      await tester.ensureVisible(find.text('Create Account'));
       await tester.tap(find.text('Create Account'));
       await tester.pumpAndSettle();
 
