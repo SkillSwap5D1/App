@@ -3,16 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/notification_model.dart';
 
 class NotificationService {
-  final FirebaseMessaging _firebaseMessaging;
+  final FirebaseMessaging? _firebaseMessaging;
   final FirebaseFirestore _firestore;
 
   NotificationService({FirebaseMessaging? firebaseMessaging, FirebaseFirestore? firestore})
-      : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
+      : _firebaseMessaging = firebaseMessaging,
         _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> initialize() async {
     // Request user permission for notifications
-    await _firebaseMessaging.requestPermission();
+    final messaging = _firebaseMessaging ?? FirebaseMessaging.instance;
+    await messaging.requestPermission();
 
     // Handle notification when app is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -34,15 +35,18 @@ class NotificationService {
   }
 
   Future<String?> getDeviceToken() async {
-    return await _firebaseMessaging.getToken();
+    final messaging = _firebaseMessaging ?? FirebaseMessaging.instance;
+    return await messaging.getToken();
   }
 
   Future<void> subscribeToTopic(String topic) async {
-    await _firebaseMessaging.subscribeToTopic(topic);
+    final messaging = _firebaseMessaging ?? FirebaseMessaging.instance;
+    await messaging.subscribeToTopic(topic);
   }
 
   Future<void> unsubscribeFromTopic(String topic) async {
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
+    final messaging = _firebaseMessaging ?? FirebaseMessaging.instance;
+    await messaging.unsubscribeFromTopic(topic);
   }
 
   // Write a notification document for a user
