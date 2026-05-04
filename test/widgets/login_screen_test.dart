@@ -40,7 +40,7 @@ void main() {
     testWidgets('submitting with @gmail.com email shows red error text under email field', (tester) async {
       final authProvider = MockAuthProvider();
       when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.signIn(any, any)).thenAnswer((_) async {});
+      when(authProvider.signIn('student@gmail.com', 'password123')).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -60,7 +60,7 @@ void main() {
     testWidgets('submitting with empty password shows required error', (tester) async {
       final authProvider = MockAuthProvider();
       when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.signIn(any, any)).thenAnswer((_) async {});
+      when(authProvider.signIn('student@port.ac.uk', '')).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
