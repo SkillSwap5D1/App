@@ -3,7 +3,9 @@ import '../models/listing_model.dart';
 
 class ListingService {
   // ── Firebase instance ─────────────────────────────────────────────────────
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  ListingService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
 
   // ── Get all active listings ───────────────────────────────────────────────
   Future<List<ListingModel>> getAllListings() async {
