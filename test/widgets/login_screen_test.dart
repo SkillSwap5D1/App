@@ -51,6 +51,7 @@ void main() {
       await tester.enterText(find.byType(TextField).at(0), 'student@gmail.com');
       await tester.enterText(find.byType(TextField).at(1), 'password123');
       await tester.pump();
+      await tester.ensureVisible(find.text('Sign In'));
       await tester.tap(find.text('Sign In'));
       await tester.pump();
 
@@ -66,6 +67,7 @@ void main() {
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
+      await tester.ensureVisible(find.text('Sign In'));
       await tester.enterText(find.byType(TextField).at(0), 'student@port.ac.uk');
       await tester.tap(find.text('Sign In'));
       await tester.pump();
@@ -93,6 +95,7 @@ void main() {
       );
 
       expect(linkFinder, findsOneWidget);
+      await tester.ensureVisible(linkFinder);
       await tester.tap(linkFinder);
       await tester.pumpAndSettle();
 
