@@ -53,6 +53,10 @@ class ConversationModel {
 
   // ── Helper — get the other user's ID ─────────────────────────────────────
   String getOtherUserId(String myUid) {
+    if (!participants.contains(myUid)) {
+      return '';
+    }
+
     return participants.firstWhere(
       (id) => id != myUid,
       orElse: () => '',
