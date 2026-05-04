@@ -3,7 +3,9 @@ import '../models/user_model.dart';
 
 class UserService {
   // ── Firebase instance ─────────────────────────────────────────────────────
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  UserService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
 
   // ── Get a single user ─────────────────────────────────────────────────────
   Future<UserModel?> getUser(String uid) async {
