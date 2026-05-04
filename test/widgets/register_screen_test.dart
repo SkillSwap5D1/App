@@ -22,7 +22,6 @@ void main() {
   group('RegisterScreen', () {
     testWidgets('renders all fields including first name, last name, email, course, password, confirm password', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -33,20 +32,12 @@ void main() {
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Confirm password'), findsOneWidget);
       expect(find.text('Select your course'), findsOneWidget);
-      expect(find.byType(TextField), findsNWidgets(4));
+      expect(find.byType(TextField), findsNWidgets(5));
       expect(find.byType(DropdownButton<String>), findsOneWidget);
     });
 
     testWidgets('submit with mismatched passwords shows error message', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.register(
-        email: anyNamed('email'),
-        password: anyNamed('password'),
-        firstName: anyNamed('firstName'),
-        lastName: anyNamed('lastName'),
-        course: anyNamed('course'),
-      )).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -64,14 +55,6 @@ void main() {
 
     testWidgets('submit without course selection shows required error', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.register(
-        email: anyNamed('email'),
-        password: anyNamed('password'),
-        firstName: anyNamed('firstName'),
-        lastName: anyNamed('lastName'),
-        course: anyNamed('course'),
-      )).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -91,13 +74,12 @@ void main() {
 
     testWidgets('all fields filled correctly calls AuthProvider.register()', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
       when(authProvider.register(
-        email: anyNamed('email'),
-        password: anyNamed('password'),
-        firstName: anyNamed('firstName'),
-        lastName: anyNamed('lastName'),
-        course: anyNamed('course'),
+        email: 'jamie@port.ac.uk',
+        password: 'password123',
+        firstName: 'Jamie',
+        lastName: 'Smith',
+        course: 'Computer Science',
       )).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
