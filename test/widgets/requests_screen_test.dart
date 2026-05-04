@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 import 'package:skillswap_app/models/request_model.dart';
 import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/providers/request_provider.dart';
-import 'package:skillswap_app/screens/requests/requests_screen.dart';
-import 'package:skillswap_app/theme/app_theme.dart';
 
 class MockRequestProvider extends Mock implements RequestProvider {
   List<RequestModel> incoming_ = [];
