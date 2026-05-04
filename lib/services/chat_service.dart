@@ -4,7 +4,9 @@ import '../models/message_model.dart';
 
 class ChatService {
   // ── Firebase instance ─────────────────────────────────────────────────────
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  ChatService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
 
   // ── Get or create a conversation between 2 users ─────────────────────────
   Future<String> getOrCreateConversation(
