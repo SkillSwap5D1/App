@@ -8,9 +8,29 @@ import 'package:skillswap_app/theme/app_theme.dart';
 
 class MockAuthProvider extends Mock implements AuthProvider {
   bool loading = false;
+  int registerCallCount = 0;
+  Map<String, String>? lastRegisterArgs;
 
   @override
   bool get isLoading => loading;
+
+  @override
+  Future<void> register({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String course,
+  }) async {
+    registerCallCount++;
+    lastRegisterArgs = {
+      'email': email,
+      'password': password,
+      'firstName': firstName,
+      'lastName': lastName,
+      'course': course,
+    };
+  }
 }
 
 Widget _buildTestApp({required AuthProvider authProvider}) {
@@ -82,13 +102,6 @@ void main() {
 
     testWidgets('all fields filled correctly calls AuthProvider.register()', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.register(
-        email: 'jamie@port.ac.uk',
-        password: 'password123',
-        firstName: 'Jamie',
-        lastName: 'Smith',
-        course: 'Computer Science',
-      )).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -110,13 +123,14 @@ void main() {
       await tester.tap(find.text('Create Account'));
       await tester.pumpAndSettle();
 
-      verify(authProvider.register(
-        email: 'jamie@port.ac.uk',
-        password: 'password123',
-        firstName: 'Jamie',
-        lastName: 'Smith',
-        course: 'Computer Science',
-      )).called(1);
+      expect(authProvider.registerCallCount, 1);
+      expect(authProvider.lastRegisterArgs, {
+        'email': 'jamie@port.ac.uk',
+        'password': 'password123',
+        'firstName': 'Jamie',
+        'lastName': 'Smith',
+        'course': 'Computer Science',
+      });
     });
   });
 }
