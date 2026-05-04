@@ -5,15 +5,39 @@ import '../models/user_model.dart';
 
 class AuthService {
   // ── Firebase instances ────────────────────────────────────────────────────
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _db;
+  final GoogleSignIn _googleSignIn;
+
+  AuthService({
+    FirebaseAuth? auth,
+    FirebaseFirestore? db,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = auth ?? FirebaseAuth.instance,
+        _db = db ?? FirebaseFirestore.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   // ── Current user ──────────────────────────────────────────────────────────
   User? get currentUser => _auth.currentUser;
 
   String _normalizeEmail(String email) {
     return email.trim().toLowerCase();
+  }
+
+  String handleAuthError(String errorCode) {
+    if (errorCode.contains('user-not-found')) {
+      return 'No user found for that email';
+    }
+    if (errorCode.contains('wrong-password')) {
+      return 'Incorrect password';
+    }
+    if (errorCode.contains('email-already-in-use')) {
+      return 'This email is already registered';
+    }
+    if (errorCode.contains('weak-password')) {
+      return 'Password must be at least 6 characters';
+    }
+    return 'Something went wrong. Please try again.';
   }
 
   Future<UserModel?> _waitForUserDocument(String uid) async {
@@ -82,6 +106,10 @@ class AuthService {
         throw Exception('Please use your University of Portsmouth email');
       }
 
+      if (password.length < 6) {
+        throw Exception('Password must be at least 6 characters');
+      }
+
       // Create Firebase Auth account
       final credential = await _auth.createUserWithEmailAndPassword(
         email: normalizedEmail,
@@ -104,7 +132,9 @@ class AuthService {
         showPhoto:         true,
       );
 
-        return await _waitForUserDocument(credential.user!.uid) ?? user;
+      await _db.collection('users').doc(credential.user!.uid).set(user.toMap());
+
+      return await _waitForUserDocument(credential.user!.uid) ?? user;
 
     } on FirebaseAuthException catch (e) {
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
