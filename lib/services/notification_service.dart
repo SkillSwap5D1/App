@@ -3,16 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/notification_model.dart';
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
+  final FirebaseMessaging _firebaseMessaging;
+  final FirebaseFirestore _firestore;
 
-  factory NotificationService() {
-    return _instance;
-  }
-
-  NotificationService._internal();
-
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  NotificationService({FirebaseMessaging? firebaseMessaging, FirebaseFirestore? firestore})
+      : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> initialize() async {
     // Request user permission for notifications
