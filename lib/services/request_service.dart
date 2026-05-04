@@ -4,9 +4,17 @@ import 'chat_service.dart';
 import 'notification_service.dart';
 
 class RequestService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final ChatService _chatService = ChatService();
-  final NotificationService _notificationService = NotificationService();
+  final FirebaseFirestore _db;
+  final ChatService _chatService;
+  final NotificationService _notificationService;
+
+  RequestService({
+    FirebaseFirestore? db,
+    ChatService? chatService,
+    NotificationService? notificationService,
+  })  : _db = db ?? FirebaseFirestore.instance,
+        _chatService = chatService ?? ChatService(),
+        _notificationService = notificationService ?? NotificationService();
 
   // ── Send a new lesson request ─────────────────────────────────────────────
   Future<String> sendRequest(RequestModel request) async {
