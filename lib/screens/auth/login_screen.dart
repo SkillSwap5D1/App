@@ -95,6 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
+    final providerLoading = context.watch<AuthProvider>().isLoading;
+    final isLoading = _isLoading || providerLoading;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -196,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: AppSpacing.sm),
                               _buildPasswordField(),
                               const SizedBox(height: AppSpacing.lg),
-                              _buildSignInButton(),
+                              _buildSignInButton(isLoading),
                               const SizedBox(height: AppSpacing.md),
                               Row(
                                 children: [
@@ -327,7 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInButton() {
+  Widget _buildSignInButton(bool isLoading) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -339,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
           boxShadow: _isLoading ? null : AppShadows.hover,
         ),
         child: ElevatedButton(
-          onPressed: _isLoading ? null : _handleSignIn,
+          onPressed: isLoading ? null : _handleSignIn,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
@@ -349,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             elevation: 0,
           ),
-          child: _isLoading
+            child: isLoading
               ? const SizedBox(
                   height: 20,
                   width: 20,
