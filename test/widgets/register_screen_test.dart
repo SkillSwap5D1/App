@@ -6,7 +6,12 @@ import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/screens/auth/register_screen.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 
-class MockAuthProvider extends Mock implements AuthProvider {}
+class MockAuthProvider extends Mock implements AuthProvider {
+  bool loading = false;
+
+  @override
+  bool get isLoading => loading;
+}
 
 Widget _buildTestApp({required AuthProvider authProvider}) {
   return MaterialApp(
@@ -19,6 +24,8 @@ Widget _buildTestApp({required AuthProvider authProvider}) {
 }
 
 void main() {
+  Provider.debugCheckInvalidValueType = null;
+
   group('RegisterScreen', () {
     testWidgets('renders all fields including first name, last name, email, course, password, confirm password', (tester) async {
       final authProvider = MockAuthProvider();
