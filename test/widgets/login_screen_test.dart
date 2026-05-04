@@ -27,7 +27,6 @@ void main() {
   group('LoginScreen', () {
     testWidgets('renders email field, password field, and Sign In button', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -39,8 +38,6 @@ void main() {
 
     testWidgets('submitting with @gmail.com email shows red error text under email field', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.signIn('student@gmail.com', 'password123')).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -59,8 +56,6 @@ void main() {
 
     testWidgets('submitting with empty password shows required error', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.signIn('student@port.ac.uk', '')).thenAnswer((_) async {});
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -73,7 +68,7 @@ void main() {
 
     testWidgets('when AuthProvider.isLoading = true button shows CircularProgressIndicator', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(true);
+      authProvider.loading = true;
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -83,7 +78,6 @@ void main() {
 
     testWidgets('tapping Create an account link navigates to RegisterScreen', (tester) async {
       final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
