@@ -18,7 +18,10 @@ Widget _buildTestApp({required AuthProvider authProvider}) {
   return MaterialApp(
     theme: AppTheme.theme,
     routes: {
-      '/register': (_) => const RegisterScreen(),
+      '/register': (_) => Provider<AuthProvider>.value(
+            value: authProvider,
+            child: const RegisterScreen(),
+          ),
       '/home': (_) => const Scaffold(body: Text('Home')),
     },
     home: Provider<AuthProvider>.value(
