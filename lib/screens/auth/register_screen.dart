@@ -213,6 +213,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
+    final providerLoading = context.watch<AuthProvider>().isLoading;
+    final isLoading = _isLoading || providerLoading;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -360,7 +362,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               const SizedBox(height: AppSpacing.lg),
 
-                              _buildCreateAccountButton(),
+                              _buildCreateAccountButton(isLoading),
                               const SizedBox(height: AppSpacing.md),
 
                               Row(
@@ -375,7 +377,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: AppSpacing.md),
 
-                              _buildGoogleSignInButton(),
+                              _buildGoogleSignInButton(isLoading),
                               const SizedBox(height: AppSpacing.md),
 
                               Center(
@@ -422,19 +424,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildCreateAccountButton() {
+  Widget _buildCreateAccountButton(bool isLoading) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: _isLoading ? null : AppColors.accentGradient,
-          color: _isLoading ? AppColors.accentUltraLight : null,
+          gradient: isLoading ? null : AppColors.accentGradient,
+          color: isLoading ? AppColors.accentUltraLight : null,
           borderRadius: BorderRadius.circular(AppRadius.md),
-          boxShadow: _isLoading ? null : AppShadows.hover,
+          boxShadow: isLoading ? null : AppShadows.hover,
         ),
         child: ElevatedButton(
-          onPressed: _isLoading ? null : _handleCreateAccount,
+          onPressed: isLoading ? null : _handleCreateAccount,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
@@ -444,7 +446,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             elevation: 0,
           ),
-          child: _isLoading
+            child: isLoading
               ? const SizedBox(
                   height: 20,
                   width: 20,
@@ -466,12 +468,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildGoogleSignInButton() {
+  Widget _buildGoogleSignInButton(bool isLoading) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: OutlinedButton(
-        onPressed: _isLoading ? null : _handleGoogleSignIn,
+        onPressed: isLoading ? null : _handleGoogleSignIn,
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: AppColors.borderLight),
           backgroundColor: AppColors.accentUltraLight,
