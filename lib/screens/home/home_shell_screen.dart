@@ -21,7 +21,6 @@ class HomeShellScreen extends StatefulWidget {
 class _HomeShellScreenState extends State<HomeShellScreen> {
   int _selectedIndex = 0;
   String? _initializedForUid;
-  bool _initializingData = false;
 
   final List<Widget> _screens = [
     const BrowseScreen(),
@@ -33,203 +32,74 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   @override
   void initState() {
     super.initState();
-    _scheduleDataInitialization();
+    _loadData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _scheduleDataInitialization();
-  }
+  void _loadData() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!mounted) return;
 
-  void _scheduleDataInitialization() {
-    if (_initializingData) {
-      return;
-    }
+      final auth = context.read<AuthProvider>();
+      final uid = auth.currentUser?.uid;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-
-      final uid = context.read<AuthProvider>().currentUser?.uid;
       if (uid == null || uid == _initializedForUid) {
         return;
       }
 
-      _initializingData = true;
       _initializedForUid = uid;
 
-      print('[HomeShell] Starting data initialization for UID: $uid');
-      
-      try {
-        context.read<ListingProvider>().loadListings().catchError((e) {
-          print('[HomeShell] ERROR loading listings: $e');
-        });
-      } catch (e) {
-        print('[HomeShell] EXCEPTION loading listings: $e');
-      }
-
-      try {
-        context.read<RequestProvider>().loadRequests(uid);
-      } catch (e) {
-        print('[HomeShell] ERROR loading requests: $e');
-      }
-      
-      try {
-        context.read<ChatProvider>().loadConversations(uid);
-      } catch (e) {
-        print('[HomeShell] ERROR loading conversations: $e');
-      }
-      
-      try {
-        context.read<NotificationProvider>().loadNotifications(uid);
-      } catch (e) {
-        print('[HomeShell] ERROR loading notifications: $e');
-      }
-
-      if (mounted) {
-        setState(() {
-          _initializingData = false;
-        });
-      }
+      context.read<ListingProvider>().loadListings();
+      context.read<RequestProvider>().loadRequests(uid);
+      context.read<ChatProvider>().loadConversations(uid);
+      context.read<NotificationProvider>().loadNotifications(uid);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUid = context.watch<AuthProvider>().currentUser?.uid;
-
-    if (currentUid == null) {
-      return const Scaffold(
-        backgroundColor: AppColors.background,
-        body: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: AppColors.border,
-              width: 1,
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        if (authProvider.currentUser == null) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-          ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          items: [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildRequestsBadge(),
-              label: 'Requests',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildChatBadge(),
-              label: 'Chat',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRequestsBadge() {
-    return Consumer<RequestProvider>(
-      builder: (context, requestProvider, _) {
-        final badgeCount = requestProvider.pendingCount;
-        if (badgeCount == 0) {
-          return const Icon(Icons.inbox_rounded);
+          );
         }
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const Icon(Icons.inbox_rounded),
-            Positioned(
-              top: -8,
-              right: -8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: AppColors.accent,
-                  shape: BoxShape.circle,
-                ),
-                constraints: const BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
-                child: Text(
-                  badgeCount.toString(),
-                  style: const TextStyle(
-                    color: AppColors.surface,
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  Widget _buildChatBadge() {
-    return Consumer<ChatProvider>(
-      builder: (context, chatProvider, _) {
-        final badgeCount = chatProvider.totalUnreadCount;
-        if (badgeCount == 0) {
-          return const Icon(Icons.chat_bubble_rounded);
-        }
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const Icon(Icons.chat_bubble_rounded),
-            Positioned(
-              top: -8,
-              right: -8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: AppColors.accent,
-                  shape: BoxShape.circle,
-                ),
-                constraints: const BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
-                child: Text(
-                  badgeCount.toString(),
-                  style: const TextStyle(
-                    color: AppColors.surface,
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: _screens[_selectedIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: AppColors.surface,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: AppColors.textSecondary,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_rounded),
+                label: 'Browse',
               ),
-            ),
-          ],
+              BottomNavigationBarItem(
+                icon: Icon(Icons.inbox_rounded),
+                label: 'Requests',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.message_rounded),
+                label: 'Messages',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_rounded),
+                label: 'Profile',
+              ),
+            ],
+          ),
         );
       },
     );
