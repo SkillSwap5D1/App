@@ -200,12 +200,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           );
         } else if (authProvider.currentUser != null) {
-          // Navigation is handled by AuthWrapper which will show HomeShellScreen
-          // Simply pop back to trigger the AuthWrapper rebuild
+          // Navigate to onboarding screen after successful registration
+          // User will complete their profile before going to home
           if (mounted) {
             Navigator.of(
               context,
-            ).pushNamedAndRemoveUntil('/home', (route) => false);
+            ).pushNamedAndRemoveUntil('/onboarding', (route) => false);
           }
         }
       }
