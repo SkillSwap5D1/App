@@ -85,13 +85,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.signIn(email, password);
+      final user = await _authService.signIn(email, password);
+      
+      // Set currentUser immediately from the returned value
+      if (user != null) {
+        currentUser = user;
+        notifyListeners();
+      }
+      
       // Verify custom claims after authentication
       final verified = await _verifyUniversityClaims();
       if (!verified) {
         print('⚠️ University claims not ready yet; continuing with provisional auth state');
       }
-      // User fetch happens automatically via authStateChanges listener
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
     } finally {
