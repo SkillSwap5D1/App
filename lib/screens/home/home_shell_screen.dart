@@ -62,15 +62,31 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
 
       print('[HomeShell] Starting data initialization for UID: $uid');
       
-      context.read<ListingProvider>().loadListings().then((_) {
-        print('[HomeShell] Listings loaded: ${context.read<ListingProvider>().listings.length} listings');
-      }).catchError((e) {
-        print('[HomeShell] ERROR loading listings: $e');
-      });
+      try {
+        context.read<ListingProvider>().loadListings().catchError((e) {
+          print('[HomeShell] ERROR loading listings: $e');
+        });
+      } catch (e) {
+        print('[HomeShell] EXCEPTION loading listings: $e');
+      }
 
-      context.read<RequestProvider>().loadRequests(uid);
-      context.read<ChatProvider>().loadConversations(uid);
-      context.read<NotificationProvider>().loadNotifications(uid);
+      try {
+        context.read<RequestProvider>().loadRequests(uid);
+      } catch (e) {
+        print('[HomeShell] ERROR loading requests: $e');
+      }
+      
+      try {
+        context.read<ChatProvider>().loadConversations(uid);
+      } catch (e) {
+        print('[HomeShell] ERROR loading conversations: $e');
+      }
+      
+      try {
+        context.read<NotificationProvider>().loadNotifications(uid);
+      } catch (e) {
+        print('[HomeShell] ERROR loading notifications: $e');
+      }
 
       if (mounted) {
         setState(() {
