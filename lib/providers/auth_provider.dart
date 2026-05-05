@@ -118,7 +118,7 @@ class AuthProvider extends ChangeNotifier {
         final isUniversityUser = claims?['isUniversityUser'] == true;
         final emailDomain = claims?['emailDomain'] as String?;
 
-        if (isUniversityUser && emailDomain == 'port.ac.uk') {
+        if (isUniversityUser && emailDomain == 'myport.ac.uk') {
           print('✓ University claims verified (attempt ${attempt + 1})');
           return true;
         }
@@ -239,10 +239,10 @@ class AuthProvider extends ChangeNotifier {
       return 'Your profile is still being created. Please try again in a moment.';
     }
     if (errorCode.contains('University of Portsmouth')) {
-      return 'Please use your University of Portsmouth email (@port.ac.uk)';
+      return 'Please use your University of Portsmouth email (@myport.ac.uk)';
     }
-    if (errorCode.contains('@port.ac.uk')) {
-      return 'Please use your @port.ac.uk email';
+    if (errorCode.contains('@myport.ac.uk')) {
+      return 'Please use your @myport.ac.uk email';
     }
     if (errorCode.contains('sign-in cancelled')) {
       return 'Google sign-in was cancelled';
