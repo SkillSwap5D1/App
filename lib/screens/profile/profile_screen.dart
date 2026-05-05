@@ -582,6 +582,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Signed out successfully')),
                     );
+                    // Navigate to login screen after signing out
+                    Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil('/login', (route) => false);
                   }
                 },
                 child: const Text('Sign Out'),

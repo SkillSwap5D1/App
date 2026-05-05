@@ -12,25 +12,24 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        // Show loading while checking auth state
+        // Show loading only during initial auth state check (when we don't know if user is logged in)
         if (authProvider.isLoading && authProvider.currentUser == null) {
           return Scaffold(
             body: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppColors.accent,
-                ),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
               ),
             ),
           );
         }
 
-        // User is logged in
+        // User is logged in - show home screen
         if (authProvider.currentUser != null) {
           return const HomeShellScreen();
         }
 
-        // User is not logged in - show LoginScreen first
+        // User is not logged in - show LoginScreen
+        // This is the default state after sign out
         return const LoginScreen();
       },
     );
