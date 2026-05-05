@@ -14,6 +14,7 @@ class UserModel {
   final bool showCourse;
   final bool showPhoto;
   final List<String> savedListingIds;
+  final int totalReviews;
 
   const UserModel({
     required this.uid,
@@ -29,43 +30,47 @@ class UserModel {
     required this.showCourse,
     required this.showPhoto,
     this.savedListingIds = const [],
+    this.totalReviews = 0,
   });
 
   // ── Convert Firestore data → Dart object ──────────────────────────────────
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid:               map['uid']               ?? '',
-      firstName:         map['firstName']         ?? '',
-      lastName:          map['lastName']          ?? '',
-      email:             map['email']             ?? '',
-      course:            map['course']            ?? '',
-      bio:               map['bio']               ?? '',
-      rating:            (map['rating']           ?? 0.0).toDouble(),
-      sessionsCompleted: (map['sessionsCompleted']?? 0).toInt(),
-      memberSince:       (map['memberSince'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      showFullName:      map['showFullName']       ?? true,
-      showCourse:        map['showCourse']         ?? true,
-      showPhoto:         map['showPhoto']          ?? true,
-      savedListingIds:   List<String>.from(map['savedListingIds'] ?? const []),
+      uid: map['uid'] ?? '',
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      email: map['email'] ?? '',
+      course: map['course'] ?? '',
+      bio: map['bio'] ?? '',
+      rating: (map['rating'] ?? 0.0).toDouble(),
+      sessionsCompleted: (map['sessionsCompleted'] ?? 0).toInt(),
+      memberSince:
+          (map['memberSince'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      showFullName: map['showFullName'] ?? true,
+      showCourse: map['showCourse'] ?? true,
+      showPhoto: map['showPhoto'] ?? true,
+      savedListingIds: List<String>.from(map['savedListingIds'] ?? const []),
+      totalReviews: (map['totalReviews'] ?? 0).toInt(),
     );
   }
 
   // ── Convert Dart object → Firestore data ──────────────────────────────────
   Map<String, dynamic> toMap() {
     return {
-      'uid':               uid,
-      'firstName':         firstName,
-      'lastName':          lastName,
-      'email':             email,
-      'course':            course,
-      'bio':               bio,
-      'rating':            rating,
+      'uid': uid,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'course': course,
+      'bio': bio,
+      'rating': rating,
       'sessionsCompleted': sessionsCompleted,
-      'memberSince':       Timestamp.fromDate(memberSince),
-      'showFullName':      showFullName,
-      'showCourse':        showCourse,
-      'showPhoto':         showPhoto,
-      'savedListingIds':   savedListingIds,
+      'memberSince': Timestamp.fromDate(memberSince),
+      'showFullName': showFullName,
+      'showCourse': showCourse,
+      'showPhoto': showPhoto,
+      'savedListingIds': savedListingIds,
+      'totalReviews': totalReviews,
     };
   }
 
@@ -84,26 +89,28 @@ class UserModel {
     bool? showCourse,
     bool? showPhoto,
     List<String>? savedListingIds,
+    int? totalReviews,
   }) {
     return UserModel(
-      uid:               uid               ?? this.uid,
-      firstName:         firstName         ?? this.firstName,
-      lastName:          lastName          ?? this.lastName,
-      email:             email             ?? this.email,
-      course:            course            ?? this.course,
-      bio:               bio               ?? this.bio,
-      rating:            rating            ?? this.rating,
+      uid: uid ?? this.uid,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      course: course ?? this.course,
+      bio: bio ?? this.bio,
+      rating: rating ?? this.rating,
       sessionsCompleted: sessionsCompleted ?? this.sessionsCompleted,
-      memberSince:       memberSince       ?? this.memberSince,
-      showFullName:      showFullName      ?? this.showFullName,
-      showCourse:        showCourse        ?? this.showCourse,
-      showPhoto:         showPhoto         ?? this.showPhoto,
-      savedListingIds:   savedListingIds   ?? this.savedListingIds,
+      memberSince: memberSince ?? this.memberSince,
+      showFullName: showFullName ?? this.showFullName,
+      showCourse: showCourse ?? this.showCourse,
+      showPhoto: showPhoto ?? this.showPhoto,
+      savedListingIds: savedListingIds ?? this.savedListingIds,
+      totalReviews: totalReviews ?? this.totalReviews,
     );
   }
 
   // ── Helper getters ─────────────────────────────────────────────────────────
-  String get fullName    => '$firstName $lastName';
+  String get fullName => '$firstName $lastName';
   String get displayName => '$firstName ${lastName[0]}.';
-  String get initials    => firstName[0].toUpperCase();
+  String get initials => firstName[0].toUpperCase();
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../models/user_model.dart';
 import './edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -54,8 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return 'Member since ${months[date.month - 1]} ${date.year}';
   }
 
-  int _getReviewCount(double rating) {
-    return 12;
+  int _getReviewCount(UserModel user) {
+    return user.totalReviews;
   }
 
   void _handlePrivacyToggle(
@@ -207,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         // Review count
                         Text(
-                          '(${_getReviewCount(user.rating)} reviews)',
+                          '(${_getReviewCount(user)} reviews)',
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textMuted,
