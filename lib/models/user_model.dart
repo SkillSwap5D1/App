@@ -15,6 +15,8 @@ class UserModel {
   final bool showPhoto;
   final List<String> savedListingIds;
   final int totalReviews;
+  final List<String> canTeach;
+  final List<String> wantsToLearn;
 
   const UserModel({
     required this.uid,
@@ -31,6 +33,8 @@ class UserModel {
     required this.showPhoto,
     this.savedListingIds = const [],
     this.totalReviews = 0,
+    this.canTeach = const [],
+    this.wantsToLearn = const [],
   });
 
   // ── Convert Firestore data → Dart object ──────────────────────────────────
@@ -51,6 +55,8 @@ class UserModel {
       showPhoto: map['showPhoto'] ?? true,
       savedListingIds: List<String>.from(map['savedListingIds'] ?? const []),
       totalReviews: (map['totalReviews'] ?? 0).toInt(),
+      canTeach: List<String>.from(map['canTeach'] ?? const []),
+      wantsToLearn: List<String>.from(map['wantsToLearn'] ?? const []),
     );
   }
 
@@ -71,6 +77,8 @@ class UserModel {
       'showPhoto': showPhoto,
       'savedListingIds': savedListingIds,
       'totalReviews': totalReviews,
+      'canTeach': canTeach,
+      'wantsToLearn': wantsToLearn,
     };
   }
 
@@ -90,6 +98,8 @@ class UserModel {
     bool? showPhoto,
     List<String>? savedListingIds,
     int? totalReviews,
+    List<String>? canTeach,
+    List<String>? wantsToLearn,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -106,6 +116,8 @@ class UserModel {
       showPhoto: showPhoto ?? this.showPhoto,
       savedListingIds: savedListingIds ?? this.savedListingIds,
       totalReviews: totalReviews ?? this.totalReviews,
+      canTeach: canTeach ?? this.canTeach,
+      wantsToLearn: wantsToLearn ?? this.wantsToLearn,
     );
   }
 

@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart';
 import './edit_profile_screen.dart';
+import './edit_skills_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -372,6 +373,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
+              // ─────────────── SKILLS SECTION ────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.school_outlined,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Skills',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Can Teach Section
+                    _buildSkillsSubsection(
+                      title: 'Can Teach',
+                      skills: user.canTeach,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Wants to Learn Section
+                    _buildSkillsSubsection(
+                      title: 'Wants to Learn',
+                      skills: user.wantsToLearn,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Edit Skills Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _navigateToEditSkills,
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Edit Skills'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          side: const BorderSide(color: AppColors.primary),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
               // ─────────────── PRIVACY SETTINGS ──────────────────────────────
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -593,5 +651,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
     );
+  }
+
+  Widget _buildSkillsSubsection({
+    required String title,
+    required List<String> skills,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (skills.isEmpty)
+          Text(
+            'No skills selected yet',
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textMuted,
+              fontStyle: FontStyle.italic,
+            ),
+          )
+        else
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                skills
+                    .map(
+                      (skill) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentVeryLight,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          skill,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+          ),
+      ],
+    );
+  }
+
+  void _navigateToEditSkills() async {
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const EditSkillsScreen()));
+
+    if (result is bool && result) {
+      setState(() {});
+    }
   }
 }
