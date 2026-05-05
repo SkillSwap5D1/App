@@ -4,8 +4,11 @@ service cloud.firestore {
     // Helper function for university user verification
     function isUniversityUser() {
       return request.auth != null && 
-             request.auth.token.isUniversityUser == true &&
-             request.auth.token.emailDomain == 'myport.ac.uk';
+             (
+               (request.auth.token.isUniversityUser == true &&
+                request.auth.token.emailDomain == 'myport.ac.uk') ||
+               request.auth.token.email.matches('.*@myport\\.ac\\.uk$')
+             );
     }
 
     function isSelf(userId) {
