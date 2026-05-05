@@ -18,7 +18,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final String _originalBio =
       'Passionate about computer science and teaching others. Love problem-solving and innovation.';
   final String _originalCourse = 'Computer Science';
-  final String _originalEmail = 'sarah.johnson@port.ac.uk';
+  final String _originalEmail = 'sarah.johnson@myport.ac.uk';
 
   // Form controllers
   late TextEditingController _firstNameController;
