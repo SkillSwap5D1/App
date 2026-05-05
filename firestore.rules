@@ -8,11 +8,20 @@ service cloud.firestore {
              request.auth.token.emailDomain == 'myport.ac.uk';
     }
 
+    function isSelf(userId) {
+      return request.auth != null && userId == request.auth.uid;
+    }
+
+    function hasUniversityEmail() {
+      return request.auth != null &&
+             request.auth.token.email.matches('.*@myport\\.ac\\.uk$');
+    }
+
     // Users collection - Profile management
     match /users/{userId} {
-      allow read: if isUniversityUser();
-      allow write: if isUniversityUser() && userId == request.auth.uid;
-      allow delete: if isUniversityUser() && userId == request.auth.uid;
+      allow read: if isUniversityUser() || isSelf(userId);
+      allow create: if isSelf(userId) && hasUniversityEmail();
+      allow update, delete: if isUniversityUser() || isSelf(userId);
     }
 
     // Listings - Skill offerings
