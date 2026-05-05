@@ -71,7 +71,7 @@ void main() {
       final fields = find.byType(TextField);
       await tester.enterText(fields.at(0), 'Jamie');
       await tester.enterText(fields.at(1), 'Smith');
-      await tester.enterText(fields.at(2), 'jamie@port.ac.uk');
+      await tester.enterText(fields.at(2), 'jamie@myport.ac.uk');
       await tester.enterText(fields.at(3), 'password123');
       await tester.pump();
       await tester.enterText(fields.at(4), 'password456');
@@ -88,7 +88,7 @@ void main() {
       final fields = find.byType(TextField);
       await tester.enterText(fields.at(0), 'Jamie');
       await tester.enterText(fields.at(1), 'Smith');
-      await tester.enterText(fields.at(2), 'jamie@port.ac.uk');
+      await tester.enterText(fields.at(2), 'jamie@myport.ac.uk');
       await tester.enterText(fields.at(3), 'password123');
       await tester.enterText(fields.at(4), 'password123');
       await tester.pump();
@@ -108,7 +108,7 @@ void main() {
       final fields = find.byType(TextField);
       await tester.enterText(fields.at(0), 'Jamie');
       await tester.enterText(fields.at(1), 'Smith');
-      await tester.enterText(fields.at(2), 'jamie@port.ac.uk');
+      await tester.enterText(fields.at(2), 'jamie@myport.ac.uk');
       await tester.enterText(fields.at(3), 'password123');
       await tester.enterText(fields.at(4), 'password123');
       await tester.pump();
@@ -125,7 +125,7 @@ void main() {
 
       expect(authProvider.registerCallCount, 1);
       expect(authProvider.lastRegisterArgs, {
-        'email': 'jamie@port.ac.uk',
+        'email': 'jamie@myport.ac.uk',
         'password': 'password123',
         'firstName': 'Jamie',
         'lastName': 'Smith',
