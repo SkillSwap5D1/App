@@ -6,8 +6,6 @@ import '../../providers/listing_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../listings/listing_detail_screen.dart';
 import '../listings/create_listing_screen.dart';
-import '../notifications/notifications_screen.dart';
-import '../../widgets/notification_icon_button.dart';
 import '../../widgets/tag_chip.dart';
 
 class BrowseScreen extends StatefulWidget {
@@ -52,6 +50,25 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
         .toList();
   }
 
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'programming':
+        return Icons.code_rounded;
+      case 'languages':
+        return Icons.language_rounded;
+      case 'design':
+        return Icons.palette_rounded;
+      case 'music':
+        return Icons.music_note_rounded;
+      case 'business':
+        return Icons.business_center_rounded;
+      case 'data science':
+        return Icons.data_usage_rounded;
+      default:
+        return Icons.lightbulb_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<ListingProvider, AuthProvider>(
@@ -65,7 +82,6 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
             title: const Text('Skills'),
             backgroundColor: AppColors.surface,
             elevation: 0,
-            actions: const [NotificationIconButton()],
             bottom: TabBar(
               controller: _tabController,
               indicatorColor: AppColors.primary,
@@ -260,108 +276,181 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.border, width: 0.5),
           boxShadow: AppShadows.card,
+          overflow: Clip.antiAlias,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                listing.title,
-                style: AppTextStyles.label.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'by ${listing.ownerName}',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 11,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.accentUltraLight,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  listing.category,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.accent,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Colored header with category
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.accentUltraLight,
+                border: Border(
+                  bottom: BorderSide(color: AppColors.accentLight, width: 0.5),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                listing.description,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 4,
-                runSpacing: 4,
+              child: Row(
                 children: [
-                  _buildDetailChip(Icons.grade_rounded, listing.level),
-                  _buildDetailChip(Icons.location_on_outlined, listing.modality),
-                ],
-              ),
-              if (listing.tags.take(1).isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 4,
-                  children: listing.tags.take(1).map((tag) {
-                    return TagChip(label: tag);
-                  }).toList(),
-                ),
-              ],
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 32,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ListingDetailScreen(listing: listing),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 0),
+                  Icon(
+                    _getCategoryIcon(listing.category),
+                    size: 14,
+                    color: AppColors.accent,
                   ),
-                  child: Text(
-                    'View',
-                    style: AppTextStyles.caption.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      listing.category,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    listing.title,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    listing.ownerName,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  // Quick info row with icons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.grade_rounded,
+                              size: 12,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              listing.level,
+                              style: AppTextStyles.caption.copyWith(
+                                fontSize: 9,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              listing.modality == 'Online'
+                                  ? Icons.cloud_queue_rounded
+                                  : listing.modality == 'In-person'
+                                      ? Icons.location_on_rounded
+                                      : Icons.hub_rounded,
+                              size: 12,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              listing.modality,
+                              style: AppTextStyles.caption.copyWith(
+                                fontSize: 9,
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // Tags preview
+                  if (listing.tags.isNotEmpty)
+                    Wrap(
+                      spacing: 3,
+                      children: listing.tags.take(2).map((tag) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            tag,
+                            style: AppTextStyles.caption.copyWith(
+                              fontSize: 9,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 28,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ListingDetailScreen(listing: listing),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                      },
+                      child: Text(
+                        'View',
+                        style: AppTextStyles.caption.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -386,157 +475,201 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
             width: 1,
           ),
           boxShadow: AppShadows.card,
+          overflow: Clip.antiAlias,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Colored header with category + status
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.accentUltraLight,
+                border: Border(
+                  bottom: BorderSide(color: AppColors.accentLight, width: 0.5),
+                ),
+              ),
+              child: Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          listing.title,
-                          style: AppTextStyles.label.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: listing.isActive
-                              ? const Color(0x1A10B981)
-                              : const Color(0x1A6B7280),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          listing.isActive ? '●' : '●',
-                          style: AppTextStyles.caption.copyWith(
-                            color: listing.isActive
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFF6B7280),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Icon(
+                    _getCategoryIcon(listing.category),
+                    size: 14,
+                    color: AppColors.accent,
                   ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentUltraLight,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
+                  const SizedBox(width: 6),
+                  Expanded(
                     child: Text(
                       listing.category,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.accent,
                         fontWeight: FontWeight.w600,
-                        fontSize: 11,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: listing.isActive
+                          ? const Color(0x1A10B981)
+                          : const Color(0x1A6B7280),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Text(
+                      listing.isActive ? '●' : '●',
+                      style: AppTextStyles.caption.copyWith(
+                        color: listing.isActive
+                            ? const Color(0xFF10B981)
+                            : const Color(0xFF6B7280),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                listing.description,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: [
-                  _buildDetailChip(Icons.grade_rounded, listing.level),
-                  _buildDetailChip(Icons.location_on_outlined, listing.modality),
-                ],
-              ),
-              if (listing.tags.take(1).isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 4,
-                  children: listing.tags.take(1).map((tag) {
-                    return TagChip(label: tag);
-                  }).toList(),
-                ),
-              ],
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 32,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ListingDetailScreen(listing: listing),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                  ),
-                  child: Text(
-                    'Edit',
-                    style: AppTextStyles.caption.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailChip(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.accentUltraLight,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: AppColors.accent),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w500,
             ),
-          ),
-        ],
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    listing.title,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    listing.nextAvailable,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  // Quick info row with icons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.grade_rounded,
+                              size: 12,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              listing.level,
+                              style: AppTextStyles.caption.copyWith(
+                                fontSize: 9,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              listing.modality == 'Online'
+                                  ? Icons.cloud_queue_rounded
+                                  : listing.modality == 'In-person'
+                                      ? Icons.location_on_rounded
+                                      : Icons.hub_rounded,
+                              size: 12,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              listing.modality,
+                              style: AppTextStyles.caption.copyWith(
+                                fontSize: 9,
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // Tags preview
+                  if (listing.tags.isNotEmpty)
+                    Wrap(
+                      spacing: 3,
+                      children: listing.tags.take(2).map((tag) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            tag,
+                            style: AppTextStyles.caption.copyWith(
+                              fontSize: 9,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 28,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ListingDetailScreen(listing: listing),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                      },
+                      child: Text(
+                        'Edit',
+                        style: AppTextStyles.caption.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
