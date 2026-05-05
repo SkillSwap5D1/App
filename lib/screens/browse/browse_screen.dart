@@ -70,100 +70,54 @@ class _BrowseScreenState extends State<BrowseScreen> {
       builder: (context, listingProvider, authProvider, _) {
         final listings = _getListings(listingProvider, authProvider);
 
-        if (listingProvider.isLoading) {
-          return const Scaffold(
-            backgroundColor: AppColors.background,
-            body: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-              ),
-            ),
-          );
-        }
-
-        if (listingProvider.errorMessage != null) {
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error: ${listingProvider.errorMessage}',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => listingProvider.loadListings(),
-                    child: const Text('Try Again'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHero(),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (listings.isEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 48),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.search_off_rounded,
-                                  size: 48,
-                                  color: AppColors.textSecondary.withOpacity(0.5),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No listings found',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      else
-                        Column(
-                          children: List.generate(
-                            listings.length,
-                            (index) => Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: _buildListingCard(listings[index]),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          appBar: AppBar(
+            title: const Text('Browse Skills'),
+            backgroundColor: AppColors.surface,
+            elevation: 0,
           ),
+          body: listingProvider.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  ),
+                )
+              : listingProvider.errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: ${listingProvider.errorMessage}'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => listingProvider.loadListings(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : listings.isEmpty
+                      ? const Center(
+                          child: Text('No listings available'),
+                        )
+                      : ListView.builder(
+                          itemCount: listings.length,
+                          itemBuilder: (context, index) {
+                            final listing = listings[index];
+                            return Card(
+                              margin: const EdgeInsets.all(8),
+                              child: ListTile(
+                                title: Text(listing.title),
+                                subtitle: Text('${listing.ownerName} • ${listing.level}'),
+                                trailing: const Icon(Icons.arrow_forward),
+                                onTap: () {
+                                  // Navigate to listing detail
+                                },
+                              ),
+                            );
+                          },
+                        ),
         );
       },
     );
