@@ -134,6 +134,9 @@ class AuthService {
 
       await _db.collection('users').doc(credential.user!.uid).set(user.toMap());
 
+      // Give Firestore a moment to settle before any downstream listeners read.
+      await Future.delayed(const Duration(milliseconds: 500));
+
       return user;
 
     } on FirebaseAuthException catch (e) {
