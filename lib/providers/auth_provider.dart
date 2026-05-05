@@ -89,12 +89,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      print('🔵 Starting sign in for $email');
       final user = await _authService.signIn(email, password);
+      print('🔵 Auth service returned: ${user?.email}');
 
       // Set currentUser immediately from the returned value
       if (user != null) {
+        print('✓ Setting currentUser to ${user.uid}');
         currentUser = user;
+        errorMessage = null;
         notifyListeners();
+      } else {
+        print('❌ Auth service returned null');
+        errorMessage = 'Sign in failed. Please try again.';
       }
 
       // Verify custom claims after authentication
@@ -105,9 +112,11 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      print('❌ Sign in error: $e');
       errorMessage = _handleAuthError(e.toString());
     } finally {
       isLoading = false;
+      print('🔵 Sign in complete. currentUser: ${currentUser?.uid}, errorMessage: $errorMessage');
       notifyListeners();
     }
   }
