@@ -35,7 +35,7 @@ void main() {
     test('signIn() with valid @myport.ac.uk email succeeds', () async {
       final mockUser = MockUser(
         uid: 'user_123',
-        email: 'jamie@port.ac.uk',
+        email: 'jamie@myport.ac.uk',
         displayName: 'Jamie Smith',
       );
       final auth = MockFirebaseAuth(mockUser: mockUser);
@@ -46,7 +46,7 @@ void main() {
               uid: 'user_123',
               firstName: 'Jamie',
               lastName: 'Smith',
-              email: 'jamie@port.ac.uk',
+              email: 'jamie@myport.ac.uk',
               course: 'Computer Science',
               bio: '',
               rating: 4.5,
@@ -58,7 +58,7 @@ void main() {
             ).toMap(),
           );
 
-      final result = await service.signIn('jamie@port.ac.uk', 'password123');
+      final result = await service.signIn('jamie@myport.ac.uk', 'password123');
 
       expect(result, isNotNull);
       expect(result!.uid, 'user_123');
@@ -84,13 +84,13 @@ void main() {
 
     test('signIn() with wrong password throws FirebaseAuthException', () async {
       final auth = MockFirebaseAuth(
-        mockUser: MockUser(uid: 'user_123', email: 'jamie@port.ac.uk'),
+        mockUser: MockUser(uid: 'user_123', email: 'jamie@myport.ac.uk'),
       );
       whenCalling(
         Invocation.method(
           #signInWithEmailAndPassword,
           null,
-          {#email: 'jamie@port.ac.uk', #password: 'wrongpass'},
+          {#email: 'jamie@myport.ac.uk', #password: 'wrongpass'},
         ),
       ).on(auth).thenThrow(
         FirebaseAuthException(code: 'wrong-password', message: 'Wrong password'),
@@ -98,7 +98,7 @@ void main() {
       final service = _buildService(auth);
 
       await expectLater(
-        service.signIn('jamie@port.ac.uk', 'wrongpass'),
+        service.signIn('jamie@myport.ac.uk', 'wrongpass'),
         throwsA(
           predicate((error) =>
               error is Exception && error.toString().contains('wrong-password')),
@@ -112,7 +112,7 @@ void main() {
         Invocation.method(
           #signInWithEmailAndPassword,
           null,
-          {#email: 'jamie@port.ac.uk', #password: 'password123'},
+          {#email: 'jamie@myport.ac.uk', #password: 'password123'},
         ),
       ).on(auth).thenThrow(
         FirebaseAuthException(code: 'user-not-found', message: 'No user found'),
@@ -120,7 +120,7 @@ void main() {
       final service = _buildService(auth);
 
       await expectLater(
-        service.signIn('jamie@port.ac.uk', 'password123'),
+        service.signIn('jamie@myport.ac.uk', 'password123'),
         throwsA(
           predicate((error) =>
               error is Exception && error.toString().contains('user-not-found')),
@@ -133,7 +133,7 @@ void main() {
       final service = _buildService(auth);
 
       final result = await service.register(
-        email: 'jamie@port.ac.uk',
+        email: 'jamie@myport.ac.uk',
         password: 'password123',
         firstName: 'Jamie',
         lastName: 'Smith',
@@ -141,14 +141,14 @@ void main() {
       );
 
       expect(result, isNotNull);
-      expect(result!.email, 'jamie@port.ac.uk');
+      expect(result!.email, 'jamie@myport.ac.uk');
       expect(auth.currentUser, isNotNull);
 
       final doc = await firestore.collection('users').doc(auth.currentUser!.uid).get();
       expect(doc.exists, isTrue);
       expect(doc.data()?['firstName'], 'Jamie');
       expect(doc.data()?['lastName'], 'Smith');
-      expect(doc.data()?['email'], 'jamie@port.ac.uk');
+      expect(doc.data()?['email'], 'jamie@myport.ac.uk');
       expect(doc.data()?['course'], 'Computer Science');
       expect(doc.data()?['showFullName'], isTrue);
       expect(doc.data()?['showCourse'], isTrue);
@@ -183,7 +183,7 @@ void main() {
         Invocation.method(
           #createUserWithEmailAndPassword,
           null,
-          {#email: 'jamie@port.ac.uk', #password: 'password123'},
+          {#email: 'jamie@myport.ac.uk', #password: 'password123'},
         ),
       ).on(auth).thenThrow(
         FirebaseAuthException(
@@ -195,7 +195,7 @@ void main() {
 
       await expectLater(
         service.register(
-          email: 'jamie@port.ac.uk',
+          email: 'jamie@myport.ac.uk',
           password: 'password123',
           firstName: 'Jamie',
           lastName: 'Smith',
@@ -216,7 +216,7 @@ void main() {
 
       await expectLater(
         service.register(
-          email: 'jamie@port.ac.uk',
+          email: 'jamie@myport.ac.uk',
           password: '12345',
           firstName: 'Jamie',
           lastName: 'Smith',
@@ -233,7 +233,7 @@ void main() {
       final service = _buildService(auth);
 
       final result = await service.register(
-        email: 'jamie@port.ac.uk',
+        email: 'jamie@myport.ac.uk',
         password: '123456',
         firstName: 'Jamie',
         lastName: 'Smith',
@@ -241,7 +241,7 @@ void main() {
       );
 
       expect(result, isNotNull);
-      expect(result!.email, 'jamie@port.ac.uk');
+      expect(result!.email, 'jamie@myport.ac.uk');
       final doc = await firestore.collection('users').doc(auth.currentUser!.uid).get();
       expect(doc.exists, isTrue);
     });
@@ -249,7 +249,7 @@ void main() {
     test('signOut() sets currentUser to null', () async {
       final auth = MockFirebaseAuth(
         signedIn: true,
-        mockUser: MockUser(uid: 'user_123', email: 'jamie@port.ac.uk'),
+        mockUser: MockUser(uid: 'user_123', email: 'jamie@myport.ac.uk'),
       );
       final service = _buildService(auth);
 
