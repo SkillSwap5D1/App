@@ -59,6 +59,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: AppColors.surface,
+      ),
+      body: Center(
+        child: Consumer<AuthProvider>(
+          builder: (context, auth, _) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Name: ${auth.currentUser?.firstName} ${auth.currentUser?.lastName}'),
+              Text('Email: ${auth.currentUser?.email}'),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => _handleSignOut(context),
+                child: const Text('Sign Out'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleSignOut(BuildContext context) async {
+    await context.read<AuthProvider>().signOut();
+    if (context.mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  Widget buildOld(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
