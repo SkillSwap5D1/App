@@ -48,7 +48,7 @@ void main() {
               uid: 'user_1',
               firstName: 'Jamie',
               lastName: 'Smith',
-              email: 'jamie@port.ac.uk',
+              email: 'jamie@myport.ac.uk',
               course: 'Computer Science',
               showFullName: true,
               showCourse: true,
@@ -62,7 +62,7 @@ void main() {
       expect(result!.uid, 'user_1');
       expect(result.firstName, 'Jamie');
       expect(result.lastName, 'Smith');
-      expect(result.email, 'jamie@port.ac.uk');
+      expect(result.email, 'jamie@myport.ac.uk');
       expect(result.course, 'Computer Science');
       expect(result.showPhoto, isFalse);
     });
@@ -79,7 +79,7 @@ void main() {
               uid: 'user_1',
               firstName: 'Jamie',
               lastName: 'Smith',
-              email: 'jamie@port.ac.uk',
+              email: 'jamie@myport.ac.uk',
               course: 'Computer Science',
               showFullName: true,
               showCourse: true,
@@ -103,7 +103,7 @@ void main() {
               uid: 'user_1',
               firstName: 'Jamie',
               lastName: 'Smith',
-              email: 'jamie@port.ac.uk',
+              email: 'jamie@myport.ac.uk',
               course: 'Computer Science',
               showFullName: true,
               showCourse: true,
@@ -131,7 +131,7 @@ void main() {
               uid: 'user_1',
               firstName: 'Jamie',
               lastName: 'Smith',
-              email: 'jamie@port.ac.uk',
+              email: 'jamie@myport.ac.uk',
               course: 'Computer Science',
               showFullName: true,
               showCourse: true,
