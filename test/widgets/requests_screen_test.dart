@@ -6,7 +6,6 @@ import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/providers/request_provider.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/screens/requests/requests_screen.dart';
-import 'package:skillswap_app/theme/app_theme.dart';
 
 // ── Mock Providers ───────────────────────────────────────────────────────
 
