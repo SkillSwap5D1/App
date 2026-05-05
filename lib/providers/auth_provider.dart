@@ -163,14 +163,15 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.register(
+      final user = await _authService.register(
         email: email,
         password: password,
         firstName: firstName,
         lastName: lastName,
         course: course,
       );
-      // User fetch happens automatically via authStateChanges listener
+      currentUser = user;
+      errorMessage = null;
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
     } finally {
