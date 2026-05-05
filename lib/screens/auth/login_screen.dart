@@ -32,8 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final normalized = value.trim().toLowerCase();
       if (normalized.isEmpty) {
         _emailError = null;
-      } else if (!normalized.endsWith('@port.ac.uk')) {
-        _emailError = 'Please use your @port.ac.uk email (University of Portsmouth)';
+      } else if (!normalized.endsWith('@myport.ac.uk')) {
+        _emailError = 'Please use your @myport.ac.uk email (University of Portsmouth)';
       } else {
         _emailError = null;
       }
@@ -60,9 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     // Validate email format
-    if (!email.endsWith('@port.ac.uk')) {
+    if (!email.endsWith('@myport.ac.uk')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please use your @port.ac.uk email')),
+        const SnackBar(content: Text('Please use your @myport.ac.uk email')),
       );
       return;
     }
@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'Use your University of Portsmouth email ending in @port.ac.uk or continue with Google.',
+                      'Use your University of Portsmouth email ending in @myport.ac.uk or continue with Google.',
                       style: AppTextStyles.caption,
                       textAlign: TextAlign.center,
                     ),
@@ -261,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       onChanged: _validateEmail,
       decoration: InputDecoration(
-        hintText: 'you@port.ac.uk',
+        hintText: 'you@myport.ac.uk',
         prefixIcon: const Icon(Icons.mail_outline),
         prefixIconColor: AppColors.accentLight,
         fillColor: const Color(0xCCFFFFFF),
