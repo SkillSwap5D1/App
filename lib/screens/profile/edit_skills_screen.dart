@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/user_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/chip_selector_widget.dart';
 import '../../widgets/snackbar_helper.dart';
@@ -58,25 +57,14 @@ class _EditSkillsScreenState extends State<EditSkillsScreen> {
 
     try {
       final authProvider = context.read<AuthProvider>();
-      final userService = UserService();
+      await authProvider.updateSkills(
+        canTeach: _canTeach,
+        wantsToLearn: _wantsToLearn,
+      );
 
-      if (authProvider.currentUser != null) {
-        await userService.updateUser(authProvider.currentUser!.uid, {
-          'canTeach': _canTeach,
-          'wantsToLearn': _wantsToLearn,
-        });
-
-        // Update the auth provider with the new skills
-        final updatedUser = authProvider.currentUser!.copyWith(
-          canTeach: _canTeach,
-          wantsToLearn: _wantsToLearn,
-        );
-        authProvider.currentUser = updatedUser;
-
-        if (mounted) {
-          SnackBarHelper.success(context, 'Skills updated successfully!');
-          Navigator.pop(context, true);
-        }
+      if (mounted) {
+        SnackBarHelper.success(context, 'Skills updated successfully!');
+        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {

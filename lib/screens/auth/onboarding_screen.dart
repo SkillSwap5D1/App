@@ -62,21 +62,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       final userService = UserService();
 
       if (authProvider.currentUser != null) {
-        await userService.updateUser(
-          authProvider.currentUser!.uid,
-          {
-            'canTeach': _canTeach,
-            'wantsToLearn': _wantsToLearn,
-            'onboardingComplete': true,
-          },
+        await userService.updateUser(authProvider.currentUser!.uid, {
+          'canTeach': _canTeach,
+          'wantsToLearn': _wantsToLearn,
+          'onboardingComplete': true,
+        });
+
+        // Update the auth provider with the new skills
+        await authProvider.updateSkills(
+          canTeach: _canTeach,
+          wantsToLearn: _wantsToLearn,
         );
 
         if (mounted) {
           SnackBarHelper.success(context, 'Welcome to SkillSwap!');
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            (route) => false,
-          );
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/home', (route) => false);
         }
       }
     } catch (e) {
@@ -96,20 +98,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       final userService = UserService();
 
       if (authProvider.currentUser != null) {
-        await userService.updateUser(
-          authProvider.currentUser!.uid,
-          {
-            'canTeach': [],
-            'wantsToLearn': [],
-            'onboardingComplete': true,
-          },
-        );
+        await userService.updateUser(authProvider.currentUser!.uid, {
+          'canTeach': [],
+          'wantsToLearn': [],
+          'onboardingComplete': true,
+        });
+
+        // Update the auth provider with empty skills
+        await authProvider.updateSkills(canTeach: [], wantsToLearn: []);
 
         if (mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            (route) => false,
-          );
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/home', (route) => false);
         }
       }
     } catch (e) {
@@ -186,29 +187,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              if (_currentPage == 0) {
-                                if (_canTeach.isEmpty) {
-                                  SnackBarHelper.error(
-                                    context,
-                                    'Please select at least one skill',
-                                  );
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () {
+                                if (_currentPage == 0) {
+                                  if (_canTeach.isEmpty) {
+                                    SnackBarHelper.error(
+                                      context,
+                                      'Please select at least one skill',
+                                    );
+                                  } else {
+                                    _pageController.nextPage(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  }
                                 } else {
-                                  _pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
+                                  _completeOnboarding();
                                 }
-                              } else {
-                                _completeOnboarding();
-                              }
-                            },
+                              },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
                         elevation: 0,
                       ),
                       child: Text(
@@ -221,17 +227,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                     if (_currentPage > 0)
                       TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                _pageController.previousPage(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
+                        onPressed:
+                            _isLoading
+                                ? null
+                                : () {
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
                         child: Text(
                           'Back',
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                   ],

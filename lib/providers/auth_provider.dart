@@ -312,6 +312,33 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ── Update Skills ─────────────────────────────────────────────────────────
+  Future<void> updateSkills({
+    required List<String> canTeach,
+    required List<String> wantsToLearn,
+  }) async {
+    if (currentUser == null) return;
+
+    try {
+      final updates = <String, dynamic>{
+        'canTeach': canTeach,
+        'wantsToLearn': wantsToLearn,
+      };
+
+      await _userService.updateUser(currentUser!.uid, updates);
+
+      // Update local state
+      currentUser = currentUser!.copyWith(
+        canTeach: canTeach,
+        wantsToLearn: wantsToLearn,
+      );
+      notifyListeners();
+    } catch (e) {
+      print('Error updating skills: $e');
+      throw e;
+    }
+  }
+
   @override
   void dispose() {
     _authStateSubscription?.cancel();
