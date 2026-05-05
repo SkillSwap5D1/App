@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart';
+import '../../widgets/notification_icon_button.dart';
 import './edit_profile_screen.dart';
 import './edit_skills_screen.dart';
 
@@ -105,6 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('Profile'),
         backgroundColor: AppColors.surface,
         elevation: 0,
+        actions: const [NotificationIconButton()],
       ),
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
