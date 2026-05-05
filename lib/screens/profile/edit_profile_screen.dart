@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../models/user_model.dart';
+import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/user_service.dart';
-import '../../theme/app_theme.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -12,48 +13,130 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // Original values (for comparison to detect changes)
-  final String _originalFirstName = 'Sarah';
-  final String _originalLastName = 'Johnson';
-  final String _originalBio =
-      'Passionate about computer science and teaching others. Love problem-solving and innovation.';
-  final String _originalCourse = 'Computer Science';
-  final String _originalEmail = 'sarah.johnson@myport.ac.uk';
-
-  // Form controllers
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _bioController;
-  late TextEditingController _courseController;
 
-  // Track if changes were made
+  String _selectedCourse = '';
   bool _hasChanges = false;
+  bool _isSaving = false;
+
+  final List<String> _courses = [
+    'Computer Science',
+    'Software Engineering',
+    'Information Technology',
+    'Business',
+    'Engineering',
+    'Design',
+    'Mathematics',
+    'Physics',
+    'Chemistry',
+    'Biology',
+    'Other',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: _originalFirstName);
-    _lastNameController = TextEditingController(text: _originalLastName);
-    _bioController = TextEditingController(text: _originalBio);
-    _courseController = TextEditingController(text: _originalCourse);
+    final user = Provider.of<AuthProvider>(context, listen: false).currentUser!;
+    _firstNameController = TextEditingController(text: user.firstName);
+    _lastNameController = TextEditingController(text: user.lastName);
+    _bioController = TextEditingController(text: user.bio);
+    _selectedCourse = user.course;
 
-    // Listen to changes on all controllers
     _firstNameController.addListener(_checkForChanges);
     _lastNameController.addListener(_checkForChanges);
     _bioController.addListener(_checkForChanges);
-    _courseController.addListener(_checkForChanges);
   }
 
   void _checkForChanges() {
-    final hasChanged =
-        _firstNameController.text != _originalFirstName ||
-        _lastNameController.text != _originalLastName ||
-        _bioController.text != _originalBio ||
-        _courseController.text != _originalCourse;
+    final user = Provider.of<AuthProvider>(context, listen: false).currentUser!;
+    bool changed = _firstNameController.text != user.firstName ||
+        _lastNameController.text != user.lastName ||
+        _bioController.text != user.bio ||
+        _selectedCourse != user.course;
 
-    if (hasChanged != _hasChanges) {
-      setState(() => _hasChanges = hasChanged);
+    setState(() => _hasChanges = changed);
+  }
+
+  Future<void> _handleSave() async {
+    final authProvider = context.read<AuthProvider>();
+    final userService = UserService();
+
+    setState(() => _isSaving = true);
+
+    try {
+      final updates = <String, dynamic>{
+        'firstName': _firstNameController.text,
+        'lastName': _lastNameController.text,
+        'bio': _bioController.text,
+        'course': _selectedCourse,
+      };
+
+      await userService.updateUser(authProvider.currentUser!.uid, updates);
+
+      // Update auth provider
+      final updatedUser = authProvider.currentUser!.copyWith(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        bio: _bioController.text,
+        course: _selectedCourse,
+      );
+
+      // Refresh auth provider with updated user
+      await authProvider.refreshUser();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile updated successfully!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
+  }
+
+  Future<void> _handleCancel() async {
+    if (!_hasChanges) {
+      Navigator.pop(context);
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard Changes?'),
+        content: const Text('You have unsaved changes. Are you sure you want to discard them?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Keep Editing'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -61,30 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _bioController.dispose();
-    _courseController.dispose();
     super.dispose();
-  }
-
-  void _cancelChanges() {
-    Navigator.pop(context);
-  }
-
-  Future<void> _saveChanges() async {
-    // Prepare updated data
-    final updatedData = {
-      'firstName': _firstNameController.text.trim(),
-      'lastName': _lastNameController.text.trim(),
-      'bio': _bioController.text.trim(),
-      'course': _courseController.text.trim(),
-    };
-
-    final userId = context.read<AuthProvider>().currentUser?.uid;
-    if (userId != null) {
-      await UserService().updateUser(userId, updatedData);
-    }
-
-    // Return to Profile Screen with updated data
-    Navigator.pop(context, updatedData);
   }
 
   @override
