@@ -158,9 +158,9 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 0.85,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.72,
                             ),
                             itemCount: otherListings.length,
                             itemBuilder: (context, index) {
@@ -225,9 +225,9 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                       ),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 0.85,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.72,
                       ),
                       itemCount: myListings.length,
                       itemBuilder: (context, index) {
