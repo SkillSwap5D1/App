@@ -57,14 +57,14 @@ After deployment completes, check:
 ```
 Registration:
 ┌─────────────────────────────────────────────────────┐
-│ 1. User enters test@port.ac.uk email                │
+│ 1. User enters test@mymyport.ac.uk email                │
 │    ↓                                                 │
-│ 2. Frontend validates: ends with @port.ac.uk? ✓     │
+│ 2. Frontend validates: ends with @mymyport.ac.uk? ✓     │
 │    ↓                                                 │
 │ 3. User signs up with Firebase Auth                 │
 │    ↓                                                 │
 │ 4. Cloud Function triggered: setUniversityUserClaims│
-│    - Checks email domain: @port.ac.uk? ✓            │
+│    - Checks email domain: @mymyport.ac.uk? ✓            │
 │    - Sets custom JWT claims                         │
 │    - Creates Firestore user document                │
 │    ↓                                                 │
@@ -77,11 +77,11 @@ Non-University User (Blocked):
 │ 1. User enters personal@gmail.com                    │
 │    ↓                                                 │
 │ 2. Frontend validation fails ✗                      │
-│    "Please use your @port.ac.uk email"              │
+│    "Please use your @mymyport.ac.uk email"              │
 │ (if they bypass frontend)                           │
 │    ↓                                                 │
 │ 3. Cloud Function auto-deletes user ✗               │
-│    "Only @port.ac.uk emails allowed"                │
+│    "Only @mymyport.ac.uk emails allowed"                │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -91,7 +91,7 @@ When a university user authenticates, their JWT token includes:
 ```json
 {
   "isUniversityUser": true,
-  "emailDomain": "port.ac.uk",
+  "emailDomain": "myport.ac.uk",
   "claimsSetAt": "2026-04-28T12:00:00Z"
 }
 ```
@@ -109,7 +109,7 @@ These claims are:
 
 1. **In the SkillSwap app:**
    - Open RegisterScreen
-   - Enter email: `test@port.ac.uk`
+   - Enter email: `test@mymyport.ac.uk`
    - Enter password and confirm
    - Tap "Create Account"
    - Should succeed ✓
@@ -142,14 +142,14 @@ These claims are:
 ### `setUniversityUserClaims` (onCreate)
 **Triggered:** Every time a new user signs up
 **Actions:**
-- Validates email ends with @port.ac.uk
+- Validates email ends with @mymyport.ac.uk
 - If invalid: AUTO-DELETES user from Firebase Auth
 - If valid: Sets custom claims in JWT token
 - Creates Firestore user document with privacy settings
 
 **Example:**
 ```
-User: john.smith@port.ac.uk → ✓ Claims set, user document created
+User: john.smith@mymyport.ac.uk → ✓ Claims set, user document created
 User: hacker@evil.com → ✗ Deleted within milliseconds
 ```
 
@@ -162,7 +162,7 @@ User: hacker@evil.com → ✗ Deleted within milliseconds
 
 ### `verifyUniversityEmail` (Callable)
 **Called from:** RegisterScreen before signup
-**Returns:** `{ success: true, domain: "port.ac.uk" }`
+**Returns:** `{ success: true, domain: "myport.ac.uk" }`
 
 ### `sendVerificationEmail` (Callable)
 **Called from:** RegisterScreen after signup
@@ -172,7 +172,7 @@ User: hacker@evil.com → ✗ Deleted within milliseconds
 **Triggered:** When user updates their email
 **Actions:**
 - Revokes claims if changed to non-university domain
-- Updates claims if changed to another @port.ac.uk email
+- Updates claims if changed to another @mymyport.ac.uk email
 
 ---
 
@@ -183,7 +183,7 @@ Every collection (users, listings, requests, messages, etc.) has rules like:
 ```firestore
 match /listings/{id} {
   allow read: if request.auth.token.isUniversityUser == true &&
-              request.auth.token.emailDomain == 'port.ac.uk';
+              request.auth.token.emailDomain == 'myport.ac.uk';
   allow write: if ... (owner only)
 }
 ```
@@ -191,20 +191,20 @@ match /listings/{id} {
 **Result:**
 - ❌ Non-university users cannot read ANY data
 - ❌ Missing custom claims = database access denied
-- ✓ Only verified @port.ac.uk users can access
+- ✓ Only verified @mymyport.ac.uk users can access
 
 ---
 
 ## 🛠️ Troubleshooting
 
 ### "Email is required" error in registration
-**Solution:** Make sure you're using `@port.ac.uk`, not any other domain
+**Solution:** Make sure you're using `@mymyport.ac.uk`, not any other domain
 
 ### User appears to register but then disappears
-**Expected behavior!** If email isn't @port.ac.uk, Cloud Function deletes them within 1-2 seconds.
+**Expected behavior!** If email isn't @mymyport.ac.uk, Cloud Function deletes them within 1-2 seconds.
 
 ### "Custom claims verification failed" on sign-in
-**Fix:** User likely registered with non-university email (Firebase deleted them). Try again with @port.ac.uk.
+**Fix:** User likely registered with non-university email (Firebase deleted them). Try again with @mymyport.ac.uk.
 
 ### Firestore Rules show compile error
 **Check:** Make sure `firestore.rules` file is saved. Deploy again with:
@@ -222,7 +222,7 @@ firebase deploy --only firestore:rules --project=cw-skillswap
 
 ## ✅ Security Checklist
 
-- [x] Frontend validates @port.ac.uk emails
+- [x] Frontend validates @mymyport.ac.uk emails
 - [x] Cloud Function auto-deletes non-university users
 - [x] Custom claims required for ALL Firestore access
 - [x] Blocking system prevents access between blocked users
@@ -234,7 +234,7 @@ firebase deploy --only firestore:rules --project=cw-skillswap
 
 ## 📱 Testing Checklist
 
-- [ ] Register with `test@port.ac.uk` → Should succeed
+- [ ] Register with `test@mymyport.ac.uk` → Should succeed
 - [ ] Sign in with the same credentials → Should work
 - [ ] Create a listing → Should appear in Firestore
 - [ ] Open app incognito/private mode (unsigned in) → Should show login
