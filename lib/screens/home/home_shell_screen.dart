@@ -20,6 +20,8 @@ class HomeShellScreen extends StatefulWidget {
 
 class _HomeShellScreenState extends State<HomeShellScreen> {
   int _selectedIndex = 0;
+  String? _initializedForUid;
+  bool _initializingData = false;
 
   final List<Widget> _screens = [
     const BrowseScreen(),
@@ -31,21 +33,61 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize all data streams on first load
+    _scheduleDataInitialization();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scheduleDataInitialization();
+  }
+
+  void _scheduleDataInitialization() {
+    if (_initializingData) {
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = context.read<AuthProvider>();
-      if (authProvider.currentUser != null) {
-        final uid = authProvider.currentUser!.uid;
-        context.read<ListingProvider>().loadListings();
-        context.read<RequestProvider>().loadRequests(uid);
-        context.read<ChatProvider>().loadConversations(uid);
-        context.read<NotificationProvider>().loadNotifications(uid);
+      if (!mounted) {
+        return;
+      }
+
+      final uid = context.read<AuthProvider>().currentUser?.uid;
+      if (uid == null || uid == _initializedForUid) {
+        return;
+      }
+
+      _initializingData = true;
+      _initializedForUid = uid;
+
+      context.read<ListingProvider>().loadListings();
+      context.read<RequestProvider>().loadRequests(uid);
+      context.read<ChatProvider>().loadConversations(uid);
+      context.read<NotificationProvider>().loadNotifications(uid);
+
+      if (mounted) {
+        setState(() {
+          _initializingData = false;
+        });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUid = context.watch<AuthProvider>().currentUser?.uid;
+
+    if (currentUid == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: _screens[_selectedIndex],
