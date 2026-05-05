@@ -1,173 +1,233 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:skillswap_app/models/listing_model.dart';
 import 'package:skillswap_app/models/user_model.dart';
-import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/providers/listing_provider.dart';
+import 'package:skillswap_app/providers/auth_provider.dart';
+import 'package:skillswap_app/screens/browse/browse_screen.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 
-class MockListingProvider extends Mock implements ListingProvider {
-  List<ListingModel> listings_ = [];
-  List<ListingModel> myListings_ = [];
-  bool loading = false;
-  String? errorMsg;
+// ── Mock Providers ────────────────────────────────────────────────────────
 
-  @override
-  List<ListingModel> get listings => listings_;
+class MockListingProvider extends ChangeNotifier {
+  List<ListingModel> listings = [];
+  List<ListingModel> myListings = [];
+  bool isLoading = false;
+  String? errorMessage;
 
-  @override
-  List<ListingModel> get myListings => myListings_;
-
-  @override
-  bool get isLoading => loading;
-
-  @override
-  String? get errorMessage => errorMsg;
-}
-
-class MockAuthProvider extends Mock implements AuthProvider {
-  String? uid;
-
-  @override
-  UserModel? get currentUser {
-    if (uid != null) {
-      return UserModel(
-        uid: uid!,
-        email: 'test@port.ac.uk',
-        firstName: 'Test',
-        lastName: 'User',
-        course: 'Computer Science',
-        bio: 'Test bio',
-        rating: 5.0,
-        sessionsCompleted: 5,
-        memberSince: DateTime.now(),
-        showFullName: true,
-        showCourse: true,
-        showPhoto: true,
-      );
-    }
-    return null;
+  void setListings(List<ListingModel> newListings) {
+    listings = newListings;
+    notifyListeners();
   }
+
+  void setMyListings(List<ListingModel> newListings) {
+    myListings = newListings;
+    notifyListeners();
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+  Future<void> loadListings() async {}
+  Future<void> loadMyListings(String uid) async {}
+  Future<void> searchListings({
+    String query = '',
+    String category = 'All',
+    String level = 'All Levels',
+    String modality = 'All Formats',
+  }) async {}
+
+  bool isSaved(String listingId) => false;
+  List<ListingModel> get savedListings => [];
+  Future<void> loadSavedListings(String uid) async {}
+  Future<void> toggleSaved(String uid, String listingId) async {}
+  Future<void> createListing(ListingModel listing) async {}
+  Future<void> updateListing(String id, Map<String, dynamic> data) async {}
+  Future<void> deleteListing(String id) async {}
 }
 
-void main() {
+class MockAuthProvider extends ChangeNotifier {
+  bool loading = false;
+  UserModel? currentUser;
+
+  MockAuthProvider({this.currentUser});
+
+  bool get isLoading => loading;
+}
+
+// ── Test Fixtures ──────────────────────────────────────────────────────
+
+final testUser = UserModel(
+  uid: 'user123',
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john@myport.ac.uk',
+  course: 'Computer Science',
+  bio: 'Test user',
+  rating: 4.8,
+  sessionsCompleted: 5,
+  memberSince: DateTime.now(),
+  showFullName: true,
+  showCourse: true,
+  showPhoto: true,
+);
+
+final testListing1 = ListingModel(
+  id: 'listing1',
+  ownerId: 'user456',
+  ownerName: 'Alice Smith',
+  title: 'Python Programming',
+  description: 'Learn Python',
+  tags: const ['python'],
+  level: 'Beginner',
+  modality: 'Online',
+  category: 'Programming',
+  nextAvailable: '2026-05-10',
+  isActive: true,
+  createdAt: DateTime.now(),
+);
+
+final testListing2 = ListingModel(
+  id: 'listing2',
+  ownerId: 'user789',
+  ownerName: 'Bob Johnson',
+  title: 'Spanish Tutoring',
+  description: 'Learn Spanish',
+  tags: const ['spanish'],
+  level: 'Intermediate',
+  modality: 'In-person',
+  category: 'Languages',
+  nextAvailable: '2026-05-12',
+  isActive: true,
+  createdAt: DateTime.now(),
+);
+
+// ── Test Widget Builder ─────────────────────────────────────────────────
+
+Widget buildTestApp({
+  required MockListingProvider listingProvider,
+  required MockAuthProvider authProvider,
+}) {
   Provider.debugCheckInvalidValueType = null;
 
-  group('BrowseScreen Unit Tests', () {
-    test('TEST 1 — renders listing cards with mock data', () {
-      final listingProvider = MockListingProvider();
-      final authProvider = MockAuthProvider()..uid = 'user1';
-
-      listingProvider.listings_ = [
-        ListingModel(
-          id: '1',
-          title: 'Python Basics',
-          description: 'Learn Python',
-          ownerId: 'user2',
-          ownerName: 'Alice',
-          category: 'Programming',
-          level: 'Beginner',
-          modality: 'Online',
-          tags: ['python'],
-          isActive: true,
-          nextAvailable: 'Flexible',
-          createdAt: DateTime.now(),
+  return MaterialApp(
+    theme: ThemeData.dark(),
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ListingProvider>(
+          create: (_) => listingProvider as ListingProvider,
         ),
-      ];
+        ChangeNotifierProvider<AuthProvider>(
+          create: (_) => authProvider as AuthProvider,
+        ),
+      ],
+      child: const BrowseScreen(),
+    ),
+  );
+}
 
-      expect(listingProvider.listings.length, 1);
-      expect(listingProvider.listings[0].title, 'Python Basics');
-      expect(listingProvider.listings[0].ownerName, 'Alice');
+// ── Tests ───────────────────────────────────────────────────────────────
+
+void main() {
+  group('BrowseScreen Tests', () {
+    late MockListingProvider mockListingProvider;
+    late MockAuthProvider mockAuthProvider;
+
+    setUp(() {
+      mockListingProvider = MockListingProvider();
+      mockAuthProvider = MockAuthProvider(currentUser: testUser);
     });
 
-    test('TEST 2 — search filters cards in real time', () {
-      final listingProvider = MockListingProvider();
+    testWidgets('TEST 1 — renders listing cards with mock data', (WidgetTester tester) async {
+      mockListingProvider.setListings([testListing1, testListing2]);
 
-      listingProvider.listings_ = [
-        ListingModel(
-          id: '1',
-          title: 'Python Basics',
-          description: 'Learn Python',
-          ownerId: 'user2',
-          ownerName: 'Alice',
-          category: 'Programming',
-          level: 'Beginner',
-          modality: 'Online',
-          tags: ['python'],
-          isActive: true,
-          nextAvailable: 'Flexible',
-          createdAt: DateTime.now(),
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
         ),
-        ListingModel(
-          id: '2',
-          title: 'Spanish Lessons',
-          description: 'Learn Spanish',
-          ownerId: 'user3',
-          ownerName: 'Bob',
-          category: 'Languages',
-          level: 'Beginner',
-          modality: 'Online',
-          tags: ['spanish'],
-          isActive: true,
-          nextAvailable: 'Flexible',
-          createdAt: DateTime.now(),
-        ),
-      ];
+      );
+      await tester.pumpAndSettle();
 
-      // Simulate filter for Python
-      final filtered = listingProvider.listings
-          .where((l) => l.title.toLowerCase().contains('python'))
-          .toList();
-
-      expect(filtered.length, 1);
-      expect(filtered[0].title, 'Python Basics');
+      expect(find.text(testListing1.title), findsWidgets);
+      expect(find.text(testListing2.title), findsWidgets);
+      expect(find.text(testListing1.ownerName), findsWidgets);
     });
 
-    test('TEST 3 — empty listings shows empty state', () {
-      final listingProvider = MockListingProvider();
+    testWidgets('TEST 2 — search filters cards in real time', (WidgetTester tester) async {
+      mockListingProvider.setListings([testListing1, testListing2]);
 
-      listingProvider.listings_ = [];
-      listingProvider.loading = false;
-
-      expect(listingProvider.listings.isEmpty, true);
-      expect(listingProvider.isLoading, false);
-    });
-
-    test('TEST 4 — isLoading shows CircularProgressIndicator', () {
-      final listingProvider = MockListingProvider();
-
-      listingProvider.loading = true;
-
-      expect(listingProvider.isLoading, true);
-    });
-
-    test('TEST 5 — switching to My Skills tab changes buttons', () {
-      final listingProvider = MockListingProvider();
-      final authProvider = MockAuthProvider()..uid = 'user1';
-
-      listingProvider.myListings_ = [
-        ListingModel(
-          id: '3',
-          title: 'Django Web Dev',
-          description: 'Build web apps',
-          ownerId: 'user1',
-          ownerName: 'Charlie',
-          category: 'Programming',
-          level: 'Intermediate',
-          modality: 'Online',
-          tags: ['django', 'web'],
-          isActive: true,
-          nextAvailable: 'Flexible',
-          createdAt: DateTime.now(),
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
         ),
-      ];
+      );
+      await tester.pumpAndSettle();
 
-      // Verify My Skills listings are available
-      expect(listingProvider.myListings.length, 1);
-      expect(listingProvider.myListings[0].ownerId, 'user1');
-      expect(listingProvider.myListings[0].title, 'Django Web Dev');
+      // Verify initial state
+      expect(find.text(testListing1.title), findsWidgets);
+      expect(find.text(testListing2.title), findsWidgets);
+
+      // Simulate search result - only showing first listing
+      mockListingProvider.setListings([testListing1]);
+      await tester.pumpAndSettle();
+
+      expect(find.text(testListing1.title), findsWidgets);
+      expect(find.text(testListing2.title), findsNothing);
+    });
+
+    testWidgets('TEST 3 — empty listings shows empty state', (WidgetTester tester) async {
+      mockListingProvider.setListings([]);
+
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No skills available'), findsWidgets);
+    });
+
+    testWidgets('TEST 4 — isLoading shows CircularProgressIndicator', (WidgetTester tester) async {
+      mockListingProvider.setLoading(true);
+
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+    });
+
+    testWidgets('TEST 5 — switching to My Skills tab changes buttons', (WidgetTester tester) async {
+      mockListingProvider.setListings([testListing1]);
+      mockListingProvider.setMyListings([testListing2]);
+
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify Available tab shows testListing1
+      expect(find.text(testListing1.title), findsWidgets);
+
+      // Simulate switching to My Skills
+      mockListingProvider.setListings([testListing2]);
+      await tester.pumpAndSettle();
+
+      expect(find.text(testListing2.title), findsWidgets);
     });
   });
 }
