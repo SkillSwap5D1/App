@@ -71,7 +71,7 @@ class AuthService {
       final normalizedEmail = _normalizeEmail(email);
 
       // Validate UoP email
-      if (!normalizedEmail.endsWith('@port.ac.uk')) {
+      if (!normalizedEmail.endsWith('@myport.ac.uk')) {
         throw Exception('Please use your University of Portsmouth email');
       }
 
@@ -102,7 +102,7 @@ class AuthService {
       final normalizedEmail = _normalizeEmail(email);
 
       // Validate UoP email
-      if (!normalizedEmail.endsWith('@port.ac.uk')) {
+      if (!normalizedEmail.endsWith('@myport.ac.uk')) {
         throw Exception('Please use your University of Portsmouth email');
       }
 
@@ -164,9 +164,9 @@ class AuthService {
       }
 
       // Verify university email domain
-      if (!googleUser.email.endsWith('@port.ac.uk')) {
+      if (!googleUser.email.endsWith('@myport.ac.uk')) {
         await _googleSignIn.signOut();
-        throw Exception('Please use your University of Portsmouth email (@port.ac.uk)');
+        throw Exception('Please use your University of Portsmouth email (@myport.ac.uk)');
       }
 
       // Get Google authentication credentials
