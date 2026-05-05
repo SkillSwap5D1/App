@@ -58,7 +58,7 @@ void main() {
       await tester.tap(find.text('Sign In'));
       await tester.pump();
 
-      final errorFinder = find.text('Please use your @port.ac.uk email (University of Portsmouth)');
+      final errorFinder = find.text('Please use your @myport.ac.uk email (University of Portsmouth)');
       expect(errorFinder, findsOneWidget);
 
       final errorText = tester.widget<Text>(errorFinder);
@@ -71,7 +71,7 @@ void main() {
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
       await tester.ensureVisible(find.text('Sign In'));
-      await tester.enterText(find.byType(TextField).at(0), 'student@port.ac.uk');
+      await tester.enterText(find.byType(TextField).at(0), 'student@myport.ac.uk');
       await tester.tap(find.text('Sign In'));
       await tester.pump();
 
