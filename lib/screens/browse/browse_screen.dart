@@ -6,6 +6,8 @@ import '../../providers/listing_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../listings/listing_detail_screen.dart';
 import '../listings/create_listing_screen.dart';
+import '../notifications/notifications_screen.dart';
+import '../../widgets/notification_icon_button.dart';
 import '../../widgets/tag_chip.dart';
 
 class BrowseScreen extends StatefulWidget {
@@ -63,6 +65,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
             title: const Text('Skills'),
             backgroundColor: AppColors.surface,
             elevation: 0,
+            actions: const [NotificationIconButton()],
             bottom: TabBar(
               controller: _tabController,
               indicatorColor: AppColors.primary,
