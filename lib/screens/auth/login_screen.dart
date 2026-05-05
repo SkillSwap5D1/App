@@ -73,16 +73,35 @@ class _LoginScreenState extends State<LoginScreen> {
     await context.read<AuthProvider>().signIn(email, _passwordController.text);
 
     if (mounted) {
-      setState(() => _isLoading = false);
-      final authProvider = context.read<AuthProvider>();
-      if (authProvider.errorMessage != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(authProvider.errorMessage!)));
-      } else if (authProvider.currentUser != null) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/home', (route) => false);
+      // Give a moment for state to fully propagate
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      if (mounted) {
+        setState(() => _isLoading = false);
+        final authProvider = context.read<AuthProvider>();
+        
+        if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authProvider.errorMessage!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        } else if (authProvider.currentUser != null && authProvider.currentUser!.uid.isNotEmpty) {
+          // Sign-in successful - navigate to home
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/home',
+            (route) => false,
+          );
+        } else {
+          // This shouldn't happen, but handle it gracefully
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign in failed. Please try again.'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
       }
     }
   }
