@@ -33,10 +33,14 @@ class AuthProvider extends ChangeNotifier {
   UserModel _buildProvisionalUser(dynamic user) {
     final email = (user.email as String?)?.trim().toLowerCase() ?? '';
     final displayName = (user.displayName as String?)?.trim() ?? '';
-    final nameParts = displayName.isNotEmpty ? displayName.split(' ') : <String>[];
-    final firstName = nameParts.isNotEmpty && nameParts.first.isNotEmpty
-        ? nameParts.first
-        : (email.isNotEmpty ? email.split('@').first.split('.').first : 'User');
+    final nameParts =
+        displayName.isNotEmpty ? displayName.split(' ') : <String>[];
+    final firstName =
+        nameParts.isNotEmpty && nameParts.first.isNotEmpty
+            ? nameParts.first
+            : (email.isNotEmpty
+                ? email.split('@').first.split('.').first
+                : 'User');
     final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
     return UserModel(
@@ -86,17 +90,19 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final user = await _authService.signIn(email, password);
-      
+
       // Set currentUser immediately from the returned value
       if (user != null) {
         currentUser = user;
         notifyListeners();
       }
-      
+
       // Verify custom claims after authentication
       final verified = await _verifyUniversityClaims();
       if (!verified) {
-        print('⚠️ University claims not ready yet; continuing with provisional auth state');
+        print(
+          '⚠️ University claims not ready yet; continuing with provisional auth state',
+        );
       }
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
@@ -130,7 +136,9 @@ class AuthProvider extends ChangeNotifier {
         }
 
         // If not verified yet, wait and retry
-        print('❗ University claims not yet present (attempt ${attempt + 1}), retrying...');
+        print(
+          '❗ University claims not yet present (attempt ${attempt + 1}), retrying...',
+        );
         await Future.delayed(retryDelay);
       }
 
@@ -214,7 +222,9 @@ class AuthProvider extends ChangeNotifier {
       // Verify custom claims after authentication
       final verified = await _verifyUniversityClaims();
       if (!verified) {
-        print('⚠️ Google claims not ready yet; continuing with provisional auth state');
+        print(
+          '⚠️ Google claims not ready yet; continuing with provisional auth state',
+        );
       }
       // User fetch happens automatically via authStateChanges listener
     } catch (e) {
@@ -259,6 +269,47 @@ class AuthProvider extends ChangeNotifier {
     }
     print('⚠️ Unhandled auth error: $errorCode');
     return errorCode.replaceFirst('Exception: ', '');
+  }
+
+  // ── Refresh User Data ─────────────────────────────────────────────────────
+  Future<void> refreshUser() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return;
+      await _fetchUser(user.uid);
+    } catch (e) {
+      print('Error refreshing user: $e');
+    }
+  }
+
+  // ── Update Privacy Settings ───────────────────────────────────────────────
+  Future<void> updatePrivacySettings({
+    required bool showFullName,
+    required bool showCourse,
+    required bool showPhoto,
+  }) async {
+    if (currentUser == null) return;
+
+    try {
+      final updates = <String, dynamic>{
+        'showFullName': showFullName,
+        'showCourse': showCourse,
+        'showPhoto': showPhoto,
+      };
+
+      await _userService.updateUser(currentUser!.uid, updates);
+
+      // Update local state
+      currentUser = currentUser!.copyWith(
+        showFullName: showFullName,
+        showCourse: showCourse,
+        showPhoto: showPhoto,
+      );
+      notifyListeners();
+    } catch (e) {
+      print('Error updating privacy settings: $e');
+      throw e;
+    }
   }
 
   @override

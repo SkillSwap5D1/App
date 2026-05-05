@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../models/user_model.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/user_service.dart';
@@ -19,7 +18,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String _selectedCourse = '';
   bool _hasChanges = false;
-  bool _isSaving = false;
 
   final List<String> _courses = [
     'Computer Science',
@@ -51,7 +49,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _checkForChanges() {
     final user = Provider.of<AuthProvider>(context, listen: false).currentUser!;
-    bool changed = _firstNameController.text != user.firstName ||
+    bool changed =
+        _firstNameController.text != user.firstName ||
         _lastNameController.text != user.lastName ||
         _bioController.text != user.bio ||
         _selectedCourse != user.course;
@@ -63,8 +62,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final authProvider = context.read<AuthProvider>();
     final userService = UserService();
 
-    setState(() => _isSaving = true);
-
     try {
       final updates = <String, dynamic>{
         'firstName': _firstNameController.text,
@@ -74,14 +71,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       };
 
       await userService.updateUser(authProvider.currentUser!.uid, updates);
-
-      // Update auth provider
-      final updatedUser = authProvider.currentUser!.copyWith(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        bio: _bioController.text,
-        course: _selectedCourse,
-      );
 
       // Refresh auth provider with updated user
       await authProvider.refreshUser();
@@ -104,10 +93,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         );
       }
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
     }
   }
 
@@ -119,23 +104,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Discard Changes?'),
-        content: const Text('You have unsaved changes. Are you sure you want to discard them?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Keep Editing'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Discard Changes?'),
+            content: const Text(
+              'You have unsaved changes. Are you sure you want to discard them?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Keep Editing'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('Discard'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Discard'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -269,8 +257,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: AppSpacing.md),
 
               // Course field
-              TextField(
-                controller: _courseController,
+              DropdownButtonFormField<String>(
+                value: _selectedCourse,
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedCourse = value;
+                      _checkForChanges();
+                    });
+                  }
+                },
+                items:
+                    _courses.map((course) {
+                      return DropdownMenuItem(
+                        value: course,
+                        child: Text(course),
+                      );
+                    }).toList(),
                 decoration: InputDecoration(
                   labelText: 'Course',
                   border: OutlineInputBorder(
@@ -293,7 +296,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 enabled: false,
                 decoration: InputDecoration(
                   labelText: 'Email Address',
-                  hintText: _originalEmail,
+                  hintText:
+                      Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      ).currentUser?.email ??
+                      'Not available',
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
@@ -322,7 +330,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _hasChanges ? _saveChanges : null,
+                  onPressed: _hasChanges ? _handleSave : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     disabledBackgroundColor: AppColors.surface,
@@ -334,7 +342,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Text(
                     'Save Changes',
                     style: AppTextStyles.button.copyWith(
-                      color: _hasChanges ? AppColors.surface : AppColors.textMuted,
+                      color:
+                          _hasChanges ? AppColors.surface : AppColors.textMuted,
                     ),
                   ),
                 ),
@@ -343,7 +352,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Cancel link
               GestureDetector(
-                onTap: _cancelChanges,
+                onTap: _handleCancel,
                 child: Text(
                   'Cancel',
                   style: AppTextStyles.label.copyWith(

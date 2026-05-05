@@ -38,8 +38,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String _formatMemberSince(DateTime date) {
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return 'Member since ${months[date.month - 1]} ${date.year}';
   }
@@ -75,9 +85,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _navigateToEditProfile() async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-    );
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const EditProfileScreen()));
 
     if (result is bool && result) {
       _initializePrivacySettings();
@@ -109,13 +119,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFEDE9F6),
-                      Color(0xFFF5F3FF),
-                    ],
+                    colors: [Color(0xFFEDE9F6), Color(0xFFF5F3FF)],
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32,
+                  horizontal: 16,
+                ),
                 child: Column(
                   children: [
                     // Avatar with initials
@@ -126,10 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFF7C3AED),
-                            Color(0xFF8B5CF6),
-                          ],
+                          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
                         ),
                         shape: BoxShape.circle,
                       ),
@@ -178,9 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: List.generate(5, (index) {
                             final isFilled = index < user.rating;
                             return Icon(
-                              isFilled
-                                  ? Icons.star
-                                  : Icons.star_border,
+                              isFilled ? Icons.star : Icons.star_border,
                               color: Colors.amber,
                               size: 18,
                             );
@@ -217,9 +222,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildStatColumn('Sessions', user.sessionsCompleted.toString(), 'Completed'),
+                        _buildStatColumn(
+                          'Sessions',
+                          user.sessionsCompleted.toString(),
+                          'Completed',
+                        ),
                         _buildDivider(),
-                        _buildStatColumn('Rating', user.rating.toStringAsFixed(1), 'Average'),
+                        _buildStatColumn(
+                          'Rating',
+                          user.rating.toStringAsFixed(1),
+                          'Average',
+                        ),
                         _buildDivider(),
                         _buildStatColumn('Skills', '2', 'Offered'),
                       ],
@@ -295,7 +308,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Email
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF3F0FF),
                         borderRadius: BorderRadius.circular(20),
@@ -325,7 +341,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Member since
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF3F0FF),
                         borderRadius: BorderRadius.circular(20),
@@ -383,11 +402,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Show my full name',
                       subtitle: 'Visible to other students',
                       value: _showFullName,
-                      onChanged: (value) => _handlePrivacyToggle(
-                        'fullName',
-                        value,
-                        authProvider,
-                      ),
+                      onChanged:
+                          (value) => _handlePrivacyToggle(
+                            'fullName',
+                            value,
+                            authProvider,
+                          ),
                     ),
                     const SizedBox(height: 12),
 
@@ -396,11 +416,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Show my course',
                       subtitle: 'Display your program info',
                       value: _showCourse,
-                      onChanged: (value) => _handlePrivacyToggle(
-                        'course',
-                        value,
-                        authProvider,
-                      ),
+                      onChanged:
+                          (value) => _handlePrivacyToggle(
+                            'course',
+                            value,
+                            authProvider,
+                          ),
                     ),
                     const SizedBox(height: 12),
 
@@ -409,11 +430,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Show my profile picture',
                       subtitle: 'Avatar visible publicly',
                       value: _showPhoto,
-                      onChanged: (value) => _handlePrivacyToggle(
-                        'photo',
-                        value,
-                        authProvider,
-                      ),
+                      onChanged:
+                          (value) => _handlePrivacyToggle(
+                            'photo',
+                            value,
+                            authProvider,
+                          ),
                     ),
                   ],
                 ),
@@ -440,7 +462,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // ─────────────── SIGN OUT BUTTON ────────────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: ElevatedButton(
                   onPressed: () => _handleSignOut(authProvider),
                   style: ElevatedButton.styleFrom(
@@ -468,10 +493,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textMuted,
-          ),
+          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
         ),
         const SizedBox(height: 4),
         Text(
@@ -485,21 +507,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 2),
         Text(
           sublabel,
-          style: const TextStyle(
-            fontSize: 11,
-            color: AppColors.textMuted,
-          ),
+          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
         ),
       ],
     );
   }
 
   Widget _buildDivider() {
-    return Container(
-      width: 1,
-      height: 40,
-      color: AppColors.border,
-    );
+    return Container(width: 1, height: 40, color: AppColors.border);
   }
 
   Widget _buildPrivacyToggle({
@@ -549,410 +564,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _handleSignOut(AuthProvider authProvider) async {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Sign Out'),
+            content: const Text('Are you sure you want to sign out?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await authProvider.signOut();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Signed out successfully')),
+                    );
+                  }
+                },
+                child: const Text('Sign Out'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await authProvider.signOut();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Signed out successfully')),
-                );
-              }
-            },
-            child: const Text('Sign Out'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildOld(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('My Profile', style: AppTextStyles.h3),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Consumer<AuthProvider>(
-        builder: (context, authProvider, _) {
-          final user = authProvider.currentUser;
-
-          if (user == null) {
-            return Center(
-              child: Text(
-                'No user data available',
-                style: AppTextStyles.bodyMedium,
-              ),
-            );
-          }
-
-          return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? AppSpacing.md : 40,
-                vertical: AppSpacing.lg,
-              ),
-              child: Column(
-                children: [
-                  // Hero section with avatar
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppSpacing.lg),
-                    child: Column(
-                      children: [
-                        // Avatar circle
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: AppColors.primary,
-                          child: Text(
-                            user.firstName.isNotEmpty
-                                ? user.firstName[0].toUpperCase()
-                                : '?',
-                            style: AppTextStyles.h1.copyWith(
-                              color: AppColors.surface,
-                              fontSize: 48,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-
-                        // Name
-                        Text(
-                          '${user.firstName} ${user.lastName}',
-                          style: AppTextStyles.h2,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-
-                        // Rating with stars
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              color: AppColors.accentLight,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${user.rating.toStringAsFixed(1)} (${user.sessionsCompleted} reviews)',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-
-                        // Course
-                        Text(
-                          user.course,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-
-                        // Member since
-                        Text(
-                          'Member since ${_formatMemberSince(user.memberSince)}',
-                          style: AppTextStyles.caption,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // Stats row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          user.sessionsCompleted.toString(),
-                          'Sessions\nCompleted',
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: _buildStatCard(
-                          user.rating.toStringAsFixed(1),
-                          'Rating',
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: _buildStatCard(
-                          '${user.sessionsCompleted}',
-                          'Skills\nOffered',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // About section
-                  Text('About', style: AppTextStyles.h3),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    user.bio.isNotEmpty ? user.bio : 'No bio added yet',
-                    style: AppTextStyles.bodyMedium.copyWith(height: 1.6),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // Contact section
-                  Text('Contact', style: AppTextStyles.h3),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Email row
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.mail_outline,
-                          color: AppColors.textSecondary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Email', style: AppTextStyles.label),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(user.email, style: AppTextStyles.bodySmall),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Member since row
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today_outlined,
-                          color: AppColors.textSecondary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Member Since', style: AppTextStyles.label),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                _formatMemberSince(user.memberSince),
-                                style: AppTextStyles.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // Privacy Settings section
-                  Text('Privacy Settings', style: AppTextStyles.h3),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Show full name toggle
-                  _buildPrivacyToggle(
-                    title: 'Show my full name',
-                    subtitle: 'Visible to other students',
-                    value: _showFullName,
-                    onChanged: (value) {
-                      setState(() => _showFullName = value);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Show course toggle
-                  _buildPrivacyToggle(
-                    title: 'Show my course',
-                    subtitle: 'Display your program info',
-                    value: _showCourse,
-                    onChanged: (value) {
-                      setState(() => _showCourse = value);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Show profile picture toggle
-                  _buildPrivacyToggle(
-                    title: 'Show my profile picture',
-                    subtitle: 'Avatar visible publicly',
-                    value: _showProfilePicture,
-                    onChanged: (value) {
-                      setState(() => _showProfilePicture = value);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // Edit Profile button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton.icon(
-                      onPressed: _navigateToEditProfile,
-                      icon: const Icon(Icons.edit_outlined),
-                      label: const Text('Edit Profile'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Logout button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        // Sign out
-                        await context.read<AuthProvider>().signOut();
-
-                        // Navigate to login/registration page
-                        if (mounted) {
-                          Navigator.of(
-                            context,
-                          ).pushNamedAndRemoveUntil('/auth', (route) => false);
-                        }
-                      },
-                      icon: const Icon(Icons.logout_outlined),
-                      label: const Text('Logout'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.error,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String value, String label) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: AppTextStyles.h2.copyWith(color: AppColors.primary),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            label,
-            style: AppTextStyles.caption,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrivacyToggle({
-    required String title,
-    required String subtitle,
-    required bool value,
-    required Function(bool) onChanged,
-  }) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.bodyLarge.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: value ? AppColors.primary : AppColors.border,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(AppRadius.sm),
-              ),
-              child: Icon(
-                Icons.check,
-                color: value ? AppColors.primary : AppColors.textMuted,
-                size: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
