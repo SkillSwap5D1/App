@@ -33,7 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (normalized.isEmpty) {
         _emailError = null;
       } else if (!normalized.endsWith('@myport.ac.uk')) {
-        _emailError = 'Please use your @myport.ac.uk email (University of Portsmouth)';
+        _emailError =
+            'Please use your @myport.ac.uk email (University of Portsmouth)';
       } else {
         _emailError = null;
       }
@@ -69,20 +70,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    await context.read<AuthProvider>().signIn(
-          email,
-          _passwordController.text,
-        );
+    await context.read<AuthProvider>().signIn(email, _passwordController.text);
 
     if (mounted) {
       setState(() => _isLoading = false);
       final authProvider = context.read<AuthProvider>();
       if (authProvider.errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(authProvider.errorMessage!)));
       } else if (authProvider.currentUser != null) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/home', (route) => false);
       }
     }
   }
@@ -103,7 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Container(decoration: const BoxDecoration(gradient: AppColors.backgroundGradient)),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: AppColors.backgroundGradient,
+              ),
+            ),
           ),
           _buildPremiumBackground(),
 
@@ -185,7 +189,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               _buildEmailField(),
                               if (_emailError != null)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                                  padding: const EdgeInsets.only(
+                                    top: AppSpacing.xs,
+                                  ),
                                   child: Text(
                                     _emailError!,
                                     style: AppTextStyles.caption.copyWith(
@@ -202,15 +208,27 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: AppSpacing.md),
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: AppColors.borderLight)),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                                    child: Text(
-                                      'or',
-                                      style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                                  Expanded(
+                                    child: Divider(
+                                      color: AppColors.borderLight,
                                     ),
                                   ),
-                                  Expanded(child: Divider(color: AppColors.borderLight)),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.sm,
+                                    ),
+                                    child: Text(
+                                      'or',
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: AppColors.borderLight,
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: AppSpacing.md),
@@ -219,15 +237,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onTap: _navigateToRegister,
                                   child: RichText(
                                     text: TextSpan(
-                                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
                                       children: [
                                         const TextSpan(text: 'New here? '),
                                         TextSpan(
                                           text: 'Create an account',
-                                          style: AppTextStyles.bodySmall.copyWith(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: AppTextStyles.bodySmall
+                                              .copyWith(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                         ),
                                       ],
                                     ),
@@ -275,7 +296,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.borderActive,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -318,7 +342,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.borderActive,
+            width: 1.5,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -351,23 +378,28 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             elevation: 0,
           ),
-            child: isLoading
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          child:
+              isLoading
+                  ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                  : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Sign In', style: AppTextStyles.button),
+                      const SizedBox(width: AppSpacing.xs),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Sign In', style: AppTextStyles.button),
-                    const SizedBox(width: AppSpacing.xs),
-                    const Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white),
-                  ],
-                ),
         ),
       ),
     );
