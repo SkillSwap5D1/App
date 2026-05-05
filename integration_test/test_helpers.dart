@@ -93,7 +93,7 @@ Future<void> tapBottomNavTab(WidgetTester tester, String tabName) async {
   final tabFinder = find.byWidgetPredicate(
     (widget) =>
         widget is BottomNavigationBarItem ||
-        (widget is Tooltip && widget.message.contains(tabName)),
+        (widget is Tooltip && (widget.message?.contains(tabName) ?? false)),
   );
 
   if (tabFinder.evaluate().isNotEmpty) {
@@ -233,10 +233,13 @@ Future<void> sendMessage(WidgetTester tester, String message) async {
 
 /// Wait for text to appear on screen
 Future<void> waitForText(WidgetTester tester, String text) async {
-  await tester.pumpUntilFound(
-    find.text(text),
-    verificationTimeout,
-  );
+  for (int i = 0; i < 10; i++) {
+    if (find.text(text).evaluate().isNotEmpty) {
+      return;
+    }
+    await tester.pump(const Duration(milliseconds: 200));
+  }
+  expect(find.text(text), findsWidgets);
 }
 
 /// Verify snackbar message appears
