@@ -60,7 +60,14 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
       _initializingData = true;
       _initializedForUid = uid;
 
-      context.read<ListingProvider>().loadListings();
+      print('[HomeShell] Starting data initialization for UID: $uid');
+      
+      context.read<ListingProvider>().loadListings().then((_) {
+        print('[HomeShell] Listings loaded: ${context.read<ListingProvider>().listings.length} listings');
+      }).catchError((e) {
+        print('[HomeShell] ERROR loading listings: $e');
+      });
+
       context.read<RequestProvider>().loadRequests(uid);
       context.read<ChatProvider>().loadConversations(uid);
       context.read<NotificationProvider>().loadNotifications(uid);
