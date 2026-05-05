@@ -26,8 +26,22 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   final TextEditingController _searchController = TextEditingController();
 
-  final List<String> categories = ['All', 'Programming', 'Languages', 'Design', 'Music', 'Sports', 'Business'];
-  final List<String> levels = ['All Levels', 'Beginner', 'Intermediate', 'Advanced', 'Expert'];
+  final List<String> categories = [
+    'All',
+    'Programming',
+    'Languages',
+    'Design',
+    'Music',
+    'Sports',
+    'Business',
+  ];
+  final List<String> levels = [
+    'All Levels',
+    'Beginner',
+    'Intermediate',
+    'Advanced',
+    'Expert',
+  ];
   final List<String> formats = ['All Formats', 'In-person', 'Online', 'Hybrid'];
 
   @override
@@ -55,11 +69,16 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  List<ListingModel> _getListings(ListingProvider provider, AuthProvider authProvider) {
+  List<ListingModel> _getListings(
+    ListingProvider provider,
+    AuthProvider authProvider,
+  ) {
     if (_selectedTab == 'Available') {
       // Filter out current user's listings from available
       final currentUid = authProvider.currentUser?.uid ?? '';
-      return provider.listings.where((listing) => listing.ownerId != currentUid).toList();
+      return provider.listings
+          .where((listing) => listing.ownerId != currentUid)
+          .toList();
     }
     return provider.myListings;
   }
@@ -77,47 +96,57 @@ class _BrowseScreenState extends State<BrowseScreen> {
             backgroundColor: AppColors.surface,
             elevation: 0,
           ),
-          body: listingProvider.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                  ),
-                )
-              : listingProvider.errorMessage != null
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Error: ${listingProvider.errorMessage}'),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => listingProvider.loadListings(),
-                            child: const Text('Retry'),
-                          ),
-                        ],
+          body:
+              listingProvider.isLoading
+                  ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
                       ),
-                    )
+                    ),
+                  )
+                  : listingProvider.errorMessage != null
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Error: ${listingProvider.errorMessage}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => listingProvider.loadListings(),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  )
                   : listings.isEmpty
-                      ? const Center(
-                          child: Text('No listings available'),
-                        )
-                      : ListView.builder(
-                          itemCount: listings.length,
-                          itemBuilder: (context, index) {
-                            final listing = listings[index];
-                            return Card(
-                              margin: const EdgeInsets.all(8),
-                              child: ListTile(
-                                title: Text(listing.title),
-                                subtitle: Text('${listing.ownerName} • ${listing.level}'),
-                                trailing: const Icon(Icons.arrow_forward),
-                                onTap: () {
-                                  // Navigate to listing detail
-                                },
+                  ? const Center(child: Text('No listings available'))
+                  : ListView.builder(
+                    itemCount: listings.length,
+                    itemBuilder: (context, index) {
+                      final listing = listings[index];
+                      return Card(
+                        margin: const EdgeInsets.all(8),
+                        child: ListTile(
+                          title: Text(listing.title),
+                          subtitle: Text(
+                            '${listing.ownerName} • ${listing.level}',
+                          ),
+                          trailing: const Icon(Icons.arrow_forward),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        ListingDetailScreen(listing: listing),
                               ),
                             );
                           },
                         ),
+                      );
+                    },
+                  ),
         );
       },
     );
@@ -147,11 +176,17 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.error,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Error: ${provider.errorMessage}',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.error,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -177,33 +212,37 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 itemCount: (listings.length / 2).ceil(),
                 itemBuilder: (context, index) {
                   final startIdx = index * 2;
-                  final endIdx = (startIdx + 2 < listings.length) ? startIdx + 2 : listings.length;
+                  final endIdx =
+                      (startIdx + 2 < listings.length)
+                          ? startIdx + 2
+                          : listings.length;
                   final row = listings.sublist(startIdx, endIdx);
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: !isCompact && row.length > 1
-                        ? Row(
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 350,
-                                  child: _buildListingCard(row[0]),
+                    child:
+                        !isCompact && row.length > 1
+                            ? Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 350,
+                                    child: _buildListingCard(row[0]),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: SizedBox(
-                                  height: 350,
-                                  child: _buildListingCard(row[1]),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 350,
+                                    child: _buildListingCard(row[1]),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : SizedBox(
-                            height: 350,
-                            child: _buildListingCard(row[0]),
-                          ),
+                              ],
+                            )
+                            : SizedBox(
+                              height: 350,
+                              child: _buildListingCard(row[0]),
+                            ),
                   );
                 },
               ),
@@ -216,7 +255,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   Widget _buildListingCard(ListingModel listing) {
     final isMySkills = _selectedTab == 'My Skills';
-    final initials = listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
+    final initials =
+        listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
@@ -233,7 +273,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ListingDetailScreen(listing: listing),
+                      builder:
+                          (context) => ListingDetailScreen(listing: listing),
                     ),
                   );
                 },
@@ -276,14 +317,20 @@ class _BrowseScreenState extends State<BrowseScreen> {
                               ),
                               Text(
                                 listing.ownerName,
-                                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                             ],
                           ),
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFF59E0B),
+                              size: 14,
+                            ),
                             const SizedBox(width: 2),
                             Text(
                               '4.8',
@@ -299,7 +346,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     const SizedBox(height: 10),
                     Text(
                       listing.description,
-                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -307,36 +356,60 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
-                      children: listing.tags
-                          .take(3)
-                          .map(
-                            (tag) => Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.accentVeryLight,
-                                borderRadius: BorderRadius.circular(AppRadius.full),
-                              ),
-                              child: Text(
-                                tag,
-                                style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w600,
+                      children:
+                          listing.tags
+                              .take(3)
+                              .map(
+                                (tag) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.accentVeryLight,
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.full,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    tag,
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                              )
+                              .toList(),
                     ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(Icons.access_time_rounded, size: 12, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.access_time_rounded,
+                          size: 12,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(width: 4),
-                        Text('Flexible', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                        Text(
+                          'Flexible',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textMuted,
+                          ),
+                        ),
                         const SizedBox(width: 12),
-                        const Icon(Icons.location_on_outlined, size: 12, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 12,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(width: 4),
-                        Text(listing.modality, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                        Text(
+                          listing.modality,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textMuted,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -352,7 +425,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ListingDetailScreen(listing: listing),
+                              builder:
+                                  (context) =>
+                                      ListingDetailScreen(listing: listing),
                             ),
                           );
                         },
@@ -360,7 +435,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                           foregroundColor: AppColors.primary,
                           backgroundColor: AppColors.accentUltraLight,
                           side: const BorderSide(color: AppColors.borderLight),
-                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.sm,
+                          ),
                           minimumSize: const Size.fromHeight(42),
                         ),
                         child: const Text('Edit'),
@@ -370,7 +447,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () async {
-                          await context.read<ListingProvider>().deleteListing(listing.id);
+                          await context.read<ListingProvider>().deleteListing(
+                            listing.id,
+                          );
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Listing deleted')),
@@ -381,7 +460,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                           foregroundColor: AppColors.error,
                           backgroundColor: const Color(0xFFFEE2E2),
                           side: const BorderSide(color: Color(0x33DC2626)),
-                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.sm,
+                          ),
                           minimumSize: const Size.fromHeight(42),
                         ),
                         child: const Text('Delete'),
@@ -398,47 +479,67 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     return Row(
                       children: [
                         Expanded(
-                          child: isOwnListing
-                              ? OutlinedButton(
-                                  onPressed: null,
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: AppColors.textMuted,
-                                    backgroundColor: AppColors.accentUltraLight,
-                                    side: const BorderSide(color: AppColors.borderLight),
-                                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                                    minimumSize: const Size.fromHeight(42),
-                                  ),
-                                  child: const Text('Your Listing'),
-                                )
-                              : SizedBox(
-                                  height: 42,
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      gradient: AppColors.accentGradient,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: AppShadows.hover,
+                          child:
+                              isOwnListing
+                                  ? OutlinedButton(
+                                    onPressed: null,
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppColors.textMuted,
+                                      backgroundColor:
+                                          AppColors.accentUltraLight,
+                                      side: const BorderSide(
+                                        color: AppColors.borderLight,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: AppSpacing.md,
+                                      ),
+                                      minimumSize: const Size.fromHeight(42),
                                     ),
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => SendRequestScreen(listing: listing),
+                                    child: const Text('Your Listing'),
+                                  )
+                                  : SizedBox(
+                                    height: 42,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: AppColors.accentGradient,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: AppShadows.hover,
+                                      ),
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      SendRequestScreen(
+                                                        listing: listing,
+                                                      ),
+                                            ),
+                                          );
+                                        },
+                                        icon: const Icon(
+                                          Icons.send_rounded,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
+                                        label: const Text('Send Request'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12,
                                           ),
-                                        );
-                                      },
-                                      icon: const Icon(Icons.send_rounded, size: 14, color: Colors.white),
-                                      label: const Text('Send Request'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                         ),
                         const SizedBox(width: 8),
                         Container(
@@ -451,16 +552,24 @@ class _BrowseScreenState extends State<BrowseScreen> {
                             onPressed: () {
                               final uid = authProvider.currentUser?.uid;
                               if (uid != null) {
-                                context.read<ListingProvider>().toggleSaved(uid, listing.id);
+                                context.read<ListingProvider>().toggleSaved(
+                                  uid,
+                                  listing.id,
+                                );
                               }
                             },
                             icon: Icon(
-                              context.read<ListingProvider>().isSaved(listing.id)
+                              context.read<ListingProvider>().isSaved(
+                                    listing.id,
+                                  )
                                   ? Icons.bookmark_rounded
                                   : Icons.bookmark_outline_rounded,
-                              color: context.read<ListingProvider>().isSaved(listing.id)
-                                  ? AppColors.primary
-                                  : Color(0xFFC4B5FD),
+                              color:
+                                  context.read<ListingProvider>().isSaved(
+                                        listing.id,
+                                      )
+                                      ? AppColors.primary
+                                      : Color(0xFFC4B5FD),
                               size: 18,
                             ),
                           ),
@@ -482,9 +591,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border: isCompact
-            ? const Border(bottom: BorderSide(color: AppColors.borderLight))
-            : const Border(right: BorderSide(color: AppColors.borderLight)),
+        border:
+            isCompact
+                ? const Border(bottom: BorderSide(color: AppColors.borderLight))
+                : const Border(right: BorderSide(color: AppColors.borderLight)),
       ),
       child: SingleChildScrollView(
         scrollDirection: isCompact ? Axis.horizontal : Axis.vertical,
@@ -567,9 +677,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             gradient: isSelected ? AppColors.accentGradient : null,
             color: isSelected ? null : AppColors.surfaceGlass,
             borderRadius: BorderRadius.circular(AppRadius.md),
-            boxShadow: isSelected
-                ? AppShadows.hover
-                : null,
+            boxShadow: isSelected ? AppShadows.hover : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -620,12 +728,18 @@ class _BrowseScreenState extends State<BrowseScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: DropdownButton<String>(
         value: value,
-        items: items.map<DropdownMenuItem<String>>((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary)),
-          );
-        }).toList(),
+        items:
+            items.map<DropdownMenuItem<String>>((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(
+                  item,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              );
+            }).toList(),
         onChanged: onChanged,
         isExpanded: true,
         underline: const SizedBox.shrink(),
@@ -641,7 +755,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.search_off_rounded, size: 48, color: AppColors.accentLight),
+          const Icon(
+            Icons.search_off_rounded,
+            size: 48,
+            color: AppColors.accentLight,
+          ),
           const SizedBox(height: 16),
           Text(
             'No skills found',
@@ -650,7 +768,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           const SizedBox(height: 8),
           Text(
             'Try different keywords or filters',
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textMuted,
+            ),
           ),
         ],
       ),
@@ -661,7 +781,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.md,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -704,7 +829,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
           const SizedBox(height: 14),
           Text(
             'A curated marketplace for premium peer-to-peer learning.',
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 14),
           TextFormField(
@@ -715,8 +842,14 @@ class _BrowseScreenState extends State<BrowseScreen> {
             },
             decoration: InputDecoration(
               hintText: 'Search skills, topics, or people...',
-              hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-              prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted, size: 20),
+              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textMuted,
+              ),
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                color: AppColors.textMuted,
+                size: 20,
+              ),
               filled: true,
               fillColor: const Color(0xCCFFFFFF),
               border: OutlineInputBorder(
@@ -729,15 +862,22 @@ class _BrowseScreenState extends State<BrowseScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: const BorderSide(color: AppColors.borderActive, width: 1.5),
+                borderSide: const BorderSide(
+                  color: AppColors.borderActive,
+                  width: 1.5,
+                ),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 18,
+              ),
             ),
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textPrimary,
+            ),
           ),
         ],
       ),
     );
   }
-
 }
