@@ -127,7 +127,6 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
         builder: (_) => CounterOfferScreen(originalRequest: request),
       );
     case AppRoutes.chatThread:
-      // Chat thread is handled via Navigator.push in chat_list_screen
       return MaterialPageRoute(
         builder: (_) => const SizedBox.shrink(),
       );
@@ -148,7 +147,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const MyApp());
 }
 
@@ -159,9 +157,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Auth provider must be first as others depend on it
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        // All other providers
         ChangeNotifierProvider(create: (_) => ListingProvider()),
         ChangeNotifierProvider(create: (_) => RequestProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
