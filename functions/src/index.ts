@@ -12,17 +12,17 @@ export const setUniversityUserClaims = functions.auth
   .onCreate(async (user) => {
     const email = user.email || "";
     
-    if (!email.endsWith("@port.ac.uk")) {
+    if (!email.endsWith("@myport.ac.uk")) {
       await admin.auth().deleteUser(user.uid);
       throw new functions.https.HttpsError(
         "invalid-argument",
-        "Only @port.ac.uk emails allowed"
+        "Only @myport.ac.uk emails allowed"
       );
     }
 
     await admin.auth().setCustomUserClaims(user.uid, {
       isUniversityUser: true,
-      emailDomain: "port.ac.uk",
+      emailDomain: "myport.ac.uk",
       claimsSetAt: new Date().toISOString(),
     });
 
@@ -48,7 +48,7 @@ export const setUniversityUserClaims = functions.auth
 export const deleteUserData = functions.auth.user().onDelete(async (user) => {
   try {
     await admin.firestore().collection("users").doc(user.uid).update({
-      email: "deleted@port.ac.uk",
+      email: "deleted@myport.ac.uk",
       displayName: "Deleted User",
       isActive: false,
       deletedAt: new Date(),
@@ -81,10 +81,10 @@ export const verifyUniversityEmail = functions.https.onCall((data, context) => {
 export const sendVerificationEmail = functions.https.onCall((data) => {
   const email = data.email || "";
 
-  if (!email.endsWith("@port.ac.uk")) {
+  if (!email.endsWith("@myport.ac.uk")) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Only @port.ac.uk emails allowed"
+      "Only @myport.ac.uk emails allowed"
     );
   }
 

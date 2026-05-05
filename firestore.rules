@@ -5,7 +5,7 @@ service cloud.firestore {
     function isUniversityUser() {
       return request.auth != null && 
              request.auth.token.isUniversityUser == true &&
-             request.auth.token.emailDomain == 'port.ac.uk';
+             request.auth.token.emailDomain == 'myport.ac.uk';
     }
 
     // Users collection - Profile management
