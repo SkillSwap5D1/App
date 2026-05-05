@@ -65,10 +65,10 @@ export const deleteUserData = functions.auth.user().onDelete(async (user) => {
 export const verifyUniversityEmail = functions.https.onCall((data, context) => {
   const email = data.email || "";
 
-  if (!email.endsWith("@port.ac.uk")) {
+  if (!email.endsWith("@myport.ac.uk")) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Only @port.ac.uk emails allowed"
+      "Only @myport.ac.uk emails allowed"
     );
   }
 
