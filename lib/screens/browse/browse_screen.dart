@@ -721,32 +721,28 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   letterSpacing: -0.8,
                 ),
               ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: AppColors.accentGradient,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  boxShadow: AppShadows.hover,
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateListingScreen(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add_rounded, size: 18),
-                  label: const Text('Create'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.sm,
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateListingScreen(),
                     ),
+                  );
+                },
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: const Text('Create'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentLight,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  elevation: 4,
                 ),
               ),
             ],
