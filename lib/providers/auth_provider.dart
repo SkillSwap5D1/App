@@ -184,8 +184,13 @@ class AuthProvider extends ChangeNotifier {
         lastName: lastName,
         course: course,
       );
-      currentUser = user;
-      errorMessage = null;
+      if (user != null) {
+        currentUser = user;
+        errorMessage = null;
+        notifyListeners();
+      } else {
+        errorMessage = 'Failed to create account. Please try again.';
+      }
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
     } finally {
@@ -237,38 +242,73 @@ class AuthProvider extends ChangeNotifier {
 
   // ── Handle auth errors ─────────────────────────────────────────────────────
   String _handleAuthError(String errorCode) {
-    if (errorCode.contains('INVALID_LOGIN_CREDENTIALS')) {
+    final error = errorCode.toLowerCase();
+    
+    // Invalid credentials (new Firebase error format)
+    if (error.contains('invalid-credential')) {
       return 'Invalid email or password';
     }
-    if (errorCode.contains('EMAIL_EXISTS')) {
+    
+    // Invalid credentials (old Firebase error format)
+    if (error.contains('invalid_login_credentials')) {
+      return 'Invalid email or password';
+    }
+    
+    // User not found
+    if (error.contains('user-not-found') || error.contains('user_not_found')) {
+      return 'No account found with this email';
+    }
+    
+    // Wrong password
+    if (error.contains('wrong-password') || error.contains('wrong_password')) {
+      return 'Incorrect password';
+    }
+    
+    // Email already exists
+    if (error.contains('email-already-in-use') || error.contains('email_exists')) {
       return 'This email is already registered';
     }
-    if (errorCode.contains('WEAK_PASSWORD')) {
-      return 'Password is too weak';
+    
+    // Weak password
+    if (error.contains('weak-password') || error.contains('weak_password')) {
+      return 'Password must be at least 6 characters';
     }
-    if (errorCode.contains('network')) {
+    
+    // Network errors
+    if (error.contains('network') || error.contains('timeout')) {
       return 'Network error. Please check your connection';
     }
-    if (errorCode.contains('permission-denied')) {
+    
+    // Permission denied (Firestore access issues)
+    if (error.contains('permission-denied') || error.contains('permission_denied')) {
       return 'Your account is still being set up. Please wait a few seconds and try again.';
     }
-    if (errorCode.contains('Failed to load user profile')) {
+    
+    // User profile loading issues
+    if (error.contains('failed to load user profile')) {
       return 'Your profile is still being created. Please try again in a moment.';
     }
-    if (errorCode.contains('University of Portsmouth')) {
+    
+    // University email validation
+    if (error.contains('university of portsmouth')) {
       return 'Please use your University of Portsmouth email (@myport.ac.uk)';
     }
-    if (errorCode.contains('@myport.ac.uk')) {
+    
+    if (error.contains('@myport.ac.uk')) {
       return 'Please use your @myport.ac.uk email';
     }
-    if (errorCode.contains('sign-in cancelled')) {
-      return 'Google sign-in was cancelled';
+    
+    // Google sign-in errors
+    if (error.contains('cancelled')) {
+      return 'Sign-in was cancelled';
     }
-    if (errorCode.contains('Sign in with Google')) {
-      return 'Google sign-in failed. Please check your credentials';
+    
+    if (error.contains('google')) {
+      return 'Google sign-in failed. Please try again';
     }
-    print('⚠️ Unhandled auth error: $errorCode');
-    return errorCode.replaceFirst('Exception: ', '');
+    
+    // Generic fallback
+    return errorCode.replaceFirst('Exception: ', '').split('\n').first;
   }
 
   // ── Refresh User Data ─────────────────────────────────────────────────────
