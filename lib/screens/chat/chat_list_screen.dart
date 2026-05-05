@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/notification_icon_button.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -31,6 +32,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       appBar: AppBar(
         title: const Text('Messages'),
         backgroundColor: AppColors.surface,
+        actions: const [NotificationIconButton()],
       ),
       body: Consumer<ChatProvider>(
         builder: (context, chatProvider, _) {
