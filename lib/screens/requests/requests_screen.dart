@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/request_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/notification_icon_button.dart';
 
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
@@ -31,6 +32,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
       appBar: AppBar(
         title: const Text('Requests'),
         backgroundColor: AppColors.surface,
+        actions: const [NotificationIconButton()],
       ),
       body: Consumer<RequestProvider>(
         builder: (context, requestProvider, _) {
