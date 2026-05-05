@@ -33,18 +33,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        final authProvider = context.read<AuthProvider>();
-        final currentUid = authProvider.currentUser?.uid;
-        final listingProvider = context.read<ListingProvider>();
-        
-        listingProvider.loadListings();
-        if (currentUid != null) {
-          listingProvider.loadMyListings(currentUid);
-        }
-      }
-    });
+    print('[BrowseScreen] initState called');
   }
 
   @override
@@ -80,44 +69,97 @@ class _BrowseScreenState extends State<BrowseScreen> {
     return Consumer2<ListingProvider, AuthProvider>(
       builder: (context, listingProvider, authProvider, _) {
         final listings = _getListings(listingProvider, authProvider);
-        final isCompact = MediaQuery.of(context).size.width < 980;
+
+        if (listingProvider.isLoading) {
+          return const Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+            ),
+          );
+        }
+
+        if (listingProvider.errorMessage != null) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${listingProvider.errorMessage}',
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => listingProvider.loadListings(),
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: Container(
-            decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+          body: SingleChildScrollView(
             child: Column(
               children: [
                 _buildHero(),
-                Expanded(
-                  child: listings.isEmpty && !listingProvider.isLoading
-                      ? _buildEmptyState()
-                      : isCompact
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (listings.isEmpty)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 48),
+                          child: Center(
+                            child: Column(
                               children: [
-                                _buildSidebar(isCompact: true),
-                                Expanded(
-                                  child: _buildListingGrid(
-                                    listings,
-                                    listingProvider,
-                                    isCompact: true,
-                                  ),
+                                Icon(
+                                  Icons.search_off_rounded,
+                                  size: 48,
+                                  color: AppColors.textSecondary.withOpacity(0.5),
                                 ),
-                              ],
-                            )
-                          : Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildSidebar(),
-                                Expanded(
-                                  child: _buildListingGrid(
-                                    listings,
-                                    listingProvider,
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No listings found',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textSecondary,
                                   ),
                                 ),
                               ],
                             ),
+                          ),
+                        )
+                      else
+                        Column(
+                          children: List.generate(
+                            listings.length,
+                            (index) => Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _buildListingCard(listings[index]),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
