@@ -136,75 +136,133 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
     }
   }
 
-  Widget _buildField({
-    required String label,
-    required String value,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+  String _formatDateForDisplay(DateTime date) {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final today = DateTime(now.year, now.month, now.day);
+    
+    if (date.year == today.year && date.month == today.month && date.day == today.day) {
+      return 'Today';
+    } else if (date.year == tomorrow.year && date.month == tomorrow.month && date.day == tomorrow.day) {
+      return 'Tomorrow';
+    } else {
+      final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      final dayName = days[date.weekday - 1];
+      return '$dayName, ${date.month}/${date.day}';
+    }
+  }
+
+  Widget _buildDateField() {
+    final isSet = _slot.date != null;
+    final dateText = isSet 
+        ? _formatDateForDisplay(_slot.date!)
+        : 'Select date';
+
     return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
+      onTap: _selectDate,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: isSet ? AppColors.borderActive : AppColors.border,
+            width: isSet ? 1.5 : 1,
           ),
-          SizedBox(height: AppSpacing.xs),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: AppColors.border),
+          boxShadow: [
+            if (isSet)
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.calendar_today_rounded,
+              size: 18,
+              color: isSet ? AppColors.primary : AppColors.textMuted,
             ),
-            child: Row(
-              children: [
-                Icon(icon, size: 16, color: AppColors.accentLight),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    value,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: value.startsWith('Select')
-                          ? AppColors.textMuted
-                          : AppColors.textPrimary,
-                    ),
-                  ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                dateText,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: isSet ? AppColors.textPrimary : AppColors.textMuted,
+                  fontWeight: isSet ? FontWeight.w500 : FontWeight.normal,
                 ),
-                const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.textMuted),
-              ],
+              ),
             ),
-          ),
-        ],
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: AppColors.textMuted,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildRemoveButton() {
-    return GestureDetector(
-      onTap: widget.onRemove,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-        decoration: BoxDecoration(
-          color: const Color(0x14EF4444),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(color: const Color(0x33EF4444)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+  Widget _buildTimeField({
+    required String label,
+    required TimeOfDay? time,
+    required VoidCallback onTap,
+  }) {
+    final isSet = time != null;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.close_rounded, size: 14, color: AppColors.error),
-            const SizedBox(width: 6),
             Text(
-              'Remove',
+              label,
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.error,
-                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: isSet ? AppColors.borderActive : AppColors.border,
+                  width: isSet ? 1.5 : 1,
+                ),
+                boxShadow: [
+                  if (isSet)
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 16,
+                    color: isSet ? AppColors.primary : AppColors.textMuted,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      isSet ? time!.format(context) : 'Select',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: isSet ? AppColors.textPrimary : AppColors.textMuted,
+                        fontWeight: isSet ? FontWeight.w500 : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -216,88 +274,169 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
   @override
   Widget build(BuildContext context) {
     final hasError = !_slot.isEmpty && !_slot.isValid;
+    final isComplete = _slot.date != null && _slot.startTime != null && _slot.endTime != null;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.surfaceElevated,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasError ? AppColors.error : AppColors.border,
-          width: 1,
+          color: hasError ? AppColors.error : (isComplete ? AppColors.primary.withValues(alpha: 0.3) : AppColors.border),
+          width: hasError ? 1.5 : 1,
         ),
-        boxShadow: AppShadows.card,
+        boxShadow: [
+          if (isComplete)
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ...AppShadows.card,
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Time Slot',
-                style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
-              ),
-              if (widget.showRemove)
-                GestureDetector(
-                  onTap: widget.onRemove,
-                  child: const Icon(Icons.close_rounded, size: 18, color: AppColors.textMuted),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.schedule_rounded,
+                          size: 14,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Time Slot',
+                      style: AppTextStyles.label.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _buildField(
-            label: 'Date',
-            value: _slot.date != null
-                ? '${_slot.date!.month}/${_slot.date!.day}/${_slot.date!.year}'
-                : 'Select date',
-            icon: Icons.calendar_month_rounded,
-            onTap: _selectDate,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: _buildField(
+                if (widget.showRemove)
+                  GestureDetector(
+                    onTap: widget.onRemove,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 16,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+
+            // Date field
+            _buildDateField(),
+            const SizedBox(height: AppSpacing.lg),
+
+            // Time range
+            Row(
+              children: [
+                _buildTimeField(
                   label: 'Start Time',
-                  value: _slot.startTime != null
-                      ? _slot.startTime!.format(context)
-                      : 'Select time',
-                  icon: Icons.schedule_rounded,
+                  time: _slot.startTime,
                   onTap: _selectStartTime,
                 ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: _buildField(
+                const SizedBox(width: 12),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 18,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                _buildTimeField(
                   label: 'End Time',
-                  value: _slot.endTime != null
-                      ? _slot.endTime!.format(context)
-                      : 'Select time',
-                  icon: Icons.schedule_rounded,
+                  time: _slot.endTime,
                   onTap: _selectEndTime,
+                ),
+              ],
+            ),
+
+            // Error message
+            if (hasError) ...[
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      size: 16,
+                      color: AppColors.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _slot.errorMessage,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-          if (hasError)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.md),
-              child: Text(
-                _slot.errorMessage,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.error,
-                  fontWeight: FontWeight.w600,
-                ),
+
+            // Success indicator
+            if (isComplete && !hasError) ...[
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                children: [
+                  Icon(
+                    Icons.check_circle_rounded,
+                    size: 16,
+                    color: const Color(0xFF10B981),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Time slot configured',
+                    style: AppTextStyles.caption.copyWith(
+                      color: const Color(0xFF10B981),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          if (widget.showRemove)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.md),
-              child: _buildRemoveButton(),
-            ),
-        ],
+            ],
+          ],
+        ),
       ),
     );
   }
