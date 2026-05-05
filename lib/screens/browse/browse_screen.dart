@@ -6,7 +6,6 @@ import '../../providers/listing_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../listings/listing_detail_screen.dart';
 import '../listings/create_listing_screen.dart';
-import '../../widgets/tag_chip.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -270,20 +269,21 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border, width: 0.5),
-          boxShadow: AppShadows.card,
-          overflow: Clip.antiAlias,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Colored header with category
-            Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border, width: 0.5),
+            boxShadow: AppShadows.card,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Colored header with category
+              Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
@@ -436,7 +436,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                         backgroundColor: AppColors.primary,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 0),
-                      },
+                      ),
                       child: Text(
                         'View',
                         style: AppTextStyles.caption.copyWith(
@@ -452,6 +452,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
             ),
           ],
         ),
+        ),
       ),
     );
   }
@@ -466,21 +467,22 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            width: 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.3),
+              width: 1,
+            ),
+            boxShadow: AppShadows.card,
           ),
-          boxShadow: AppShadows.card,
-          overflow: Clip.antiAlias,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // Colored header with category + status
             Container(
               width: double.infinity,
@@ -654,7 +656,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                         backgroundColor: AppColors.primary,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 0),
-                      },
+                      ),
                       child: Text(
                         'Edit',
                         style: AppTextStyles.caption.copyWith(
@@ -669,6 +671,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
               ),
             ),
           ],
+        ),
         ),
       ),
     );
