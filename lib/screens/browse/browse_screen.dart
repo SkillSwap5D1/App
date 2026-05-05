@@ -15,19 +15,22 @@ class BrowseScreen extends StatefulWidget {
   State<BrowseScreen> createState() => _BrowseScreenState();
 }
 
-class _BrowseScreenState extends State<BrowseScreen> {
+class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
-    print('[BrowseScreen] initState called');
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     super.dispose();
   }
 
-  List<ListingModel> _getListings(
+  List<ListingModel> _getOtherListings(
     ListingProvider provider,
     AuthProvider authProvider,
   ) {
@@ -37,134 +40,200 @@ class _BrowseScreenState extends State<BrowseScreen> {
         .toList();
   }
 
+  List<ListingModel> _getMyListings(
+    ListingProvider provider,
+    AuthProvider authProvider,
+  ) {
+    final currentUid = authProvider.currentUser?.uid ?? '';
+    return provider.listings
+        .where((listing) => listing.ownerId == currentUid)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<ListingProvider, AuthProvider>(
       builder: (context, listingProvider, authProvider, _) {
-        final listings = _getListings(listingProvider, authProvider);
+        final otherListings = _getOtherListings(listingProvider, authProvider);
+        final myListings = _getMyListings(listingProvider, authProvider);
 
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
-            title: const Text('Browse Skills'),
+            title: const Text('Skills'),
             backgroundColor: AppColors.surface,
             elevation: 0,
+            bottom: TabBar(
+              controller: _tabController,
+              indicatorColor: AppColors.primary,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: AppColors.textSecondary,
+              labelStyle: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600),
+              unselectedLabelStyle: AppTextStyles.label,
+              tabs: [
+                const Tab(text: 'Browse'),
+                const Tab(text: 'My Listings'),
+              ],
+            ),
           ),
-          body: Column(
+          body: TabBarView(
+            controller: _tabController,
             children: [
-              // ──────── LIST A SKILL BUTTON ────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateListingScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.accentGradient,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'List a Skill',
-                          style: AppTextStyles.button.copyWith(
-                            color: Colors.white,
-                            fontSize: 16,
+              // ═════════════════════════════════════════════════════════════
+              // BROWSE TAB - Other people's listings
+              // ═════════════════════════════════════════════════════════════
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateListingScreen(),
                           ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppColors.accentUltraLight,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderLight),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              color: AppColors.accent,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'List a Skill',
+                              style: AppTextStyles.button.copyWith(
+                                color: AppColors.accent,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: otherListings.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.school_rounded,
+                                  size: 48,
+                                  color: AppColors.accentLight.withValues(alpha: 0.5),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No skills available yet',
+                                  style: AppTextStyles.bodyMedium
+                                      .copyWith(color: AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          )
+                        : GridView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.85,
+                            ),
+                            itemCount: otherListings.length,
+                            itemBuilder: (context, index) {
+                              return _buildListingCard(
+                                otherListings[index],
+                                context,
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
 
-              // ──────── LISTINGS LIST ────────────
-              Expanded(
-                child:
-                    listingProvider.isLoading
-                        ? const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+              // ═════════════════════════════════════════════════════════════
+              // MY LISTINGS TAB - Current user's listings
+              // ═════════════════════════════════════════════════════════════
+              myListings.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.folder_open_rounded,
+                            size: 48,
+                            color: AppColors.accentLight.withValues(alpha: 0.5),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'You haven\'t listed any skills yet',
+                            style: AppTextStyles.bodyMedium
+                                .copyWith(color: AppColors.textSecondary),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateListingScreen(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Create Listing'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
                             ),
                           ),
-                        )
-                        : listingProvider.errorMessage != null
-                        ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                size: 48,
-                                color: AppColors.error,
-                              ),
-                              const SizedBox(height: 16),
-                              Text('Error: ${listingProvider.errorMessage}'),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () =>
-                                    listingProvider.loadListings(),
-                                child: const Text('Retry'),
-                              ),
-                            ],
-                          ),
-                        )
-                        : listings.isEmpty
-                        ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.school,
-                                size: 64,
-                                color: AppColors.textMuted,
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'No skills available yet',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                        : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: listings.length,
-                          itemBuilder: (context, index) {
-                            final listing = listings[index];
-                            return _buildListingCard(
-                              listing,
-                              context,
-                            );
-                          },
-                        ),
-              ),
+                        ],
+                      ),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 0.85,
+                      ),
+                      itemCount: myListings.length,
+                      itemBuilder: (context, index) {
+                        return _buildMyListingCard(
+                          myListings[index],
+                          context,
+                        );
+                      },
+                    ),
             ],
           ),
         );
@@ -172,10 +241,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  Widget _buildListingCard(
-    ListingModel listing,
-    BuildContext context,
-  ) {
+  Widget _buildListingCard(ListingModel listing, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -186,132 +252,87 @@ class _BrowseScreenState extends State<BrowseScreen> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.border,
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: AppColors.border, width: 0.5),
+          boxShadow: AppShadows.card,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Title and Category
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          listing.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          listing.ownerName,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F3FF),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      listing.category,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Description
               Text(
-                listing.description,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
+                listing.title,
+                style: AppTextStyles.label.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 12),
-
-              // Level, Modality, Availability
-              Row(
+              const SizedBox(height: 4),
+              Text(
+                'by ${listing.ownerName}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 11,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.accentUltraLight,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  listing.category,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                listing.description,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
                 children: [
-                  Expanded(
-                    child: _buildDetailChip(
-                      Icons.trending_up,
-                      listing.level,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildDetailChip(
-                      Icons.screen_share_outlined,
-                      listing.modality,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildDetailChip(
-                      Icons.calendar_today_outlined,
-                      listing.nextAvailable,
-                    ),
-                  ),
+                  _buildDetailChip(Icons.grade_rounded, listing.level),
+                  _buildDetailChip(Icons.location_on_outlined, listing.modality),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // Tags
-              if (listing.tags.isNotEmpty)
+              if (listing.tags.take(1).isNotEmpty) ...[
+                const SizedBox(height: 6),
                 Wrap(
-                  spacing: 6,
-                  children: listing.tags
-                      .take(3)
-                      .map((tag) => TagChip(label: tag))
-                      .toList(),
+                  spacing: 4,
+                  children: listing.tags.take(1).map((tag) {
+                    return TagChip(label: tag);
+                  }).toList(),
                 ),
-
-              const SizedBox(height: 12),
-
-              // View Details Button
+              ],
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
-                height: 40,
+                height: 32,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -323,14 +344,167 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                    backgroundColor: AppColors.primary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                  ),
+                  child: Text(
+                    'View',
+                    style: AppTextStyles.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
-                  child: const Text('View Details'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyListingCard(ListingModel listing, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListingDetailScreen(listing: listing),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          boxShadow: AppShadows.card,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          listing.title,
+                          style: AppTextStyles.label.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: listing.isActive
+                              ? const Color(0x1A10B981)
+                              : const Color(0x1A6B7280),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          listing.isActive ? '●' : '●',
+                          style: AppTextStyles.caption.copyWith(
+                            color: listing.isActive
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFF6B7280),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentUltraLight,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      listing.category,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                listing.description,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: [
+                  _buildDetailChip(Icons.grade_rounded, listing.level),
+                  _buildDetailChip(Icons.location_on_outlined, listing.modality),
+                ],
+              ),
+              if (listing.tags.take(1).isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 4,
+                  children: listing.tags.take(1).map((tag) {
+                    return TagChip(label: tag);
+                  }).toList(),
+                ),
+              ],
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                height: 32,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ListingDetailScreen(listing: listing),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                  ),
+                  child: Text(
+                    'Edit',
+                    style: AppTextStyles.caption.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -342,24 +516,21 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   Widget _buildDetailChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F3FF),
+        color: AppColors.accentUltraLight,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: AppColors.primary),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppColors.textSecondary,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Icon(icon, size: 14, color: AppColors.accent),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
