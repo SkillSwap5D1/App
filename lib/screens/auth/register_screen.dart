@@ -191,21 +191,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (mounted) {
-        final authProvider = context.read<AuthProvider>();
-        if (authProvider.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(authProvider.errorMessage!),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        } else if (authProvider.currentUser != null) {
-          // Navigate to onboarding screen after successful registration
-          // User will complete their profile before going to home
-          if (mounted) {
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil('/onboarding', (route) => false);
+        // Give a moment for state to fully propagate
+        await Future.delayed(const Duration(milliseconds: 300));
+        
+        if (mounted) {
+          final authProvider = context.read<AuthProvider>();
+          if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(authProvider.errorMessage!),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          } else if (authProvider.currentUser != null && authProvider.currentUser!.uid.isNotEmpty) {
+            // Registration successful - navigate to onboarding
+            if (mounted) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding',
+                (route) => false,
+              );
+            }
           }
         }
       }
