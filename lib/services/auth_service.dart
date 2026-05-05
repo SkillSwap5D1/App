@@ -134,7 +134,7 @@ class AuthService {
 
       await _db.collection('users').doc(credential.user!.uid).set(user.toMap());
 
-      return await _waitForUserDocument(credential.user!.uid) ?? user;
+      return user;
 
     } on FirebaseAuthException catch (e) {
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
