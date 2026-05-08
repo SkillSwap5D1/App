@@ -70,6 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     print('🔵 Starting sign-in for $email...');
+    print('   Email from field: "${_emailController.text}" (${_emailController.text.length} chars)');
+    print('   Password from field: ${_passwordController.text.length} chars');
 
     await context.read<AuthProvider>().signIn(email, _passwordController.text);
 
@@ -89,8 +91,12 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         
+        print('🔍 Sign-in result:');
+        print('   errorMessage: ${authProvider.errorMessage}');
+        print('   currentUser: ${authProvider.currentUser?.uid ?? "null"}');
+        
         if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
-          print('❌ Sign-in error: ${authProvider.errorMessage}');
+          print('❌ Sign-in error detected: ${authProvider.errorMessage}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(authProvider.errorMessage!),
@@ -103,7 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // Sign-in successful - AuthWrapper will handle navigation
           // Do nothing here, the auth state listener will trigger navigation
         } else {
-          print('⚠️ Sign-in incomplete: currentUser is null after waiting');
+          print('⚠️ ISSUE: No error message AND no currentUser - something went wrong silently');
+          print('   Showing generic error to user');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Sign in failed. Please check your email and password.'),
