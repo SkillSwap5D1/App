@@ -69,36 +69,46 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
+    print('🔵 Starting sign-in for $email...');
 
     await context.read<AuthProvider>().signIn(email, _passwordController.text);
 
     if (mounted) {
-      // Give a moment for state to fully propagate
-      await Future.delayed(const Duration(milliseconds: 300));
+      final authProvider = context.read<AuthProvider>();
+      print('🔵 Sign-in call completed. Current user: ${authProvider.currentUser?.uid ?? "null"}');
+      
+      // Wait longer for auth state to propagate and user document to load
+      // The AuthProvider's auth state listener should fire and populate currentUser
+      int waitCount = 0;
+      while (mounted && authProvider.currentUser == null && waitCount < 30) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        waitCount++;
+      }
+      print('🔵 Waited ${waitCount * 100}ms for auth state. Final currentUser: ${authProvider.currentUser?.uid ?? "null"}');
       
       if (mounted) {
         setState(() => _isLoading = false);
-        final authProvider = context.read<AuthProvider>();
         
         if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
+          print('❌ Sign-in error: ${authProvider.errorMessage}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(authProvider.errorMessage!),
               backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 4),
             ),
           );
         } else if (authProvider.currentUser != null && authProvider.currentUser!.uid.isNotEmpty) {
-          // Sign-in successful - navigate to home
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            (route) => false,
-          );
+          print('✅ Sign-in successful! UID: ${authProvider.currentUser!.uid}');
+          // Sign-in successful - AuthWrapper will handle navigation
+          // Do nothing here, the auth state listener will trigger navigation
         } else {
-          // This shouldn't happen, but handle it gracefully
+          print('⚠️ Sign-in incomplete: currentUser is null after waiting');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Sign in failed. Please try again.'),
+              content: Text('Sign in failed. Please check your email and password.'),
               backgroundColor: AppColors.error,
+              duration: Duration(seconds: 4),
             ),
           );
         }
