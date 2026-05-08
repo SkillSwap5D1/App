@@ -24,12 +24,19 @@ class AuthService {
     return email.trim().toLowerCase();
   }
 
+  String _normalizePassword(String password) {
+    return password.trim();
+  }
+
   String handleAuthError(String errorCode) {
+    if (errorCode.contains('invalid-credential') ||
+        errorCode.contains('invalid-login-credentials') ||
+        errorCode.contains('invalid-email') ||
+        errorCode.contains('wrong-password')) {
+      return 'Incorrect email or password. Please try again.';
+    }
     if (errorCode.contains('user-not-found')) {
       return 'No user found for that email';
-    }
-    if (errorCode.contains('wrong-password')) {
-      return 'Incorrect password';
     }
     if (errorCode.contains('email-already-in-use')) {
       return 'This email is already registered';
@@ -43,14 +50,19 @@ class AuthService {
   Future<UserModel?> _waitForUserDocument(String uid) async {
     const maxAttempts = 10;
     const delay = Duration(milliseconds: 500);
+    print('🔵 _waitForUserDocument() looking for UID: $uid');
 
     for (var attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         final doc = await _db.collection('users').doc(uid).get();
         if (doc.exists) {
+          print('✅ Found user document for $uid on attempt ${attempt + 1}');
           return UserModel.fromMap(doc.data()!);
+        } else {
+          print('⚠️ User document not found for $uid on attempt ${attempt + 1}/${maxAttempts}');
         }
       } catch (e) {
+        print('❌ Error fetching user document attempt ${attempt + 1}: $e');
         if (attempt == maxAttempts - 1) {
           throw Exception('Failed to load user profile: $e');
         }
@@ -59,6 +71,7 @@ class AuthService {
       await Future.delayed(delay);
     }
 
+    print('❌ _waitForUserDocument() timed out: user document not found for $uid after ${maxAttempts * 500}ms');
     return null;
   }
 
@@ -69,6 +82,8 @@ class AuthService {
   Future<UserModel?> signIn(String email, String password) async {
     try {
       final normalizedEmail = _normalizeEmail(email);
+      final normalizedPassword = _normalizePassword(password);
+      print('🔵 AuthService.signIn() starting for $normalizedEmail');
 
       // Validate UoP email
       if (!normalizedEmail.endsWith('@myport.ac.uk')) {
@@ -76,16 +91,55 @@ class AuthService {
       }
 
       // Sign in with Firebase Auth
+      print('🔵 Signing in with Firebase Auth...');
       final credential = await _auth.signInWithEmailAndPassword(
         email: normalizedEmail,
-        password: password,
+        password: normalizedPassword,
       );
+      final uid = credential.user!.uid;
+      print('✅ Firebase Auth successful! UID: $uid');
 
-      return await _waitForUserDocument(credential.user!.uid);
+      print('🔵 Waiting for user document in Firestore...');
+      var userModel = await _waitForUserDocument(uid);
+      
+      // If document doesn't exist, create it with basic info
+      if (userModel == null) {
+        print('⚠️ User document not found, creating default profile...');
+        final user = credential.user!;
+        final nameParts = (user.displayName ?? '').split(' ');
+        final firstName = nameParts.isNotEmpty && nameParts[0].isNotEmpty
+            ? nameParts[0]
+            : email.split('@').first.split('.').first;
+        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+        userModel = UserModel(
+          uid: uid,
+          firstName: firstName,
+          lastName: lastName,
+          email: normalizedEmail,
+          course: 'Not specified',
+          bio: '',
+          rating: 0.0,
+          sessionsCompleted: 0,
+          memberSince: DateTime.now(),
+          showFullName: true,
+          showCourse: false,
+          showPhoto: true,
+        );
+
+        // Save to Firestore
+        await _db.collection('users').doc(uid).set(userModel.toMap());
+        print('✅ Created default user document for $uid');
+      }
+
+      print('✅ AuthService.signIn() returning user: ${userModel.uid}');
+      return userModel;
 
     } on FirebaseAuthException catch (e) {
+      print('❌ FirebaseAuthException: ${e.code} - ${e.message}');
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
     } catch (e) {
+      print('❌ SignIn error: $e');
       throw Exception(e.toString());
     }
   }
@@ -100,20 +154,21 @@ class AuthService {
   }) async {
     try {
       final normalizedEmail = _normalizeEmail(email);
+      final normalizedPassword = _normalizePassword(password);
 
       // Validate UoP email
       if (!normalizedEmail.endsWith('@myport.ac.uk')) {
         throw Exception('Please use your University of Portsmouth email');
       }
 
-      if (password.length < 6) {
+      if (normalizedPassword.length < 6) {
         throw Exception('Password must be at least 6 characters');
       }
 
       // Create Firebase Auth account
       final credential = await _auth.createUserWithEmailAndPassword(
         email: normalizedEmail,
-        password: password,
+        password: normalizedPassword,
       );
 
       // Create user model
