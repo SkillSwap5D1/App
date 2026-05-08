@@ -44,16 +44,10 @@ class RequestService {
         request.toUserId,
       );
 
-      // 4. Send notification to provider
-      await _notificationService.sendNotification(
-        request.toUserId,
-        'request',
-        'New lesson request from ${request.fromUserName}',
-        'wants to learn ${request.skillName}',
-        request.listingId,
-      );
+      // Note: Notification is handled automatically by Cloud Function onRequestCreated
+      // when the request is written to Firestore
 
-      // 5. Return the new request ID
+      // 4. Return the new request ID
       return docRef.id;
 
     } catch (e) {
@@ -104,14 +98,8 @@ class RequestService {
             'updatedAt':     Timestamp.fromDate(DateTime.now()),
           });
 
-      // 2. Notify the requester
-      await _notificationService.sendNotification(
-        requesterId,
-        'accepted',
-        'Your request was accepted!',
-        '$skillName has been confirmed',
-        requestId,
-      );
+      // Note: Notification is handled by Cloud Function onRequestStatusChanged
+      // when the request status is updated to 'accepted'
 
     } catch (e) {
       throw Exception('Failed to accept request: $e');
@@ -134,14 +122,8 @@ class RequestService {
             'updatedAt': Timestamp.fromDate(DateTime.now()),
           });
 
-      // 2. Notify the requester
-      await _notificationService.sendNotification(
-        requesterId,
-        'declined',
-        'Your request was declined',
-        '$skillName could not be confirmed',
-        requestId,
-      );
+      // Note: Notification is handled by Cloud Function onRequestStatusChanged
+      // when the request status is updated to 'declined'
 
     } catch (e) {
       throw Exception('Failed to decline request: $e');
@@ -168,14 +150,8 @@ class RequestService {
             'updatedAt':     Timestamp.fromDate(DateTime.now()),
           });
 
-      // 2. Notify the requester
-      await _notificationService.sendNotification(
-        requesterId,
-        'countered',
-        'New time slots proposed',
-        '$skillName — check the new proposed times',
-        requestId,
-      );
+      // Note: Notification is handled by Cloud Function onRequestStatusChanged
+      // when the request status is updated to 'countered'
 
     } catch (e) {
       throw Exception('Failed to counter request: $e');
