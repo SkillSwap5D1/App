@@ -13,32 +13,49 @@ export const setUniversityUserClaims = functions.auth
   .user()
   .onCreate(async (user) => {
     const email = user.email || "";
+    console.log(`🔵 setUniversityUserClaims triggered for: ${email}`);
     
     if (!email.endsWith("@myport.ac.uk")) {
+      console.log(`❌ Non-university email detected: ${email}`);
       await admin.auth().deleteUser(user.uid);
+      console.log(`❌ User deleted: ${user.uid}`);
       throw new functions.https.HttpsError(
         "invalid-argument",
         "Only @myport.ac.uk emails allowed"
       );
     }
 
-    await admin.auth().setCustomUserClaims(user.uid, {
-      isUniversityUser: true,
-      emailDomain: "myport.ac.uk",
-      claimsSetAt: new Date().toISOString(),
-    });
-
-    await db.collection("users").doc(user.uid).set(
-      {
-        uid: user.uid,
-        email: email,
-        displayName: user.displayName || "",
+    console.log(`✅ Email validated: ${email}`);
+    
+    try {
+      await admin.auth().setCustomUserClaims(user.uid, {
         isUniversityUser: true,
-        createdAt: new Date(),
-        isActive: true,
-      },
-      { merge: true }
-    );
+        emailDomain: "myport.ac.uk",
+        claimsSetAt: new Date().toISOString(),
+      });
+      console.log(`✅ Custom claims set for ${user.uid}`);
+    } catch (err) {
+      console.error(`❌ Error setting custom claims: ${err}`);
+      throw err;
+    }
+
+    try {
+      await db.collection("users").doc(user.uid).set(
+        {
+          uid: user.uid,
+          email: email,
+          displayName: user.displayName || "",
+          isUniversityUser: true,
+          createdAt: new Date(),
+          isActive: true,
+        },
+        { merge: true }
+      );
+      console.log(`✅ User document created for ${user.uid}`);
+    } catch (err) {
+      console.error(`❌ Error creating user document: ${err}`);
+      throw err;
+    }
 
     console.log(`✓ University user created: ${email}`);
   });
