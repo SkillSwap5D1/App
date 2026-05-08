@@ -93,6 +93,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
       fromUserId: currentUser.uid,
       fromUserName: currentUser.fullName,
       toUserId: widget.listing.ownerId,
+      toUserName: widget.listing.ownerName,
       listingId: widget.listing.id,
       skillName: widget.listing.title,
       message: _noteController.text.trim(),
