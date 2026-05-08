@@ -5,6 +5,7 @@ class RequestModel {
   final String fromUserId;
   final String fromUserName;
   final String toUserId;
+  final String toUserName;
   final String listingId;
   final String skillName;
   final String message;
@@ -18,6 +19,7 @@ class RequestModel {
     required this.fromUserId,
     required this.fromUserName,
     required this.toUserId,
+    required this.toUserName,
     required this.listingId,
     required this.skillName,
     required this.message,
@@ -34,6 +36,7 @@ class RequestModel {
       fromUserId:    map['fromUserId']    ?? '',
       fromUserName:  map['fromUserName']  ?? '',
       toUserId:      map['toUserId']      ?? '',
+      toUserName:    map['toUserName']    ?? '',
       listingId:     map['listingId']     ?? '',
       skillName:     map['skillName']     ?? '',
       message:       map['message']       ?? '',
@@ -51,6 +54,7 @@ class RequestModel {
       'fromUserId':    fromUserId,
       'fromUserName':  fromUserName,
       'toUserId':      toUserId,
+      'toUserName':    toUserName,
       'listingId':     listingId,
       'skillName':     skillName,
       'message':       message,
@@ -67,6 +71,7 @@ class RequestModel {
     String? fromUserId,
     String? fromUserName,
     String? toUserId,
+    String? toUserName,
     String? listingId,
     String? skillName,
     String? message,
@@ -80,6 +85,7 @@ class RequestModel {
       fromUserId:    fromUserId    ?? this.fromUserId,
       fromUserName:  fromUserName  ?? this.fromUserName,
       toUserId:      toUserId      ?? this.toUserId,
+      toUserName:    toUserName    ?? this.toUserName,
       listingId:     listingId     ?? this.listingId,
       skillName:     skillName     ?? this.skillName,
       message:       message       ?? this.message,
