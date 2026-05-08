@@ -83,7 +83,11 @@ class AuthService {
     try {
       final normalizedEmail = _normalizeEmail(email);
       final normalizedPassword = _normalizePassword(password);
-      print('🔵 AuthService.signIn() starting for $normalizedEmail');
+      print('🔵 AuthService.signIn() starting');
+      print('   Raw email: "$email" (${email.length} chars)');
+      print('   Normalized email: "$normalizedEmail" (${normalizedEmail.length} chars)');
+      print('   Raw password length: ${password.length} chars');
+      print('   Normalized password length: ${normalizedPassword.length} chars');
 
       // Validate UoP email
       if (!normalizedEmail.endsWith('@myport.ac.uk')) {
@@ -91,11 +95,12 @@ class AuthService {
       }
 
       // Sign in with Firebase Auth
-      print('🔵 Signing in with Firebase Auth...');
+      print('🔵 Attempting Firebase Auth.signInWithEmailAndPassword()...');
       final credential = await _auth.signInWithEmailAndPassword(
         email: normalizedEmail,
         password: normalizedPassword,
       );
+      print('🔵 Firebase Auth succeeded immediately');
       final uid = credential.user!.uid;
       print('✅ Firebase Auth successful! UID: $uid');
 
