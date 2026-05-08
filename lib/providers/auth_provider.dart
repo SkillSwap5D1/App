@@ -19,12 +19,16 @@ class AuthProvider extends ChangeNotifier {
   // ── Constructor - initialize auth state listener ──────────────────────────
   AuthProvider() {
     _authStateSubscription = _authService.authStateChanges.listen((user) async {
+      print('🔵 authStateChanges listener fired! User: ${user?.uid ?? "null"}');
       if (user != null) {
         currentUser = _buildProvisionalUser(user);
+        print('✅ Set provisional currentUser from Firebase: ${user.uid}');
         notifyListeners();
+        print('🔵 Calling _fetchUser to get full profile...');
         _fetchUser(user.uid);
       } else {
         currentUser = null;
+        print('🔵 User logged out, currentUser set to null');
         notifyListeners();
       }
     });
@@ -62,6 +66,7 @@ class AuthProvider extends ChangeNotifier {
   // ── Private: fetch user from Firestore ────────────────────────────────────
   Future<void> _fetchUser(String uid) async {
     try {
+      print('🔵 _fetchUser() called for $uid');
       const maxAttempts = 10;
       const delay = Duration(milliseconds: 500);
 
@@ -69,16 +74,18 @@ class AuthProvider extends ChangeNotifier {
         final user = await _userService.getUser(uid);
         if (user != null) {
           currentUser = user;
+          print('✅ _fetchUser() got full profile for $uid on attempt ${attempt + 1}');
           notifyListeners();
           return;
         }
+        print('⚠️ _fetchUser() attempt ${attempt + 1}/${maxAttempts}: user not found yet');
 
         await Future.delayed(delay);
       }
 
-      print('⚠️ User profile not available yet for $uid');
+      print('⚠️ User profile not available yet for $uid after ${maxAttempts * 500}ms');
     } catch (e) {
-      print('Error fetching user: $e');
+      print('❌ Error fetching user: $e');
     }
   }
 
@@ -87,24 +94,24 @@ class AuthProvider extends ChangeNotifier {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
+    print('🔵 AuthProvider.signIn() started for $email');
 
     try {
-      print('🔵 Starting sign in for $email');
       final user = await _authService.signIn(email, password);
-      print('🔵 Auth service returned: ${user?.email}');
+      print('🔵 AuthService.signIn() returned: ${user?.uid ?? "null"}');
 
       // Set currentUser immediately from the returned value
       if (user != null) {
-        print('✓ Setting currentUser to ${user.uid}');
         currentUser = user;
-        errorMessage = null;
+        print('✅ Set currentUser immediately: ${user.uid}');
         notifyListeners();
       } else {
-        print('❌ Auth service returned null');
-        errorMessage = 'Sign in failed. Please try again.';
+        print('⚠️ AuthService.signIn() returned null');
+        print('   The auth state listener should have fired via authStateChanges stream');
       }
 
       // Verify custom claims after authentication
+      print('🔵 Verifying university claims...');
       final verified = await _verifyUniversityClaims();
       if (!verified) {
         print(
@@ -112,11 +119,11 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print('❌ Sign in error: $e');
+      print('❌ SignIn error: $e');
       errorMessage = _handleAuthError(e.toString());
     } finally {
       isLoading = false;
-      print('🔵 Sign in complete. currentUser: ${currentUser?.uid}, errorMessage: $errorMessage');
+      print('🔵 AuthProvider.signIn() finished. currentUser: ${currentUser?.uid ?? "null"}');
       notifyListeners();
     }
   }
