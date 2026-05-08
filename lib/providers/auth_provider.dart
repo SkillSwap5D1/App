@@ -108,6 +108,7 @@ class AuthProvider extends ChangeNotifier {
       } else {
         print('⚠️ AuthService.signIn() returned null');
         print('   The auth state listener should have fired via authStateChanges stream');
+        // Don't set errorMessage here - we'll wait for auth state listener to fire
       }
 
       // Verify custom claims after authentication
@@ -119,11 +120,14 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print('❌ SignIn error: $e');
+      print('❌ SignIn error caught: $e');
       errorMessage = _handleAuthError(e.toString());
+      print('📝 Error message set to: $errorMessage');
     } finally {
       isLoading = false;
-      print('🔵 AuthProvider.signIn() finished. currentUser: ${currentUser?.uid ?? "null"}');
+      print('🔵 AuthProvider.signIn() finished. Final state:');
+      print('   currentUser: ${currentUser?.uid ?? "null"}');
+      print('   errorMessage: $errorMessage');
       notifyListeners();
     }
   }
