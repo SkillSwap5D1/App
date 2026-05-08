@@ -86,8 +86,9 @@ class AuthService {
       print('🔵 AuthService.signIn() starting');
       print('   Raw email: "$email" (${email.length} chars)');
       print('   Normalized email: "$normalizedEmail" (${normalizedEmail.length} chars)');
-      print('   Raw password length: ${password.length} chars');
-      print('   Normalized password length: ${normalizedPassword.length} chars');
+      print('   Raw password: "$password" (${password.length} chars)');
+      print('   Normalized password: "$normalizedPassword" (${normalizedPassword.length} chars)');
+      print('   Password chars: ${normalizedPassword.split('').map((c) => '${c}(${c.codeUnitAt(0)})').join(', ')}');
 
       // Validate UoP email
       if (!normalizedEmail.endsWith('@myport.ac.uk')) {
@@ -96,6 +97,8 @@ class AuthService {
 
       // Sign in with Firebase Auth
       print('🔵 Attempting Firebase Auth.signInWithEmailAndPassword()...');
+      print('   Sending email: "$normalizedEmail"');
+      print('   Sending password: "$normalizedPassword"');
       final credential = await _auth.signInWithEmailAndPassword(
         email: normalizedEmail,
         password: normalizedPassword,
@@ -103,6 +106,8 @@ class AuthService {
       print('🔵 Firebase Auth succeeded immediately');
       final uid = credential.user!.uid;
       print('✅ Firebase Auth successful! UID: $uid');
+      print('   Account email: ${credential.user!.email}');
+      print('   Account disabled?: ${credential.user!.emailVerified}');
 
       print('🔵 Waiting for user document in Firestore...');
       var userModel = await _waitForUserDocument(uid);
@@ -141,10 +146,14 @@ class AuthService {
       return userModel;
 
     } on FirebaseAuthException catch (e) {
-      print('❌ FirebaseAuthException: ${e.code} - ${e.message}');
+      print('❌ FirebaseAuthException caught!');
+      print('   Code: ${e.code}');
+      print('   Message: ${e.message}');
+      print('   Plugin: ${e.plugin}');
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
     } catch (e) {
-      print('❌ SignIn error: $e');
+      print('❌ Unexpected error during signIn: $e');
+      print('   Type: ${e.runtimeType}');
       throw Exception(e.toString());
     }
   }
