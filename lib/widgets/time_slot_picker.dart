@@ -255,7 +255,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      isSet ? time!.format(context) : 'Select',
+                      isSet ? time.format(context) : 'Select',
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: isSet ? AppColors.textPrimary : AppColors.textMuted,
                         fontWeight: isSet ? FontWeight.w500 : FontWeight.normal,
