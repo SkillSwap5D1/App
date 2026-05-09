@@ -78,6 +78,13 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
         .toList();
   }
 
+  int _gridCrossAxisCount(double width) {
+    if (width >= 1400) return 4;
+    if (width >= 1100) return 3;
+    if (width >= 700) return 2;
+    return 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,19 +206,25 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                           );
                         }
 
-                        return GridView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.12,
-                          ),
-                          itemCount: filteredListings.length,
-                          itemBuilder: (context, index) {
-                            return _buildListingCard(
-                              filteredListings[index],
-                              context,
+                        return LayoutBuilder(
+                          builder: (context, constraints) {
+                            final crossAxisCount = _gridCrossAxisCount(constraints.maxWidth);
+
+                            return GridView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 1.12,
+                              ),
+                              itemCount: filteredListings.length,
+                              itemBuilder: (context, index) {
+                                return _buildListingCard(
+                                  filteredListings[index],
+                                  context,
+                                );
+                              },
                             );
                           },
                         );
@@ -269,22 +282,28 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                             ],
                           ),
                         )
-                      : GridView.builder(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.12,
-                          ),
-                          itemCount: myListings.length,
-                          itemBuilder: (context, index) {
-                            return _buildMyListingCard(
-                              myListings[index],
-                              context,
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            final crossAxisCount = _gridCrossAxisCount(constraints.maxWidth);
+
+                            return GridView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 1.12,
+                              ),
+                              itemCount: myListings.length,
+                              itemBuilder: (context, index) {
+                                return _buildMyListingCard(
+                                  myListings[index],
+                                  context,
+                                );
+                              },
                             );
                           },
                         );
