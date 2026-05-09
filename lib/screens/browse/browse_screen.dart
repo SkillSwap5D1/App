@@ -434,7 +434,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                      color: AppColors.accentUltraLight,
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
@@ -613,7 +613,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: AppColors.accentUltraLight,
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
@@ -683,15 +683,6 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                     ),
                   ),
                 ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-                  ),
-                ),
               ),
             ],
           ),
