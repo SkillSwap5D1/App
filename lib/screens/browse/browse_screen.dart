@@ -205,7 +205,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.7,
+                            childAspectRatio: 1.12,
                           ),
                           itemCount: filteredListings.length,
                           itemBuilder: (context, index) {
@@ -278,7 +278,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.7,
+                            childAspectRatio: 1.12,
                           ),
                           itemCount: myListings.length,
                           itemBuilder: (context, index) {
@@ -313,7 +313,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
           boxShadow: AppShadows.card,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -454,7 +454,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
               // CTA Button
               SizedBox(
                 width: double.infinity,
-                height: 28,
+                height: 24,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -474,7 +474,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                     style: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
-                      fontSize: 10,
+                            fontSize: 9,
                     ),
                   ),
                 ),
@@ -507,7 +507,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
           boxShadow: AppShadows.card,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -636,7 +636,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 28,
+                      height: 24,
                       child: OutlinedButton(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
@@ -647,7 +647,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                           'Edit',
                           style: AppTextStyles.caption.copyWith(
                             fontWeight: FontWeight.w600,
-                            fontSize: 10,
+                            fontSize: 9,
                           ),
                         ),
                       ),
@@ -655,7 +655,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                   ),
                   Expanded(
                     child: SizedBox(
-                      height: 28,
+                      height: 24,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -676,7 +676,7 @@ class _BrowseScreenState extends State<BrowseScreen> with TickerProviderStateMix
                           style: AppTextStyles.caption.copyWith(
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
-                            fontSize: 10,
+                            fontSize: 9,
                           ),
                         ),
                       ),
