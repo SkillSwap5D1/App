@@ -34,14 +34,21 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
   Future<void> _deleteListing() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete listing?'),
-        content: Text('This action cannot be undone.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Delete', style: TextStyle(color: AppColors.error))),
-        ],
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: Text('Delete listing?'),
+            content: Text('This action cannot be undone.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Delete', style: TextStyle(color: AppColors.error)),
+              ),
+            ],
+          ),
     );
 
     if (confirmed ?? false) {
@@ -65,73 +72,109 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     final isOwner = authProvider.currentUser?.uid == widget.listing.ownerId;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text('Listing', style: AppTextStyles.h3),
+        backgroundColor: Colors.transparent,
         actions: [
           if (isOwner)
-            PopupMenuButton(itemBuilder: (context) => [
-              PopupMenuItem(child: Text('Edit'), onTap: _editListing),
-              PopupMenuItem(child: Text('Delete', style: TextStyle(color: AppColors.error)), onTap: _deleteListing),
-            ])
+            PopupMenuButton(
+              itemBuilder:
+                  (context) => [
+                    PopupMenuItem(child: Text('Edit'), onTap: _editListing),
+                    PopupMenuItem(
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: AppColors.error),
+                      ),
+                      onTap: _deleteListing,
+                    ),
+                  ],
+            )
           else
             IconButton(
-              icon: Icon(_isBookmarked ? Icons.bookmark : Icons.bookmark_outline, color: _isBookmarked ? AppColors.accent : null),
+              icon: Icon(
+                _isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
+                color: _isBookmarked ? AppColors.accent : null,
+              ),
               onPressed: () => setState(() => _isBookmarked = !_isBookmarked),
             ),
         ],
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProviderSection(),
-                SizedBox(height: AppSpacing.lg),
-                _buildTitleSection(),
-                SizedBox(height: AppSpacing.lg),
-                _buildDescriptionSection(),
-                SizedBox(height: AppSpacing.lg),
-                _buildAvailabilitySection(),
-                SizedBox(height: AppSpacing.lg),
-                _buildProviderStatsCard(),
-                SizedBox(height: 100),
-              ],
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildProviderSection(),
+                  SizedBox(height: AppSpacing.lg),
+                  _buildTitleSection(),
+                  SizedBox(height: AppSpacing.lg),
+                  _buildDescriptionSection(),
+                  SizedBox(height: AppSpacing.lg),
+                  _buildAvailabilitySection(),
+                  SizedBox(height: AppSpacing.lg),
+                  _buildProviderStatsCard(),
+                  SizedBox(height: 100),
+                ],
+              ),
             ),
-          ),
-          if (!isOwner)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceElevated,
-                  border: Border(top: BorderSide(color: AppColors.border)),
-                  boxShadow: AppShadows.card,
-                ),
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _sendRequest,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
-                    elevation: 0,
+            if (!isOwner)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.90),
+                    border: Border(
+                      top: BorderSide(color: AppColors.borderLight),
+                    ),
+                    boxShadow: AppShadows.card,
                   ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Center(
-                      child: _isLoading
-                          ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2))
-                          : Text('Request Lesson', style: AppTextStyles.button),
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _sendRequest,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.textPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        side: const BorderSide(color: Color(0x337C3AED)),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Center(
+                        child:
+                            _isLoading
+                                ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.accentLight,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : Text(
+                                  'Request Lesson',
+                                  style: AppTextStyles.button.copyWith(
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -140,9 +183,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFFFFF), Color(0xFFF5F3FF), Color(0xFFEAF2FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.borderLight),
         boxShadow: AppShadows.card,
       ),
       child: Row(
@@ -156,20 +203,38 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
               boxShadow: AppShadows.hover,
             ),
             alignment: Alignment.center,
-            child: Text(widget.listing.ownerName[0].toUpperCase(), style: TextStyle(color: AppColors.surface, fontSize: 20, fontWeight: FontWeight.bold)),
+            child: Text(
+              widget.listing.ownerName[0].toUpperCase(),
+              style: TextStyle(
+                color: AppColors.surface,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.listing.ownerName, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                Text(
+                  widget.listing.ownerName,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.star, size: 16, color: AppColors.accent),
                     SizedBox(width: 4),
-                    Text('4.5 (12 reviews)', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                    Text(
+                      '4.5 (12 reviews)',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -204,11 +269,21 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
       children: [
         Text('About This Skill', style: AppTextStyles.h3),
         SizedBox(height: AppSpacing.sm),
-        Text(widget.listing.description, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.6)),
+        Text(
+          widget.listing.description,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+            height: 1.6,
+          ),
+        ),
         SizedBox(height: AppSpacing.md),
         Text('Tags', style: AppTextStyles.label),
         SizedBox(height: AppSpacing.sm),
-        Wrap(spacing: AppSpacing.sm, children: widget.listing.tags.map((tag) => Chip(label: Text(tag))).toList()),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children:
+              widget.listing.tags.map((tag) => Chip(label: Text(tag))).toList(),
+        ),
       ],
     );
   }
@@ -222,9 +297,11 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: AppColors.surfaceElevated,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFFFFF), Color(0xFFF5F3FF)],
+            ),
             borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: Column(
             children: [
@@ -237,7 +314,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
               ListTile(
                 title: Text('Status'),
                 subtitle: Text(widget.listing.isActive ? 'Active' : 'Inactive'),
-                leading: Icon(widget.listing.isActive ? Icons.check_circle : Icons.cancel, color: widget.listing.isActive ? AppColors.success : AppColors.error),
+                leading: Icon(
+                  widget.listing.isActive ? Icons.check_circle : Icons.cancel,
+                  color:
+                      widget.listing.isActive
+                          ? AppColors.success
+                          : AppColors.error,
+                ),
               ),
             ],
           ),
@@ -250,9 +333,11 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFFFFF), Color(0xFFEEF2FF)],
+        ),
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.borderLight),
         boxShadow: AppShadows.card,
       ),
       child: Row(
