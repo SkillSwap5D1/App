@@ -3,10 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// App colour palette - Light glassmorphism theme
 class AppColors {
-  static const Color background = Color(0xFFF8F6FF);
+  static const Color background = Color(0xFFF6F3FF);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceElevated = Color(0xB3FFFFFF);
-  static const Color surfaceGlass = Color(0xCCFFFFFF);
+  static const Color surfaceElevated = Color(0xD8FFFFFF);
+  static const Color surfaceGlass = Color(0xE6FFFFFF);
   static const Color surfaceSolid = Color(0xFFFFFFFF);
   static const Color primary = Color(0xFF7C3AED);
 
@@ -39,9 +39,9 @@ class AppColors {
     end: Alignment.bottomRight,
     colors: [
       Color(0xFFEDE9F6),
+      Color(0xFFEAF2FF),
+      Color(0xFFFFF4E8),
       Color(0xFFF5F3FF),
-      Color(0xFFEEF2FF),
-      Color(0xFFFAF8FF),
     ],
     stops: [0.0, 0.35, 0.65, 1.0],
   );
@@ -51,12 +51,21 @@ class AppColors {
   static const Gradient accentGradient = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
+    colors: [Color(0xFF7C3AED), Color(0xFF60A5FA)],
   );
 
   static BoxDecoration glassCard({double borderRadius = 24}) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.65),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white.withValues(alpha: 0.90),
+          Color(0xFFBFDBFE).withValues(alpha: 0.24),
+          Color(0xFFFBCFE8).withValues(alpha: 0.20),
+          Color(0xFFFCD8B8).withValues(alpha: 0.18),
+        ],
+      ),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
         color: Colors.white.withValues(alpha: 0.8),
@@ -181,32 +190,16 @@ class AppRadius {
 
 class AppShadows {
   static const List<BoxShadow> card = [
-    BoxShadow(
-      color: Color(0x147C3AED),
-      blurRadius: 24,
-      offset: Offset(0, 8),
-    ),
-    BoxShadow(
-      color: Color(0x66FFFFFF),
-      blurRadius: 0,
-      offset: Offset(0, 0),
-    ),
+    BoxShadow(color: Color(0x147C3AED), blurRadius: 24, offset: Offset(0, 8)),
+    BoxShadow(color: Color(0x66FFFFFF), blurRadius: 0, offset: Offset(0, 0)),
   ];
-  
+
   static const List<BoxShadow> modal = [
-    BoxShadow(
-      color: Color(0x1A7C3AED),
-      blurRadius: 32,
-      offset: Offset(0, 12),
-    ),
+    BoxShadow(color: Color(0x1A7C3AED), blurRadius: 32, offset: Offset(0, 12)),
   ];
-  
+
   static const List<BoxShadow> hover = [
-    BoxShadow(
-      color: Color(0x267C3AED),
-      blurRadius: 20,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: Color(0x267C3AED), blurRadius: 20, offset: Offset(0, 8)),
   ];
 }
 
@@ -246,44 +239,45 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: AppColors.accentLight,
-        disabledForegroundColor: Colors.white70,
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.textPrimary,
+        disabledBackgroundColor: AppColors.surfaceGlass,
+        disabledForegroundColor: AppColors.textMuted,
         elevation: 0,
         minimumSize: const Size.fromHeight(56),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
+          side: const BorderSide(color: Color(0x337C3AED), width: 1),
         ),
-        textStyle: AppTextStyles.button,
+        textStyle: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        backgroundColor: AppColors.accentUltraLight,
-        side: const BorderSide(color: Color(0x4D7C3AED), width: 1),
+        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Colors.white,
+        side: const BorderSide(color: Color(0x337C3AED), width: 1),
         minimumSize: const Size.fromHeight(56),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        textStyle: AppTextStyles.button.copyWith(color: AppColors.primary),
+        textStyle: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.primary,
+        foregroundColor: AppColors.textPrimary,
         textStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.primary,
+          color: AppColors.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xCCFFFFFF),
+      fillColor: const Color(0xF2FFFFFF),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -305,14 +299,20 @@ class AppTheme {
         borderRadius: BorderRadius.circular(AppRadius.md),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
-      hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted, fontSize: 14),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.textMuted,
+        fontSize: 14,
+      ),
       labelStyle: AppTextStyles.label.copyWith(fontSize: 13),
       prefixIconColor: AppColors.accentLight,
       suffixIconColor: AppColors.accentLight,
-      errorStyle: AppTextStyles.caption.copyWith(color: AppColors.error, fontSize: 12),
+      errorStyle: AppTextStyles.caption.copyWith(
+        color: AppColors.error,
+        fontSize: 12,
+      ),
     ),
     cardTheme: CardThemeData(
-      color: const Color(0xB3FFFFFF),
+      color: const Color(0xD8FFFFFF),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -348,9 +348,7 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.textPrimary,
-      contentTextStyle: AppTextStyles.bodyMedium.copyWith(
-        color: Colors.white,
-      ),
+      contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
       actionTextColor: AppColors.accentLight,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -371,4 +369,3 @@ class AppTheme {
     ),
   );
 }
-
