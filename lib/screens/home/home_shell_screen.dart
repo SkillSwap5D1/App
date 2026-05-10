@@ -61,44 +61,69 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
       builder: (context, authProvider, _) {
         if (authProvider.currentUser == null) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Colors.transparent,
           body: _screens[_selectedIndex],
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.surface,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.textSecondary,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                label: 'Browse',
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.90),
+              border: Border(
+                top: BorderSide(
+                  color: AppColors.accent.withValues(alpha: 0.08),
+                  width: 1,
+                ),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.inbox_rounded),
-                label: 'Requests',
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withValues(alpha: 0.06),
+                  blurRadius: 20,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: BottomNavigationBar(
+                currentIndex: _selectedIndex,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                selectedItemColor: AppColors.accent,
+                unselectedItemColor: AppColors.textMuted,
+                selectedLabelStyle: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: const TextStyle(fontSize: 11),
+                onTap: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home_rounded),
+                    label: 'Browse',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.inbox_rounded),
+                    label: 'Requests',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.message_rounded),
+                    label: 'Messages',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person_rounded),
+                    label: 'Profile',
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.message_rounded),
-                label: 'Messages',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_rounded),
-                label: 'Profile',
-              ),
-            ],
+            ),
           ),
         );
       },
