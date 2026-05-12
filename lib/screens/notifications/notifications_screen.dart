@@ -14,6 +14,7 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   String? _loadedForUid;
+  bool _isMarkingAllAsRead = false;
 
   @override
   void didChangeDependencies() {
@@ -30,6 +31,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     _loadedForUid = currentUid;
     context.read<NotificationProvider>().loadNotifications(currentUid);
+  }
+
+  Future<void> _markAllAsRead() async {
+    final currentUid = context.read<AuthProvider>().currentUser?.uid;
+    if (currentUid == null || _isMarkingAllAsRead) return;
+
+    setState(() => _isMarkingAllAsRead = true);
+
+    try {
+      await context.read<NotificationProvider>().markAllAsRead(currentUid);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All notifications marked as read')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isMarkingAllAsRead = false);
+      }
+    }
   }
 
   void _handleNotificationTap(NotificationModel notification) {
@@ -85,15 +106,71 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                     Consumer<NotificationProvider>(
                       builder: (context, notifProvider, _) {
-                        final authProvider = context.read<AuthProvider>();
-                        final currentUid = authProvider.currentUser?.uid;
-                        return TextButton(
-                          onPressed:
-                              currentUid != null
-                                  ? () =>
-                                      notifProvider.markAllAsRead(currentUid)
-                                  : null,
-                          child: const Text('Mark all as read'),
+                        final canTap =
+                            context.read<AuthProvider>().currentUser?.uid !=
+                            null;
+
+                        return AnimatedOpacity(
+                          duration: const Duration(milliseconds: 180),
+                          opacity: canTap ? 1 : 0.5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFF4F0FF), Color(0xFFE8F1FF)],
+                              ),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: AppColors.accentLight.withValues(
+                                  alpha: 0.28,
+                                ),
+                              ),
+                            ),
+                            child: TextButton.icon(
+                              onPressed:
+                                  canTap && !_isMarkingAllAsRead
+                                      ? _markAllAsRead
+                                      : null,
+                              icon: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 180),
+                                child:
+                                    _isMarkingAllAsRead
+                                        ? SizedBox(
+                                          key: const ValueKey('loading'),
+                                          width: 14,
+                                          height: 14,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: AppColors.accent,
+                                          ),
+                                        )
+                                        : Icon(
+                                          Icons.done_all_rounded,
+                                          key: const ValueKey('icon'),
+                                          size: 16,
+                                          color: AppColors.accent,
+                                        ),
+                              ),
+                              label: Text(
+                                _isMarkingAllAsRead
+                                    ? 'Marking...'
+                                    : 'Mark all as read',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppColors.accent,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                              ),
+                            ),
+                          ),
                         );
                       },
                     ),
