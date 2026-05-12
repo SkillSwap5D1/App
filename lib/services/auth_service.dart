@@ -119,7 +119,11 @@ class AuthService {
       print('   Account email: ${credential.user!.email}');
       print('   Account disabled?: ${credential.user!.emailVerified}');
 
+      // Force refresh to get custom claims from Cloud Function
       await credential.user?.getIdToken(true);
+
+      // Small delay to ensure custom claims are propagated
+      await Future.delayed(const Duration(milliseconds: 500));
 
       print('🔵 Waiting for user document in Firestore...');
       var userModel = await _waitForUserDocument(uid);
@@ -200,6 +204,9 @@ class AuthService {
 
       await credential.user?.getIdToken(true);
 
+      // Small delay to ensure custom claims are propagated
+      await Future.delayed(const Duration(milliseconds: 500));
+
       // Create user model
       final user = UserModel(
         uid: credential.user!.uid,
@@ -276,6 +283,9 @@ class AuthService {
       }
 
       await firebaseUser.getIdToken(true);
+
+      // Small delay to ensure custom claims are propagated
+      await Future.delayed(const Duration(milliseconds: 500));
 
       final existingUser = await _waitForUserDocument(firebaseUser.uid);
       if (existingUser != null) {

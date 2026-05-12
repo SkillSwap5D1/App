@@ -29,20 +29,34 @@ class RequestProvider extends ChangeNotifier {
     notifyListeners();
 
     // Listen to incoming requests
-    _incomingSubscription = _requestService.getIncomingRequests(uid).listen((
-      data,
-    ) {
-      incoming = data;
-      notifyListeners();
-    });
+    _incomingSubscription = _requestService
+        .getIncomingRequests(uid)
+        .listen(
+          (data) {
+            incoming = data;
+            notifyListeners();
+          },
+          onError: (error) {
+            errorMessage = 'Error loading incoming requests: $error';
+            print('❌ Incoming requests error: $error');
+            notifyListeners();
+          },
+        );
 
     // Listen to outgoing requests
-    _outgoingSubscription = _requestService.getOutgoingRequests(uid).listen((
-      data,
-    ) {
-      outgoing = data;
-      notifyListeners();
-    });
+    _outgoingSubscription = _requestService
+        .getOutgoingRequests(uid)
+        .listen(
+          (data) {
+            outgoing = data;
+            notifyListeners();
+          },
+          onError: (error) {
+            errorMessage = 'Error loading outgoing requests: $error';
+            print('❌ Outgoing requests error: $error');
+            notifyListeners();
+          },
+        );
   }
 
   // ── Send a request ────────────────────────────────────────────────────────
