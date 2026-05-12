@@ -112,9 +112,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Notifications',
-                      style: AppTextStyles.h2,
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        Text(
+                          'Notifications',
+                          style: AppTextStyles.h2,
+                        ),
+                      ],
                     ),
                     TextButton(
                       onPressed: _markAllAsRead,
