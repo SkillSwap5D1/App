@@ -392,7 +392,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                         () => _openChatForRequest(
                           context,
                           request,
-                          otherUserId: request.toUserId,
+                          otherUserId: request.fromUserId,
                         ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -633,7 +633,6 @@ class _RequestsScreenState extends State<RequestsScreen>
               (_) => ChatThreadScreen(
                 conversationId: conversationId,
                 otherUserId: otherUserId,
-                requestId: request.id,
               ),
         ),
       );
