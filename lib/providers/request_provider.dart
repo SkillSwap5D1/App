@@ -5,11 +5,12 @@ import 'dart:async';
 
 class RequestProvider extends ChangeNotifier {
   final RequestService _requestService = RequestService();
+  String? _activeUid;
 
   // ── State ─────────────────────────────────────────────────────────────────
-  List<RequestModel> incoming  = [];
-  List<RequestModel> outgoing  = [];
-  bool isLoading               = false;
+  List<RequestModel> incoming = [];
+  List<RequestModel> outgoing = [];
+  bool isLoading = false;
   String? errorMessage;
 
   // ── Stream subscriptions ──────────────────────────────────────────────────
@@ -18,21 +19,30 @@ class RequestProvider extends ChangeNotifier {
 
   // ── Load requests — starts real time streams ──────────────────────────────
   void loadRequests(String uid) {
+    _activeUid = uid;
+
+    _incomingSubscription?.cancel();
+    _outgoingSubscription?.cancel();
+
+    incoming = [];
+    outgoing = [];
+    notifyListeners();
+
     // Listen to incoming requests
-    _incomingSubscription = _requestService
-        .getIncomingRequests(uid)
-        .listen((data) {
-          incoming = data;
-          notifyListeners();
-        });
+    _incomingSubscription = _requestService.getIncomingRequests(uid).listen((
+      data,
+    ) {
+      incoming = data;
+      notifyListeners();
+    });
 
     // Listen to outgoing requests
-    _outgoingSubscription = _requestService
-        .getOutgoingRequests(uid)
-        .listen((data) {
-          outgoing = data;
-          notifyListeners();
-        });
+    _outgoingSubscription = _requestService.getOutgoingRequests(uid).listen((
+      data,
+    ) {
+      outgoing = data;
+      notifyListeners();
+    });
   }
 
   // ── Send a request ────────────────────────────────────────────────────────
@@ -92,11 +102,7 @@ class RequestProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _requestService.declineRequest(
-        requestId,
-        requesterId,
-        skillName,
-      );
+      await _requestService.declineRequest(requestId, requesterId, skillName);
     } catch (e) {
       errorMessage = e.toString();
     } finally {

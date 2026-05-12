@@ -40,6 +40,11 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
       if (!mounted) return;
 
       final auth = context.read<AuthProvider>();
+      if (auth.currentUser != null && auth.isLoading) {
+        _loadData();
+        return;
+      }
+
       final uid = auth.currentUser?.uid;
 
       if (uid == null || uid == _initializedForUid) {

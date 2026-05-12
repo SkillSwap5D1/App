@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 import 'package:skillswap_app/models/listing_model.dart';
+import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/widgets/snackbar_helper.dart';
 import 'package:skillswap_app/widgets/tag_chip.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
+import 'package:skillswap_app/services/user_service.dart';
 
 class ListingDetailScreen extends StatefulWidget {
   final ListingModel listing;
@@ -15,12 +17,15 @@ class ListingDetailScreen extends StatefulWidget {
 }
 
 class _ListingDetailScreenState extends State<ListingDetailScreen> {
+  final UserService _userService = UserService();
+  late Future<UserModel?> _ownerFuture;
   bool _isBookmarked = false;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _ownerFuture = _userService.getUser(widget.listing.ownerId);
   }
 
   Future<void> _sendRequest() async {
@@ -180,68 +185,80 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
   }
 
   Widget _buildProviderSection() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFFFFF), Color(0xFFF5F3FF), Color(0xFFEAF2FF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: AppShadows.card,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: AppColors.accentGradient,
-              boxShadow: AppShadows.hover,
+    return FutureBuilder<UserModel?>(
+      future: _ownerFuture,
+      builder: (context, snapshot) {
+        final owner = snapshot.data;
+        final ownerName = owner?.fullName ?? widget.listing.ownerName;
+        final ownerInitial =
+            ownerName.isNotEmpty ? ownerName[0].toUpperCase() : '?';
+        final ownerRating = owner?.rating ?? 0.0;
+        final ownerReviews = owner?.totalReviews ?? 0;
+
+        return Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFFFFF), Color(0xFFF5F3FF), Color(0xFFEAF2FF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            alignment: Alignment.center,
-            child: Text(
-              widget.listing.ownerName[0].toUpperCase(),
-              style: TextStyle(
-                color: AppColors.surface,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.borderLight),
+            boxShadow: AppShadows.card,
           ),
-          SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.listing.ownerName,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppColors.accentGradient,
+                  boxShadow: AppShadows.hover,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  ownerInitial,
+                  style: TextStyle(
+                    color: AppColors.surface,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
-                Row(
+              ),
+              SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.star, size: 16, color: AppColors.accent),
-                    SizedBox(width: 4),
                     Text(
-                      '4.5 (12 reviews)',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      ownerName,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.star, size: 16, color: AppColors.accent),
+                        SizedBox(width: 4),
+                        Text(
+                          '${ownerRating.toStringAsFixed(1)} ($ownerReviews reviews)',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -330,26 +347,36 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
   }
 
   Widget _buildProviderStatsCard() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFFFFFF), Color(0xFFEEF2FF)],
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: AppShadows.card,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatColumn('42', 'Sessions'),
-          VerticalDivider(color: AppColors.border),
-          _buildStatColumn('4.5', 'Rating'),
-          VerticalDivider(color: AppColors.border),
-          _buildStatColumn('12', 'Reviews'),
-        ],
-      ),
+    return FutureBuilder<UserModel?>(
+      future: _ownerFuture,
+      builder: (context, snapshot) {
+        final owner = snapshot.data;
+        final sessions = owner?.sessionsCompleted ?? 0;
+        final rating = owner?.rating.toStringAsFixed(1) ?? '0.0';
+        final reviews = owner?.totalReviews ?? 0;
+
+        return Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFFFFF), Color(0xFFEEF2FF)],
+            ),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.borderLight),
+            boxShadow: AppShadows.card,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildStatColumn(sessions.toString(), 'Sessions'),
+              VerticalDivider(color: AppColors.border),
+              _buildStatColumn(rating, 'Rating'),
+              VerticalDivider(color: AppColors.border),
+              _buildStatColumn(reviews.toString(), 'Reviews'),
+            ],
+          ),
+        );
+      },
     );
   }
 

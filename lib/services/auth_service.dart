@@ -13,9 +13,9 @@ class AuthService {
     FirebaseAuth? auth,
     FirebaseFirestore? db,
     GoogleSignIn? googleSignIn,
-  })  : _auth = auth ?? FirebaseAuth.instance,
-        _db = db ?? FirebaseFirestore.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       _db = db ?? FirebaseFirestore.instance,
+       _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   // ── Current user ──────────────────────────────────────────────────────────
   User? get currentUser => _auth.currentUser;
@@ -59,7 +59,9 @@ class AuthService {
           print('✅ Found user document for $uid on attempt ${attempt + 1}');
           return UserModel.fromMap(doc.data()!);
         } else {
-          print('⚠️ User document not found for $uid on attempt ${attempt + 1}/${maxAttempts}');
+          print(
+            '⚠️ User document not found for $uid on attempt ${attempt + 1}/${maxAttempts}',
+          );
         }
       } catch (e) {
         print('❌ Error fetching user document attempt ${attempt + 1}: $e');
@@ -71,7 +73,9 @@ class AuthService {
       await Future.delayed(delay);
     }
 
-    print('❌ _waitForUserDocument() timed out: user document not found for $uid after ${maxAttempts * 500}ms');
+    print(
+      '❌ _waitForUserDocument() timed out: user document not found for $uid after ${maxAttempts * 500}ms',
+    );
     return null;
   }
 
@@ -85,10 +89,16 @@ class AuthService {
       final normalizedPassword = _normalizePassword(password);
       print('🔵 AuthService.signIn() starting');
       print('   Raw email: "$email" (${email.length} chars)');
-      print('   Normalized email: "$normalizedEmail" (${normalizedEmail.length} chars)');
+      print(
+        '   Normalized email: "$normalizedEmail" (${normalizedEmail.length} chars)',
+      );
       print('   Raw password: "$password" (${password.length} chars)');
-      print('   Normalized password: "$normalizedPassword" (${normalizedPassword.length} chars)');
-      print('   Password chars: ${normalizedPassword.split('').map((c) => '${c}(${c.codeUnitAt(0)})').join(', ')}');
+      print(
+        '   Normalized password: "$normalizedPassword" (${normalizedPassword.length} chars)',
+      );
+      print(
+        '   Password chars: ${normalizedPassword.split('').map((c) => '${c}(${c.codeUnitAt(0)})').join(', ')}',
+      );
 
       // Validate UoP email
       if (!normalizedEmail.endsWith('@myport.ac.uk')) {
@@ -109,18 +119,22 @@ class AuthService {
       print('   Account email: ${credential.user!.email}');
       print('   Account disabled?: ${credential.user!.emailVerified}');
 
+      await credential.user?.getIdToken(true);
+
       print('🔵 Waiting for user document in Firestore...');
       var userModel = await _waitForUserDocument(uid);
-      
+
       // If document doesn't exist, create it with basic info
       if (userModel == null) {
         print('⚠️ User document not found, creating default profile...');
         final user = credential.user!;
         final nameParts = (user.displayName ?? '').split(' ');
-        final firstName = nameParts.isNotEmpty && nameParts[0].isNotEmpty
-            ? nameParts[0]
-            : email.split('@').first.split('.').first;
-        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+        final firstName =
+            nameParts.isNotEmpty && nameParts[0].isNotEmpty
+                ? nameParts[0]
+                : email.split('@').first.split('.').first;
+        final lastName =
+            nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
         userModel = UserModel(
           uid: uid,
@@ -144,7 +158,6 @@ class AuthService {
 
       print('✅ AuthService.signIn() returning user: ${userModel.uid}');
       return userModel;
-
     } on FirebaseAuthException catch (e) {
       print('❌ FirebaseAuthException caught!');
       print('   Code: ${e.code}');
@@ -185,20 +198,22 @@ class AuthService {
         password: normalizedPassword,
       );
 
+      await credential.user?.getIdToken(true);
+
       // Create user model
       final user = UserModel(
-        uid:               credential.user!.uid,
-        firstName:         firstName,
-        lastName:          lastName,
-        email:             normalizedEmail,
-        course:            course,
-        bio:               '',
-        rating:            0.0,
+        uid: credential.user!.uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: normalizedEmail,
+        course: course,
+        bio: '',
+        rating: 0.0,
         sessionsCompleted: 0,
-        memberSince:       DateTime.now(),
-        showFullName:      true,
-        showCourse:        true,
-        showPhoto:         true,
+        memberSince: DateTime.now(),
+        showFullName: true,
+        showCourse: true,
+        showPhoto: true,
       );
 
       await _db.collection('users').doc(credential.user!.uid).set(user.toMap());
@@ -207,7 +222,6 @@ class AuthService {
       await Future.delayed(const Duration(milliseconds: 500));
 
       return user;
-
     } on FirebaseAuthException catch (e) {
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
     } catch (e) {
@@ -230,7 +244,7 @@ class AuthService {
     try {
       // Trigger Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         throw Exception('Google sign-in cancelled');
       }
@@ -238,12 +252,15 @@ class AuthService {
       // Verify university email domain
       if (!googleUser.email.endsWith('@myport.ac.uk')) {
         await _googleSignIn.signOut();
-        throw Exception('Please use your University of Portsmouth email (@myport.ac.uk)');
+        throw Exception(
+          'Please use your University of Portsmouth email (@myport.ac.uk)',
+        );
       }
 
       // Get Google authentication credentials
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
       // Create Firebase credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -258,6 +275,8 @@ class AuthService {
         throw Exception('Firebase sign-in failed');
       }
 
+      await firebaseUser.getIdToken(true);
+
       final existingUser = await _waitForUserDocument(firebaseUser.uid);
       if (existingUser != null) {
         return existingUser;
@@ -267,7 +286,8 @@ class AuthService {
       // model so the caller can continue while the auth state listener retries.
       final nameParts = (firebaseUser.displayName ?? '').split(' ');
       final firstName = nameParts.isNotEmpty ? nameParts[0] : 'User';
-      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+      final lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
       return UserModel(
         uid: firebaseUser.uid,
@@ -283,12 +303,10 @@ class AuthService {
         showCourse: false,
         showPhoto: true,
       );
-
     } on FirebaseAuthException catch (e) {
       throw Exception('${e.code}: ${e.message ?? 'Auth failed'}');
     } catch (e) {
       throw Exception(e.toString());
     }
   }
-
 }

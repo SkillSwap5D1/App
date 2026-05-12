@@ -16,19 +16,29 @@ class RequestsScreen extends StatefulWidget {
 class _RequestsScreenState extends State<RequestsScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  String? _loadedForUid;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = context.read<AuthProvider>();
-      final currentUid = authProvider.currentUser?.uid;
-      if (currentUid != null) {
-        context.read<RequestProvider>().loadRequests(currentUid);
-      }
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final authProvider = context.watch<AuthProvider>();
+    final currentUid = authProvider.currentUser?.uid;
+
+    if (currentUid == null ||
+        authProvider.isLoading ||
+        currentUid == _loadedForUid) {
+      return;
+    }
+
+    _loadedForUid = currentUid;
+    context.read<RequestProvider>().loadRequests(currentUid);
   }
 
   @override
