@@ -52,6 +52,7 @@ class AuthProvider extends ChangeNotifier {
             currentUser = _buildProvisionalUser(user);
             print('✅ Set provisional currentUser from Firebase: ${user.uid}');
             notifyListeners();
+            await _authService.setUserOnlineStatus(user.uid, true);
             print('🔵 Called notifyListeners() from auth state listener');
             print('🔵 Calling _fetchUser to get full profile...');
             _fetchUser(user.uid);
@@ -100,6 +101,7 @@ class AuthProvider extends ChangeNotifier {
       showFullName: true,
       showCourse: false,
       showPhoto: true,
+      isOnline: true,
     );
   }
 

@@ -13,6 +13,7 @@ class UserModel {
   final bool showFullName;
   final bool showCourse;
   final bool showPhoto;
+  final bool isOnline;
   final List<String> savedListingIds;
   final int totalReviews;
   final List<String> canTeach;
@@ -31,6 +32,7 @@ class UserModel {
     required this.showFullName,
     required this.showCourse,
     required this.showPhoto,
+    this.isOnline = false,
     this.savedListingIds = const [],
     this.totalReviews = 0,
     this.canTeach = const [],
@@ -53,6 +55,7 @@ class UserModel {
       showFullName: map['showFullName'] ?? true,
       showCourse: map['showCourse'] ?? true,
       showPhoto: map['showPhoto'] ?? true,
+      isOnline: map['isOnline'] ?? false,
       savedListingIds: List<String>.from(map['savedListingIds'] ?? const []),
       totalReviews: (map['totalReviews'] ?? 0).toInt(),
       canTeach: List<String>.from(map['canTeach'] ?? const []),
@@ -75,6 +78,7 @@ class UserModel {
       'showFullName': showFullName,
       'showCourse': showCourse,
       'showPhoto': showPhoto,
+      'isOnline': isOnline,
       'savedListingIds': savedListingIds,
       'totalReviews': totalReviews,
       'canTeach': canTeach,
@@ -96,6 +100,7 @@ class UserModel {
     bool? showFullName,
     bool? showCourse,
     bool? showPhoto,
+    bool? isOnline,
     List<String>? savedListingIds,
     int? totalReviews,
     List<String>? canTeach,
@@ -114,6 +119,7 @@ class UserModel {
       showFullName: showFullName ?? this.showFullName,
       showCourse: showCourse ?? this.showCourse,
       showPhoto: showPhoto ?? this.showPhoto,
+      isOnline: isOnline ?? this.isOnline,
       savedListingIds: savedListingIds ?? this.savedListingIds,
       totalReviews: totalReviews ?? this.totalReviews,
       canTeach: canTeach ?? this.canTeach,

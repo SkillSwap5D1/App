@@ -179,13 +179,14 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _userService.getUser(widget.otherUserId),
+    return StreamBuilder(
+      stream: _userService.userStream(widget.otherUserId),
       builder: (context, snapshot) {
         final otherUser = snapshot.data;
         final otherUserName = otherUser?.displayName ?? 'Unknown';
         final otherUserInitial =
             otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : '?';
+        final isOnline = otherUser?.isOnline ?? false;
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -237,13 +238,16 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: AppColors.success,
+                              color:
+                                  isOnline
+                                      ? AppColors.success
+                                      : AppColors.textMuted,
                               shape: BoxShape.circle,
                             ),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Offline',
+                            isOnline ? 'Online' : 'Offline',
                             style: AppTextStyles.caption.copyWith(
                               color: AppColors.textSecondary,
                             ),

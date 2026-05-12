@@ -79,6 +79,17 @@ class AuthService {
     return null;
   }
 
+  Future<void> setUserOnlineStatus(String uid, bool isOnline) async {
+    try {
+      await _db.collection('users').doc(uid).set({
+        'isOnline': isOnline,
+        'lastSeen': Timestamp.fromDate(DateTime.now()),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('Failed to update online status: $e');
+    }
+  }
+
   // ── Auth state stream — listens to login/logout ───────────────────────────
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
@@ -154,6 +165,7 @@ class AuthService {
             showFullName: true,
             showCourse: false,
             showPhoto: true,
+            isOnline: true,
           );
 
           // Save to Firestore
@@ -172,7 +184,7 @@ class AuthService {
       print(
         '✅ AuthService.signIn() returning user: ${userModel?.uid ?? "null"}',
       );
-      return userModel;
+      return userModel?.copyWith(isOnline: true) ?? userModel;
     } on FirebaseAuthException catch (e) {
       print('❌ FirebaseAuthException caught!');
       print('   Code: ${e.code}');
@@ -232,6 +244,7 @@ class AuthService {
         showFullName: true,
         showCourse: true,
         showPhoto: true,
+        isOnline: true,
       );
 
       await _db.collection('users').doc(credential.user!.uid).set(user.toMap());
@@ -250,6 +263,10 @@ class AuthService {
   // ── Sign Out ──────────────────────────────────────────────────────────────
   Future<void> signOut() async {
     try {
+      final uid = _auth.currentUser?.uid;
+      if (uid != null) {
+        await setUserOnlineStatus(uid, false);
+      }
       await _auth.signOut();
       await _googleSignIn.signOut();
     } catch (e) {
@@ -300,7 +317,7 @@ class AuthService {
 
       final existingUser = await _waitForUserDocument(firebaseUser.uid);
       if (existingUser != null) {
-        return existingUser;
+        return existingUser.copyWith(isOnline: true);
       }
 
       // If the Cloud Function hasn't created the user doc yet, return a local
