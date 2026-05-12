@@ -66,7 +66,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // ── Send a message ───────────────────────────────────────────────────────
-  Future<void> sendMessage({
+  Future<MessageModel> sendMessage({
     required String conversationId,
     required String senderId,
     required String senderName,
@@ -76,14 +76,19 @@ class ChatProvider extends ChangeNotifier {
       print(
         '🔵 ChatProvider.sendMessage(): Sending message to $conversationId',
       );
-      await _chatService.sendMessage(
+      final sentMessage = await _chatService.sendMessage(
         conversationId: conversationId,
         senderId: senderId,
         senderName: senderName,
         text: text,
       );
+
+      if (activeConversationId == conversationId) {
+        currentMessages = [...currentMessages, sentMessage];
+        notifyListeners();
+      }
       print('✅ Message sent successfully');
-      // Messages update via stream subscription
+      return sentMessage;
     } catch (e) {
       print('❌ Error sending message: $e');
       throw e;

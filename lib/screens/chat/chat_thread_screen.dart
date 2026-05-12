@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../models/message_model.dart';
 import '../../services/user_service.dart';
 import '../safety/report_blocked_screen.dart';
 
@@ -25,6 +26,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final ScrollController _scrollController;
   bool _isComposing = false;
   bool _isUserBlocked = false;
+  final List<MessageModel> _optimisticMessages = [];
   final UserService _userService = UserService();
 
   @override
@@ -48,6 +50,20 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  List<MessageModel> _mergedMessages(List<MessageModel> providerMessages) {
+    final merged = <String, MessageModel>{};
+
+    for (final message in providerMessages) {
+      merged[message.id] = message;
+    }
+
+    for (final message in _optimisticMessages) {
+      merged[message.id] = message;
+    }
+
+    return merged.values.toList();
   }
 
   void _handleTextChanged() {
@@ -79,12 +95,25 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     _messageController.clear();
     setState(() => _isComposing = false);
 
-    await context.read<ChatProvider>().sendMessage(
+    final sentMessage = await context.read<ChatProvider>().sendMessage(
       conversationId: widget.conversationId,
       senderId: currentUid,
       senderName: senderName,
       text: text,
     );
+
+    if (!mounted) return;
+
+    setState(() {
+      _optimisticMessages.removeWhere(
+        (message) => message.id == sentMessage.id,
+      );
+      if (_optimisticMessages.every(
+        (message) => message.id != sentMessage.id,
+      )) {
+        _optimisticMessages.add(sentMessage);
+      }
+    });
 
     // Scroll to bottom after sending
     Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
@@ -299,7 +328,9 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               Expanded(
                 child: Consumer<ChatProvider>(
                   builder: (context, chatProvider, _) {
-                    final messages = chatProvider.currentMessages;
+                    final messages = _mergedMessages(
+                      chatProvider.currentMessages,
+                    );
                     final currentUid =
                         context.read<AuthProvider>().currentUser?.uid ?? '';
 

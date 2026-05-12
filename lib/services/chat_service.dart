@@ -50,7 +50,7 @@ class ChatService {
   }
 
   // ── Send a message ────────────────────────────────────────────────────────
-  Future<void> sendMessage({
+  Future<MessageModel> sendMessage({
     required String conversationId,
     required String senderId,
     required String senderName,
@@ -99,6 +99,8 @@ class ChatService {
           conversationId,
         );
       }
+
+      return message;
     } catch (e) {
       throw Exception('Failed to send message: $e');
     }
