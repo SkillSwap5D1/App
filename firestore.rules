@@ -20,6 +20,12 @@ service cloud.firestore {
              request.auth.token.email.matches('.*@myport\\.ac\\.uk$');
     }
 
+    function isConversationParticipant(conversationId) {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/conversations/$(conversationId)) &&
+        request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+    }
+
     // Users collection - Profile management
     match /users/{userId} {
       allow read: if isUniversityUser() || isSelf(userId);
@@ -51,9 +57,11 @@ service cloud.firestore {
     match /messages/{messageId} {
       allow read: if isUniversityUser() && (
         resource.data.senderId == request.auth.uid ||
-        resource.data.recipientId == request.auth.uid
+        isConversationParticipant(resource.data.conversationId)
       );
-      allow create: if isUniversityUser() && request.resource.data.senderId == request.auth.uid;
+      allow create: if isUniversityUser() &&
+        request.resource.data.senderId == request.auth.uid &&
+        isConversationParticipant(request.resource.data.conversationId);
       allow update: if false;
       allow delete: if isUniversityUser() && resource.data.senderId == request.auth.uid;
     }
