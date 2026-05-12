@@ -134,6 +134,22 @@ class RequestProvider extends ChangeNotifier {
     }
   }
 
+  // ── End a request ────────────────────────────────────────────────────────
+  Future<void> endRequest(String requestId, String endedByUserId) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _requestService.endRequest(requestId, endedByUserId);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // ── Counter a request ─────────────────────────────────────────────────────
   Future<void> counterRequest(
     String requestId,

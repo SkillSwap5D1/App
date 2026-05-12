@@ -96,10 +96,10 @@ class _RequestsScreenState extends State<RequestsScreen>
     List<RequestModel> requests,
     BuildContext context,
   ) {
-    final pendingRequests =
-        requests.where((request) => request.isPending).toList();
+    final visibleRequests =
+        requests.where((request) => !request.isDeclined).toList();
 
-    if (pendingRequests.isEmpty) {
+    if (visibleRequests.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -123,10 +123,10 @@ class _RequestsScreenState extends State<RequestsScreen>
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: pendingRequests.length,
+      itemCount: visibleRequests.length,
       itemBuilder: (context, index) {
         return _buildRequestCard(
-          pendingRequests[index],
+          visibleRequests[index],
           isReceived: true,
           context: context,
         );
@@ -332,61 +332,79 @@ class _RequestsScreenState extends State<RequestsScreen>
 
             // Actions based on whether it's received or sent
             if (isReceived) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 36,
-                      child: OutlinedButton(
-                        onPressed:
-                            () => _handleDeclineRequest(context, request),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppColors.error),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+              if (request.isPending)
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: OutlinedButton(
+                          onPressed:
+                              () => _handleDeclineRequest(context, request),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.error),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          'Decline',
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.error,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: SizedBox(
-                      height: 36,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (request.isPending) {
-                            _handleAcceptRequest(context, request);
-                          } else {
-                            _showRequestDetails(context, request);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          request.status == 'pending' ? 'Accept' : 'View',
-                          style: AppTextStyles.caption.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          child: Text(
+                            'Decline',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.error,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed:
+                              () => _handleAcceptRequest(context, request),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Accept',
+                            style: AppTextStyles.caption.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  height: 36,
+                  child: ElevatedButton(
+                    onPressed: () => _openChatForRequest(context, request),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Open Chat',
+                      style: AppTextStyles.caption.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                ),
             ] else ...[
               SizedBox(
                 width: double.infinity,
@@ -581,6 +599,45 @@ class _RequestsScreenState extends State<RequestsScreen>
             ],
           ),
     );
+  }
+
+  Future<void> _openChatForRequest(
+    BuildContext context,
+    RequestModel request,
+  ) async {
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be signed in to open chat.')),
+      );
+      return;
+    }
+
+    try {
+      final conversationId = await ChatService().getOrCreateConversation(
+        currentUser.uid,
+        request.fromUserId,
+      );
+
+      if (!context.mounted) return;
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (_) => ChatThreadScreen(
+                conversationId: conversationId,
+                otherUserId: request.fromUserId,
+                requestId: request.id,
+              ),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not open chat: $e')));
+    }
   }
 
   Map<String, String> _buildConfirmedSlot(String proposedTime) {

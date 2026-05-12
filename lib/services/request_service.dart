@@ -210,6 +210,41 @@ class RequestService {
     }
   }
 
+  // ── End a request ────────────────────────────────────────────────────────
+  Future<void> endRequest(String requestId, String endedByUserId) async {
+    try {
+      final doc = await _db.collection('requests').doc(requestId).get();
+      final data = doc.data();
+
+      if (data == null) {
+        throw Exception('Request not found');
+      }
+
+      final fromUserId = data['fromUserId'] as String? ?? '';
+      final toUserId = data['toUserId'] as String? ?? '';
+      final skillName = data['skillName'] as String? ?? 'this request';
+
+      final otherUserId = endedByUserId == fromUserId ? toUserId : fromUserId;
+
+      await doc.reference.update({
+        'status': 'completed',
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
+
+      if (otherUserId.isNotEmpty) {
+        await _notificationService.sendNotification(
+          otherUserId,
+          'request_completed',
+          'Request ended',
+          'The request for $skillName has been ended',
+          requestId,
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to end request: $e');
+    }
+  }
+
   // ── Counter a request ─────────────────────────────────────────────────────
   Future<void> counterRequest(
     String requestId,

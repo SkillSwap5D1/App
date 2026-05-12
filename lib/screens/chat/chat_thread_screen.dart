@@ -3,17 +3,20 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/request_provider.dart';
 import '../../services/user_service.dart';
 import '../safety/report_blocked_screen.dart';
 
 class ChatThreadScreen extends StatefulWidget {
   final String conversationId;
   final String otherUserId;
+  final String? requestId;
 
   const ChatThreadScreen({
     super.key,
     required this.conversationId,
     required this.otherUserId,
+    this.requestId,
   });
 
   @override
@@ -25,6 +28,8 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   late final ScrollController _scrollController;
   bool _isComposing = false;
   bool _isUserBlocked = false;
+  bool _isEndingRequest = false;
+  bool _hasEndedRequest = false;
   final UserService _userService = UserService();
 
   @override
@@ -116,6 +121,58 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                 setState(() => _isUserBlocked = true);
               },
             ),
+      ),
+    );
+  }
+
+  Future<void> _endRequest() async {
+    final requestId = widget.requestId;
+    if (requestId == null || _isEndingRequest || _hasEndedRequest) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('End Request'),
+            content: const Text('Mark this request as completed?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('End Request'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final currentUid = context.read<AuthProvider>().currentUser?.uid;
+    if (currentUid == null) return;
+
+    setState(() => _isEndingRequest = true);
+
+    await context.read<RequestProvider>().endRequest(requestId, currentUid);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isEndingRequest = false;
+      if (context.read<RequestProvider>().errorMessage == null) {
+        _hasEndedRequest = true;
+      }
+    });
+
+    final errorMessage = context.read<RequestProvider>().errorMessage;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            errorMessage == null
+                ? const Text('Request ended')
+                : Text(errorMessage),
       ),
     );
   }
@@ -416,6 +473,40 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   },
                 ),
               ),
+
+              if (widget.requestId != null && !_hasEndedRequest)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    0,
+                    AppSpacing.md,
+                    AppSpacing.sm,
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: _isEndingRequest ? null : _endRequest,
+                      icon:
+                          _isEndingRequest
+                              ? const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Icon(Icons.flag_outlined),
+                      label: const Text('End Request'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                        side: BorderSide(
+                          color: AppColors.error.withOpacity(0.7),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                ),
 
               // ── MESSAGE INPUT ──────────────────────────────────────────
               Container(

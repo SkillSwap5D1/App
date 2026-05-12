@@ -44,6 +44,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       case 'new_request':
       case 'request_accepted':
       case 'request_declined':
+      case 'request_completed':
       case 'countered':
         Navigator.of(context).pushNamed('/requests');
         break;
