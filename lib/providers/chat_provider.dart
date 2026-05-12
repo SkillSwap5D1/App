@@ -24,12 +24,12 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _conversationsSubscription = _chatService
-          .conversationsStream(uid)
-          .listen((convs) {
-        conversations = convs;
-        notifyListeners();
-      });
+      _conversationsSubscription = _chatService.conversationsStream(uid).listen(
+        (convs) {
+          conversations = convs;
+          notifyListeners();
+        },
+      );
       isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -50,9 +50,9 @@ class ChatProvider extends ChangeNotifier {
       _messagesSubscription = _chatService
           .messagesStream(conversationId)
           .listen((messages) {
-        currentMessages = messages;
-        notifyListeners();
-      });
+            currentMessages = messages;
+            notifyListeners();
+          });
     } catch (e) {
       print('Error loading messages: $e');
     }
@@ -62,12 +62,14 @@ class ChatProvider extends ChangeNotifier {
   Future<void> sendMessage({
     required String conversationId,
     required String senderId,
+    required String senderName,
     required String text,
   }) async {
     try {
       await _chatService.sendMessage(
         conversationId: conversationId,
         senderId: senderId,
+        senderName: senderName,
         text: text,
       );
       // Messages update via stream subscription

@@ -12,25 +12,24 @@ class RequestService {
     FirebaseFirestore? db,
     ChatService? chatService,
     NotificationService? notificationService,
-  })  : _db = db ?? FirebaseFirestore.instance,
-        _chatService = chatService ?? ChatService(),
-        _notificationService = notificationService ?? NotificationService();
+  }) : _db = db ?? FirebaseFirestore.instance,
+       _chatService = chatService ?? ChatService(),
+       _notificationService = notificationService ?? NotificationService();
 
   // ── Send a new lesson request ─────────────────────────────────────────────
   Future<String> sendRequest(RequestModel request) async {
     try {
       // 1. Check no pending request already exists
-      final existing = await _db
-          .collection('requests')
-          .where('fromUserId', isEqualTo: request.fromUserId)
-          .where('listingId', isEqualTo: request.listingId)
-          .where('status', isEqualTo: 'pending')
-          .get();
+      final existing =
+          await _db
+              .collection('requests')
+              .where('fromUserId', isEqualTo: request.fromUserId)
+              .where('listingId', isEqualTo: request.listingId)
+              .where('status', isEqualTo: 'pending')
+              .get();
 
       if (existing.docs.isNotEmpty) {
-        throw Exception(
-          'You already have a pending request for this listing'
-        );
+        throw Exception('You already have a pending request for this listing');
       }
 
       // 2. Write document to requests collection
@@ -44,12 +43,19 @@ class RequestService {
         request.toUserId,
       );
 
-      // Note: Notification is handled automatically by Cloud Function onRequestCreated
-      // when the request is written to Firestore
+      // 4. Send notification to the recipient
+      await _notificationService.sendNotification(
+        request.toUserId,
+        'new_request',
+        'New request from ${request.fromUserName}',
+        'wants to learn ${request.skillName}',
+        newRequest.id,
+      );
 
-      // 4. Return the new request ID
+      // Note: Cloud Function onRequestCreated may also handle notifications
+
+      // 5. Return the new request ID
       return docRef.id;
-
     } catch (e) {
       throw Exception('Failed to send request: $e');
     }
@@ -62,9 +68,12 @@ class RequestService {
         .where('toUserId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => RequestModel.fromMap(doc.data()))
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => RequestModel.fromMap(doc.data()))
+                  .toList(),
+        );
   }
 
   // ── Get outgoing requests — real time stream ──────────────────────────────
@@ -74,9 +83,12 @@ class RequestService {
         .where('fromUserId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => RequestModel.fromMap(doc.data()))
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => RequestModel.fromMap(doc.data()))
+                  .toList(),
+        );
   }
 
   // ── Accept a request ──────────────────────────────────────────────────────
@@ -89,18 +101,20 @@ class RequestService {
   ) async {
     try {
       // 1. Update status and confirmed slot
-      await _db
-          .collection('requests')
-          .doc(requestId)
-          .update({
-            'status':        'accepted',
-            'confirmedSlot': confirmedSlot,
-            'updatedAt':     Timestamp.fromDate(DateTime.now()),
-          });
+      await _db.collection('requests').doc(requestId).update({
+        'status': 'accepted',
+        'confirmedSlot': confirmedSlot,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
 
-      // Note: Notification is handled by Cloud Function onRequestStatusChanged
-      // when the request status is updated to 'accepted'
-
+      // 2. Send notification to requester
+      await _notificationService.sendNotification(
+        requesterId,
+        'request_accepted',
+        'Your request was accepted!',
+        '$requesterName accepted your request to learn $skillName',
+        requestId,
+      );
     } catch (e) {
       throw Exception('Failed to accept request: $e');
     }
@@ -114,17 +128,19 @@ class RequestService {
   ) async {
     try {
       // 1. Update status
-      await _db
-          .collection('requests')
-          .doc(requestId)
-          .update({
-            'status':    'declined',
-            'updatedAt': Timestamp.fromDate(DateTime.now()),
-          });
+      await _db.collection('requests').doc(requestId).update({
+        'status': 'declined',
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
 
-      // Note: Notification is handled by Cloud Function onRequestStatusChanged
-      // when the request status is updated to 'declined'
-
+      // 2. Send notification to requester
+      await _notificationService.sendNotification(
+        requesterId,
+        'request_declined',
+        'Your request was declined',
+        'Unfortunately, your request to learn $skillName was declined',
+        requestId,
+      );
     } catch (e) {
       throw Exception('Failed to decline request: $e');
     }
@@ -140,19 +156,15 @@ class RequestService {
   ) async {
     try {
       // 1. Update status and proposed slots
-      await _db
-          .collection('requests')
-          .doc(requestId)
-          .update({
-            'status':        'countered',
-            'proposedTimes': newSlots,
-            'counterNote':   note,
-            'updatedAt':     Timestamp.fromDate(DateTime.now()),
-          });
+      await _db.collection('requests').doc(requestId).update({
+        'status': 'countered',
+        'proposedTimes': newSlots,
+        'counterNote': note,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
 
       // Note: Notification is handled by Cloud Function onRequestStatusChanged
       // when the request status is updated to 'countered'
-
     } catch (e) {
       throw Exception('Failed to counter request: $e');
     }
@@ -164,19 +176,19 @@ class RequestService {
       final now = DateTime.now();
 
       // Get all accepted requests for this user
-      final snapshot = await _db
-          .collection('requests')
-          .where('status', isEqualTo: 'accepted')
-          .where('reviewDue', isEqualTo: false)
-          .get();
+      final snapshot =
+          await _db
+              .collection('requests')
+              .where('status', isEqualTo: 'accepted')
+              .where('reviewDue', isEqualTo: false)
+              .get();
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
 
         // Check if either user is this user
         final isInvolved =
-            data['fromUserId'] == userId ||
-            data['toUserId'] == userId;
+            data['fromUserId'] == userId || data['toUserId'] == userId;
 
         if (!isInvolved) continue;
 
@@ -212,7 +224,6 @@ class RequestService {
           );
         }
       }
-
     } catch (e) {
       throw Exception('Failed to check sessions due: $e');
     }

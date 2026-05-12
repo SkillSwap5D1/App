@@ -32,10 +32,10 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     super.initState();
     _messageController = TextEditingController();
     _scrollController = ScrollController();
-    
+
     // Listen for text changes to enable/disable send button
     _messageController.addListener(_handleTextChanged);
-    
+
     // Load messages
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatProvider>().openConversation(widget.conversationId);
@@ -70,7 +70,9 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     if (!_isComposing) return;
 
     final text = _messageController.text.trim();
-    final currentUid = context.read<AuthProvider>().currentUser?.uid;
+    final authProvider = context.read<AuthProvider>();
+    final currentUid = authProvider.currentUser?.uid;
+    final senderName = authProvider.currentUser?.fullName ?? 'Unknown';
 
     if (currentUid == null) return;
 
@@ -78,10 +80,11 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     setState(() => _isComposing = false);
 
     await context.read<ChatProvider>().sendMessage(
-          conversationId: widget.conversationId,
-          senderId: currentUid,
-          text: text,
-        );
+      conversationId: widget.conversationId,
+      senderId: currentUid,
+      senderName: senderName,
+      text: text,
+    );
 
     // Scroll to bottom after sending
     Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
@@ -90,13 +93,14 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   void _showReportSheet(String otherUserName) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ReportBlockedScreen(
-          userName: otherUserName,
-          userId: widget.otherUserId,
-          onBlock: () {
-            setState(() => _isUserBlocked = true);
-          },
-        ),
+        builder:
+            (context) => ReportBlockedScreen(
+              userName: otherUserName,
+              userId: widget.otherUserId,
+              onBlock: () {
+                setState(() => _isUserBlocked = true);
+              },
+            ),
       ),
     );
   }
@@ -104,13 +108,14 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   void _showBlockDialog(String otherUserName) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ReportBlockedScreen(
-          userName: otherUserName,
-          userId: widget.otherUserId,
-          onBlock: () {
-            setState(() => _isUserBlocked = true);
-          },
-        ),
+        builder:
+            (context) => ReportBlockedScreen(
+              userName: otherUserName,
+              userId: widget.otherUserId,
+              onBlock: () {
+                setState(() => _isUserBlocked = true);
+              },
+            ),
       ),
     );
   }
@@ -122,9 +127,8 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
       builder: (context, snapshot) {
         final otherUser = snapshot.data;
         final otherUserName = otherUser?.displayName ?? 'Unknown';
-        final otherUserInitial = otherUserName.isNotEmpty
-            ? otherUserName[0].toUpperCase()
-            : '?';
+        final otherUserInitial =
+            otherUserName.isNotEmpty ? otherUserName[0].toUpperCase() : '?';
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -200,48 +204,56 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) => Container(
-                      decoration: const BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(24),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(top: AppSpacing.sm),
-                            width: 40,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.border,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.full),
+                    builder:
+                        (context) => Container(
+                          decoration: const BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(24),
                             ),
                           ),
-                          ListTile(
-                            leading: const Icon(Icons.flag,
-                                color: AppColors.error),
-                            title: const Text('Report User'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              _showReportSheet(otherUserName);
-                            },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  top: AppSpacing.sm,
+                                ),
+                                width: 40,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: AppColors.border,
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.full,
+                                  ),
+                                ),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.flag,
+                                  color: AppColors.error,
+                                ),
+                                title: const Text('Report User'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _showReportSheet(otherUserName);
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.block,
+                                  color: AppColors.error,
+                                ),
+                                title: const Text('Block User'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _showBlockDialog(otherUserName);
+                                },
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                            ],
                           ),
-                          ListTile(
-                            leading:
-                                const Icon(Icons.block, color: AppColors.error),
-                            title: const Text('Block User'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              _showBlockDialog(otherUserName);
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                        ],
-                      ),
-                    ),
+                        ),
                   );
                 },
               ),
@@ -249,7 +261,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           ),
           body: Column(
             children: [
-              // ── BLOCKED NOTIFICATION 
+              // ── BLOCKED NOTIFICATION
               if (_isUserBlocked)
                 Container(
                   width: double.infinity,
@@ -264,11 +276,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.block,
-                        color: AppColors.error,
-                        size: 20,
-                      ),
+                      Icon(Icons.block, color: AppColors.error, size: 20),
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Text(
@@ -296,19 +304,24 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.mail_outline_rounded,
-                                size: 48, color: AppColors.textMuted),
+                            const Icon(
+                              Icons.mail_outline_rounded,
+                              size: 48,
+                              color: AppColors.textMuted,
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               'No messages yet',
-                              style: AppTextStyles.h3
-                                  .copyWith(color: AppColors.textSecondary),
+                              style: AppTextStyles.h3.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Start a conversation with $otherUserName',
-                              style: AppTextStyles.bodySmall
-                                  .copyWith(color: AppColors.textMuted),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textMuted,
+                              ),
                             ),
                           ],
                         ),
@@ -327,9 +340,10 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         final isCurrentUser = message.senderId == currentUid;
 
                         return Align(
-                          alignment: isCurrentUser
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
+                          alignment:
+                              isCurrentUser
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             padding: const EdgeInsets.symmetric(
@@ -337,41 +351,55 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                               vertical: AppSpacing.sm,
                             ),
                             decoration: BoxDecoration(
-                              gradient: isCurrentUser ? AppColors.accentGradient : null,
-                              color: isCurrentUser ? null : AppColors.surfaceElevated,
+                              gradient:
+                                  isCurrentUser
+                                      ? AppColors.accentGradient
+                                      : null,
+                              color:
+                                  isCurrentUser
+                                      ? null
+                                      : AppColors.surfaceElevated,
                               borderRadius: BorderRadius.only(
                                 topLeft: const Radius.circular(16),
                                 topRight: const Radius.circular(16),
-                                bottomLeft: Radius.circular(isCurrentUser ? 16 : 4),
-                                bottomRight: Radius.circular(isCurrentUser ? 4 : 16),
+                                bottomLeft: Radius.circular(
+                                  isCurrentUser ? 16 : 4,
+                                ),
+                                bottomRight: Radius.circular(
+                                  isCurrentUser ? 4 : 16,
+                                ),
                               ),
                               border: Border.all(
-                                color: isCurrentUser
-                                    ? Colors.transparent
-                                    : AppColors.border,
+                                color:
+                                    isCurrentUser
+                                        ? Colors.transparent
+                                        : AppColors.border,
                               ),
                               boxShadow: isCurrentUser ? AppShadows.card : null,
                             ),
                             child: Column(
-                              crossAxisAlignment: isCurrentUser
-                                  ? CrossAxisAlignment.end
-                                  : CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  isCurrentUser
+                                      ? CrossAxisAlignment.end
+                                      : CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   message.text,
                                   style: AppTextStyles.bodyMedium.copyWith(
-                                    color: isCurrentUser
-                                        ? Colors.white
-                                        : AppColors.textPrimary,
+                                    color:
+                                        isCurrentUser
+                                            ? Colors.white
+                                            : AppColors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   _formatTime(message.timestamp),
                                   style: AppTextStyles.caption.copyWith(
-                                    color: isCurrentUser
-                                        ? AppColors.textSecondary
-                                        : AppColors.textMuted,
+                                    color:
+                                        isCurrentUser
+                                            ? AppColors.textSecondary
+                                            : AppColors.textMuted,
                                   ),
                                 ),
                               ],
@@ -389,9 +417,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  border: Border(
-                    top: BorderSide(color: AppColors.border),
-                  ),
+                  border: Border(top: BorderSide(color: AppColors.border)),
                 ),
                 child: Row(
                   children: [
@@ -402,20 +428,23 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                         decoration: InputDecoration(
                           hintText: 'Type a message...',
                           hintStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textMuted),
+                            color: AppColors.textMuted,
+                          ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.md,
                             vertical: AppSpacing.sm,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppRadius.full),
-                            borderSide:
-                                const BorderSide(color: AppColors.border),
+                            borderSide: const BorderSide(
+                              color: AppColors.border,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppRadius.full),
-                            borderSide:
-                                const BorderSide(color: AppColors.border),
+                            borderSide: const BorderSide(
+                              color: AppColors.border,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppRadius.full),
@@ -437,17 +466,22 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        gradient: _isComposing ? AppColors.accentGradient : null,
+                        gradient:
+                            _isComposing ? AppColors.accentGradient : null,
                         color: _isComposing ? null : AppColors.surfaceElevated,
                         shape: BoxShape.circle,
                         boxShadow: _isComposing ? AppShadows.card : null,
                         border: Border.all(
-                          color: _isComposing ? Colors.transparent : AppColors.border,
+                          color:
+                              _isComposing
+                                  ? Colors.transparent
+                                  : AppColors.border,
                         ),
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.send_rounded, size: 18),
-                        color: _isComposing ? Colors.white : AppColors.textMuted,
+                        color:
+                            _isComposing ? Colors.white : AppColors.textMuted,
                         onPressed: _isComposing ? _sendMessage : null,
                       ),
                     ),
