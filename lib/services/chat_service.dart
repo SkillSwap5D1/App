@@ -15,28 +15,18 @@ class ChatService {
   // ── Get or create a conversation between 2 users ─────────────────────────
   Future<String> getOrCreateConversation(String uid1, String uid2) async {
     try {
-      // Check if conversation already exists
-      final existing =
-          await _db
-              .collection('conversations')
-              .where('participants', arrayContains: uid1)
-              .get();
+      final participantIds = [uid1, uid2]..sort();
+      final conversationId = participantIds.join('_');
+      final docRef = _db.collection('conversations').doc(conversationId);
 
-      for (final doc in existing.docs) {
-        final participants = List<String>.from(
-          doc.data()['participants'] ?? [],
-        );
-        if (participants.contains(uid2)) {
-          // Conversation already exists — return its ID
-          return doc.id;
-        }
+      final existing = await docRef.get();
+      if (existing.exists) {
+        return docRef.id;
       }
 
-      // No existing conversation — create a new one
-      final docRef = _db.collection('conversations').doc();
       final conversation = ConversationModel(
         id: docRef.id,
-        participants: [uid1, uid2],
+        participants: participantIds,
         lastMessage: '',
         lastMessageTime: DateTime.now(),
         unreadCount: 0,

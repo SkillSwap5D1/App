@@ -95,7 +95,22 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     _messageController.clear();
     setState(() => _isComposing = false);
 
-    final sentMessage = await context.read<ChatProvider>().sendMessage(
+    final pendingMessage = MessageModel(
+      id: 'pending-${DateTime.now().microsecondsSinceEpoch}',
+      conversationId: widget.conversationId,
+      senderId: currentUid,
+      text: text,
+      timestamp: DateTime.now(),
+      isRead: false,
+    );
+
+    setState(() {
+      _optimisticMessages.add(pendingMessage);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
+    await context.read<ChatProvider>().sendMessage(
       conversationId: widget.conversationId,
       senderId: currentUid,
       senderName: senderName,
@@ -106,13 +121,8 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
 
     setState(() {
       _optimisticMessages.removeWhere(
-        (message) => message.id == sentMessage.id,
+        (message) => message.id == pendingMessage.id,
       );
-      if (_optimisticMessages.every(
-        (message) => message.id != sentMessage.id,
-      )) {
-        _optimisticMessages.add(sentMessage);
-      }
     });
 
     // Scroll to bottom after sending
