@@ -299,6 +299,11 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                     final currentUid =
                         context.read<AuthProvider>().currentUser?.uid ?? '';
 
+                    // Auto-scroll to bottom when new messages arrive
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToBottom();
+                    });
+
                     if (messages.isEmpty) {
                       return Center(
                         child: Column(

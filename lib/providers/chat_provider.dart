@@ -47,14 +47,21 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _messagesSubscription = _chatService
-          .messagesStream(conversationId)
-          .listen((messages) {
-            currentMessages = messages;
-            notifyListeners();
-          });
+      _messagesSubscription = _chatService.messagesStream(conversationId).listen((
+        messages,
+      ) {
+        currentMessages = messages;
+        print(
+          '🔵 ChatProvider: Received ${messages.length} messages for conversation $conversationId',
+        );
+        notifyListeners();
+      });
+
+      // Mark conversation as read
+      print('🔵 ChatProvider: Marking conversation $conversationId as read');
+      await markAsRead(conversationId);
     } catch (e) {
-      print('Error loading messages: $e');
+      print('❌ Error loading messages: $e');
     }
   }
 
@@ -66,15 +73,20 @@ class ChatProvider extends ChangeNotifier {
     required String text,
   }) async {
     try {
+      print(
+        '🔵 ChatProvider.sendMessage(): Sending message to $conversationId',
+      );
       await _chatService.sendMessage(
         conversationId: conversationId,
         senderId: senderId,
         senderName: senderName,
         text: text,
       );
+      print('✅ Message sent successfully');
       // Messages update via stream subscription
     } catch (e) {
-      print('Error sending message: $e');
+      print('❌ Error sending message: $e');
+      throw e;
     }
   }
 

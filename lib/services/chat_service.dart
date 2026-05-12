@@ -106,32 +106,52 @@ class ChatService {
 
   // ── Real time stream of messages in a conversation ────────────────────────
   Stream<List<MessageModel>> messagesStream(String conversationId) {
+    print(
+      '🔵 ChatService.messagesStream(): Setting up stream for $conversationId',
+    );
     return _db
         .collection('messages')
         .where('conversationId', isEqualTo: conversationId)
         .orderBy('timestamp', descending: false)
         .snapshots()
-        .map(
-          (snapshot) =>
+        .map((snapshot) {
+          final messages =
               snapshot.docs
                   .map((doc) => MessageModel.fromMap(doc.data()))
-                  .toList(),
-        );
+                  .toList();
+          print(
+            '🔵 ChatService.messagesStream(): Got ${messages.length} messages',
+          );
+          return messages;
+        })
+        .handleError((error) {
+          print('❌ Error in messagesStream: $error');
+          throw error;
+        });
   }
 
   // ── Real time stream of all conversations for a user ─────────────────────
   Stream<List<ConversationModel>> conversationsStream(String uid) {
+    print('🔵 ChatService.conversationsStream(): Setting up stream for $uid');
     return _db
         .collection('conversations')
         .where('participants', arrayContains: uid)
         .orderBy('lastMessageTime', descending: true)
         .snapshots()
-        .map(
-          (snapshot) =>
+        .map((snapshot) {
+          final conversations =
               snapshot.docs
                   .map((doc) => ConversationModel.fromMap(doc.data()))
-                  .toList(),
-        );
+                  .toList();
+          print(
+            '🔵 ChatService.conversationsStream(): Got ${conversations.length} conversations',
+          );
+          return conversations;
+        })
+        .handleError((error) {
+          print('❌ Error in conversationsStream: $error');
+          throw error;
+        });
   }
 
   // ── Mark conversation as read ─────────────────────────────────────────────

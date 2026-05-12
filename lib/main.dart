@@ -51,32 +51,34 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
     case AppRoutes.listingDetail:
       final args = settings.arguments;
-      final listing = args is ListingModel
-          ? args
-          : args is MockListing
+      final listing =
+          args is ListingModel
+              ? args
+              : args is MockListing
               ? _listingFromMock(args)
               : ListingModel(
-                  id: '',
-                  ownerId: '',
-                  ownerName: 'Unknown',
-                  title: 'Listing',
-                  description: 'No listing data provided.',
-                  tags: const [],
-                  level: 'Beginner',
-                  modality: 'Online',
-                  category: 'General',
-                  nextAvailable: '',
-                  isActive: true,
-                  createdAt: DateTime.now(),
-                );
+                id: '',
+                ownerId: '',
+                ownerName: 'Unknown',
+                title: 'Listing',
+                description: 'No listing data provided.',
+                tags: const [],
+                level: 'Beginner',
+                modality: 'Online',
+                category: 'General',
+                nextAvailable: '',
+                isActive: true,
+                createdAt: DateTime.now(),
+              );
       return MaterialPageRoute(
         builder: (_) => ListingDetailScreen(listing: listing),
       );
     case AppRoutes.createListing:
       final args = settings.arguments;
-      final listing = args is ListingModel
-          ? args
-          : args is MockListing
+      final listing =
+          args is ListingModel
+              ? args
+              : args is MockListing
               ? _listingFromMock(args)
               : null;
       return MaterialPageRoute(
@@ -84,24 +86,25 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       );
     case AppRoutes.sendRequest:
       final args = settings.arguments;
-      final listing = args is ListingModel
-          ? args
-          : args is MockListing
+      final listing =
+          args is ListingModel
+              ? args
+              : args is MockListing
               ? _listingFromMock(args)
               : ListingModel(
-                  id: '',
-                  ownerId: '',
-                  ownerName: 'Unknown',
-                  title: 'Request',
-                  description: 'No listing data provided.',
-                  tags: const [],
-                  level: 'Beginner',
-                  modality: 'Online',
-                  category: 'General',
-                  nextAvailable: '',
-                  isActive: true,
-                  createdAt: DateTime.now(),
-                );
+                id: '',
+                ownerId: '',
+                ownerName: 'Unknown',
+                title: 'Request',
+                description: 'No listing data provided.',
+                tags: const [],
+                level: 'Beginner',
+                modality: 'Online',
+                category: 'General',
+                nextAvailable: '',
+                isActive: true,
+                createdAt: DateTime.now(),
+              );
       return MaterialPageRoute(
         builder: (_) => SendRequestScreen(listing: listing),
       );
@@ -113,30 +116,31 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const EditProfileScreen());
     case AppRoutes.rateReview:
       return MaterialPageRoute(
-        builder: (_) => const RateReviewScreen(
-          skillTitle: 'Session',
-          otherUserName: 'User',
-          sessionDate: 'Today',
-        ),
+        builder:
+            (_) => const RateReviewScreen(
+              skillTitle: 'Session',
+              otherUserName: 'User',
+              sessionDate: 'Today',
+            ),
       );
     case AppRoutes.counterOffer:
-      final request = settings.arguments is MockRequest
-          ? settings.arguments as MockRequest
-          : MockData.incomingRequests.first;
+      final request =
+          settings.arguments is MockRequest
+              ? settings.arguments as MockRequest
+              : MockData.incomingRequests.first;
       return MaterialPageRoute(
         builder: (_) => CounterOfferScreen(originalRequest: request),
       );
     case AppRoutes.chatThread:
-      return MaterialPageRoute(
-        builder: (_) => const SizedBox.shrink(),
-      );
+      return MaterialPageRoute(builder: (_) => const SizedBox.shrink());
     case AppRoutes.report:
       return MaterialPageRoute(
-        builder: (_) => ReportBlockedScreen(
-          userName: 'User',
-          userId: '',
-          onBlock: () {},
-        ),
+        builder:
+            (_) => ReportBlockedScreen(
+              userName: 'User',
+              userId: '',
+              onBlock: () {},
+            ),
       );
   }
   return null;
@@ -144,9 +148,7 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
