@@ -554,7 +554,9 @@ class _BrowseScreenState extends State<BrowseScreen>
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _pastelOrange.withOpacity(0.45)),
+                      border: Border.all(
+                        color: _pastelOrange.withOpacity(0.45),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: _pastelOrange.withOpacity(0.20),
@@ -1026,7 +1028,16 @@ class _BrowseScreenState extends State<BrowseScreen>
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    CreateListingScreen(listing: listing),
+                          ),
+                        );
+                      },
                       child: Container(
                         height: 44,
                         decoration: BoxDecoration(
@@ -1039,7 +1050,9 @@ class _BrowseScreenState extends State<BrowseScreen>
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _pastelBlue.withOpacity(0.50)),
+                          border: Border.all(
+                            color: _pastelBlue.withOpacity(0.50),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: _pastelBlue.withOpacity(0.18),
@@ -1086,7 +1099,9 @@ class _BrowseScreenState extends State<BrowseScreen>
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _pastelOrange.withOpacity(0.55)),
+                          border: Border.all(
+                            color: _pastelOrange.withOpacity(0.55),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: _pastelOrange.withOpacity(0.20),

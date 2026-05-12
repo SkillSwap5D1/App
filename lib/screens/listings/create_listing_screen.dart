@@ -22,7 +22,14 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
   String _selectedModality = 'Online';
   bool _isLoading = false;
 
-  final categories = ['Programming', 'Languages', 'Design', 'Music', 'Business', 'Data Science'];
+  final categories = [
+    'Programming',
+    'Languages',
+    'Design',
+    'Music',
+    'Business',
+    'Data Science',
+  ];
   final levels = ['Beginner', 'Intermediate', 'Advanced'];
   final modalities = ['In-person', 'Online', 'Hybrid'];
 
@@ -30,7 +37,15 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.listing?.title ?? '');
-    _descriptionController = TextEditingController(text: widget.listing?.description ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.listing?.description ?? '',
+    );
+
+    if (widget.listing != null) {
+      _selectedCategory = widget.listing!.category;
+      _selectedLevel = widget.listing!.level;
+      _selectedModality = _normalizeModality(widget.listing!.modality);
+    }
   }
 
   @override
@@ -60,27 +75,39 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
         throw Exception('No user logged in');
       }
 
-      final newListing = ListingModel(
-        id: '',
-        ownerId: currentUser.uid,
-        ownerName: '${currentUser.firstName} ${currentUser.lastName}'.trim(),
-        title: _titleController.text,
-        description: _descriptionController.text,
-        tags: [],
-        level: _selectedLevel,
-        modality: _selectedModality,
-        category: _selectedCategory,
-        nextAvailable: 'Flexible',
-        isActive: true,
-        createdAt: DateTime.now(),
-      );
+      final listingProvider = context.read<ListingProvider>();
 
-      await context.read<ListingProvider>().createListing(newListing);
+      if (widget.listing == null) {
+        final newListing = ListingModel(
+          id: '',
+          ownerId: currentUser.uid,
+          ownerName: '${currentUser.firstName} ${currentUser.lastName}'.trim(),
+          title: _titleController.text,
+          description: _descriptionController.text,
+          tags: [],
+          level: _selectedLevel,
+          modality: _selectedModality,
+          category: _selectedCategory,
+          nextAvailable: 'Flexible',
+          isActive: true,
+          createdAt: DateTime.now(),
+        );
+
+        await listingProvider.createListing(newListing);
+      } else {
+        await listingProvider.updateListing(widget.listing!.id, {
+          'title': _titleController.text,
+          'description': _descriptionController.text,
+          'level': _selectedLevel,
+          'modality': _selectedModality,
+          'category': _selectedCategory,
+        });
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Skill listing created successfully!'),
+            content: Text('Skill listing saved successfully!'),
             backgroundColor: AppColors.primary,
           ),
         );
@@ -89,11 +116,28 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _normalizeModality(String modality) {
+    switch (modality.toLowerCase()) {
+      case 'in-person':
+      case 'in person':
+        return 'In-person';
+      case 'online':
+        return 'Online';
+      case 'hybrid':
+        return 'Hybrid';
+      default:
+        return 'Online';
     }
   }
 
@@ -205,9 +249,13 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Level', style: AppTextStyles.label),
+                                        Text(
+                                          'Level',
+                                          style: AppTextStyles.label,
+                                        ),
                                         const SizedBox(height: AppSpacing.sm),
                                         _buildLevelDropdown(),
                                       ],
@@ -216,9 +264,13 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Modality', style: AppTextStyles.label),
+                                        Text(
+                                          'Modality',
+                                          style: AppTextStyles.label,
+                                        ),
                                         const SizedBox(height: AppSpacing.sm),
                                         _buildModalityDropdown(),
                                       ],
@@ -338,9 +390,10 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
       ),
       child: DropdownButtonFormField<String>(
         value: _selectedCategory,
-        items: categories
-            .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
-            .toList(),
+        items:
+            categories
+                .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                .toList(),
         onChanged: (value) {
           if (value != null) {
             setState(() => _selectedCategory = value);
@@ -368,9 +421,12 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
       ),
       child: DropdownButtonFormField<String>(
         value: _selectedLevel,
-        items: levels
-            .map((level) => DropdownMenuItem(value: level, child: Text(level)))
-            .toList(),
+        items:
+            levels
+                .map(
+                  (level) => DropdownMenuItem(value: level, child: Text(level)),
+                )
+                .toList(),
         onChanged: (value) {
           if (value != null) {
             setState(() => _selectedLevel = value);
@@ -398,9 +454,10 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
       ),
       child: DropdownButtonFormField<String>(
         value: _selectedModality,
-        items: modalities
-            .map((mod) => DropdownMenuItem(value: mod, child: Text(mod)))
-            .toList(),
+        items:
+            modalities
+                .map((mod) => DropdownMenuItem(value: mod, child: Text(mod)))
+                .toList(),
         onChanged: (value) {
           if (value != null) {
             setState(() => _selectedModality = value);
@@ -442,27 +499,28 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
             ),
             elevation: 0,
           ),
-          child: _isLoading
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('List Your Skill', style: AppTextStyles.button),
-                    const SizedBox(width: AppSpacing.xs),
-                    const Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 18,
-                      color: Colors.white,
+          child:
+              _isLoading
+                  ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
-                  ],
-                ),
+                  )
+                  : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('List Your Skill', style: AppTextStyles.button),
+                      const SizedBox(width: AppSpacing.xs),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
         ),
       ),
     );

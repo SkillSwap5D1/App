@@ -8,10 +8,10 @@ class ListingProvider extends ChangeNotifier {
   final UserService _userService = UserService();
 
   // ── State ─────────────────────────────────────────────────────────────────
-  List<ListingModel> listings    = [];
-  List<ListingModel> myListings  = [];
-  List<String> savedListingIds   = [];
-  bool isLoading                 = false;
+  List<ListingModel> listings = [];
+  List<ListingModel> myListings = [];
+  List<String> savedListingIds = [];
+  bool isLoading = false;
   String? errorMessage;
 
   // ── Load all listings ─────────────────────────────────────────────────────
@@ -71,6 +71,37 @@ class ListingProvider extends ChangeNotifier {
 
     try {
       await _listingService.updateListing(id, data);
+      listings =
+          listings
+              .map(
+                (listing) =>
+                    listing.id == id
+                        ? listing.copyWith(
+                          title: data['title'] as String?,
+                          description: data['description'] as String?,
+                          level: data['level'] as String?,
+                          modality: data['modality'] as String?,
+                          category: data['category'] as String?,
+                        )
+                        : listing,
+              )
+              .toList();
+      myListings =
+          myListings
+              .map(
+                (listing) =>
+                    listing.id == id
+                        ? listing.copyWith(
+                          title: data['title'] as String?,
+                          description: data['description'] as String?,
+                          level: data['level'] as String?,
+                          modality: data['modality'] as String?,
+                          category: data['category'] as String?,
+                        )
+                        : listing,
+              )
+              .toList();
+      notifyListeners();
       await loadListings();
     } catch (e) {
       errorMessage = e.toString();
@@ -100,9 +131,7 @@ class ListingProvider extends ChangeNotifier {
 
   // ── Get saved listings ────────────────────────────────────────────────────
   List<ListingModel> get savedListings {
-    return listings
-        .where((l) => savedListingIds.contains(l.id))
-        .toList();
+    return listings.where((l) => savedListingIds.contains(l.id)).toList();
   }
 
   // ── Load saved listings for a user ───────────────────────────────────────
@@ -153,9 +182,9 @@ class ListingProvider extends ChangeNotifier {
 
     try {
       listings = await _listingService.searchListings(
-        query:    query,
+        query: query,
         category: category,
-        level:    level,
+        level: level,
         modality: modality,
       );
     } catch (e) {
