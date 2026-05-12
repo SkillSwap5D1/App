@@ -131,36 +131,47 @@ class AuthService {
       // If document doesn't exist, create it with basic info
       if (userModel == null) {
         print('⚠️ User document not found, creating default profile...');
-        final user = credential.user!;
-        final nameParts = (user.displayName ?? '').split(' ');
-        final firstName =
-            nameParts.isNotEmpty && nameParts[0].isNotEmpty
-                ? nameParts[0]
-                : email.split('@').first.split('.').first;
-        final lastName =
-            nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+        try {
+          final user = credential.user!;
+          final nameParts = (user.displayName ?? '').split(' ');
+          final firstName =
+              nameParts.isNotEmpty && nameParts[0].isNotEmpty
+                  ? nameParts[0]
+                  : email.split('@').first.split('.').first;
+          final lastName =
+              nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-        userModel = UserModel(
-          uid: uid,
-          firstName: firstName,
-          lastName: lastName,
-          email: normalizedEmail,
-          course: 'Not specified',
-          bio: '',
-          rating: 0.0,
-          sessionsCompleted: 0,
-          memberSince: DateTime.now(),
-          showFullName: true,
-          showCourse: false,
-          showPhoto: true,
-        );
+          userModel = UserModel(
+            uid: uid,
+            firstName: firstName,
+            lastName: lastName,
+            email: normalizedEmail,
+            course: 'Not specified',
+            bio: '',
+            rating: 0.0,
+            sessionsCompleted: 0,
+            memberSince: DateTime.now(),
+            showFullName: true,
+            showCourse: false,
+            showPhoto: true,
+          );
 
-        // Save to Firestore
-        await _db.collection('users').doc(uid).set(userModel.toMap());
-        print('✅ Created default user document for $uid');
+          // Save to Firestore
+          print('🔵 Attempting to save default user document to Firestore...');
+          await _db.collection('users').doc(uid).set(userModel.toMap());
+          print('✅ Created default user document for $uid');
+        } catch (e) {
+          print('❌ Error creating default user document: $e');
+          // Even if document creation fails, we have a userModel in memory, so return it
+          print(
+            '⚠️ Returning in-memory userModel despite Firestore write failure',
+          );
+        }
       }
 
-      print('✅ AuthService.signIn() returning user: ${userModel.uid}');
+      print(
+        '✅ AuthService.signIn() returning user: ${userModel?.uid ?? "null"}',
+      );
       return userModel;
     } on FirebaseAuthException catch (e) {
       print('❌ FirebaseAuthException caught!');

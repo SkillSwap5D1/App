@@ -40,7 +40,12 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
       if (!mounted) return;
 
       final auth = context.read<AuthProvider>();
-      if (auth.currentUser != null && auth.isLoading) {
+
+      // If still loading or no user, retry
+      if (auth.currentUser == null || auth.isLoading) {
+        print(
+          '⚠️ HomeShellScreen._loadData(): currentUser is null or still loading, retrying...',
+        );
         _loadData();
         return;
       }
@@ -51,12 +56,36 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
         return;
       }
 
+      print('✅ HomeShellScreen._loadData(): Loading data for user $uid');
       _initializedForUid = uid;
 
-      context.read<ListingProvider>().loadListings();
-      context.read<RequestProvider>().loadRequests(uid);
-      context.read<ChatProvider>().loadConversations(uid);
-      context.read<NotificationProvider>().loadNotifications(uid);
+      try {
+        context.read<ListingProvider>().loadListings();
+        print('✅ Started loading listings');
+      } catch (e) {
+        print('❌ Error loading listings: $e');
+      }
+
+      try {
+        context.read<RequestProvider>().loadRequests(uid);
+        print('✅ Started loading requests');
+      } catch (e) {
+        print('❌ Error loading requests: $e');
+      }
+
+      try {
+        context.read<ChatProvider>().loadConversations(uid);
+        print('✅ Started loading conversations');
+      } catch (e) {
+        print('❌ Error loading conversations: $e');
+      }
+
+      try {
+        context.read<NotificationProvider>().loadNotifications(uid);
+        print('✅ Started loading notifications');
+      } catch (e) {
+        print('❌ Error loading notifications: $e');
+      }
     });
   }
 

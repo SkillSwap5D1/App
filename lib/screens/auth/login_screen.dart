@@ -69,56 +69,74 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-    print('🔵 Starting sign-in for $email...');
-    print('   Email from field: "${_emailController.text}" (${_emailController.text.length} chars)');
-    print('   Password from field: ${_passwordController.text.length} chars');
+    print('🔵 LoginScreen._handleSignIn() starting for $email');
 
-    await context.read<AuthProvider>().signIn(email, _passwordController.text);
-
-    if (mounted) {
+    try {
       final authProvider = context.read<AuthProvider>();
-      print('🔵 Sign-in call completed. Current user: ${authProvider.currentUser?.uid ?? "null"}');
-      
-      // Wait longer for auth state to propagate and user document to load
-      // The AuthProvider's auth state listener should fire and populate currentUser
-      int waitCount = 0;
-      while (mounted && authProvider.currentUser == null && waitCount < 30) {
-        await Future.delayed(const Duration(milliseconds: 100));
-        waitCount++;
+
+      print('🔵 Calling authProvider.signIn()...');
+      await authProvider.signIn(email, _passwordController.text);
+
+      print('🔵 SignIn completed. Current state:');
+      print('   currentUser: ${authProvider.currentUser?.uid ?? "null"}');
+      print('   errorMessage: ${authProvider.errorMessage}');
+      print('   isLoading: ${authProvider.isLoading}');
+
+      if (!mounted) return;
+
+      // Check if there was an error
+      if (authProvider.errorMessage != null &&
+          authProvider.errorMessage!.isNotEmpty) {
+        print('❌ Sign-in failed with error: ${authProvider.errorMessage}');
+        setState(() => _isLoading = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage!),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      } else if (authProvider.currentUser != null) {
+        print(
+          '✅ Sign-in successful! CurrentUser is set to: ${authProvider.currentUser!.uid}',
+        );
+        print('✅ AuthWrapper should now navigate to HomeShellScreen');
+        // Set loading to false so the form clears before the transition
+        if (mounted) {
+          setState(() => _isLoading = false);
+          // Give a brief moment for state to settle, then navigate
+          await Future.delayed(const Duration(milliseconds: 100));
+          if (mounted && context.mounted) {
+            // Use Navigator to ensure clean transition
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil('/home', (route) => false);
+          }
+        }
+      } else {
+        print('⚠️ No error and no currentUser - something went wrong silently');
+        setState(() => _isLoading = false);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign in failed. Please try again.'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 4),
+          ),
+        );
       }
-      print('🔵 Waited ${waitCount * 100}ms for auth state. Final currentUser: ${authProvider.currentUser?.uid ?? "null"}');
-      
+    } catch (e) {
+      print('❌ Unexpected error in _handleSignIn: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        
-        print('🔍 Sign-in result:');
-        print('   errorMessage: ${authProvider.errorMessage}');
-        print('   currentUser: ${authProvider.currentUser?.uid ?? "null"}');
-        
-        if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
-          print('❌ Sign-in error detected: ${authProvider.errorMessage}');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(authProvider.errorMessage!),
-              backgroundColor: AppColors.error,
-              duration: const Duration(seconds: 4),
-            ),
-          );
-        } else if (authProvider.currentUser != null && authProvider.currentUser!.uid.isNotEmpty) {
-          print('✅ Sign-in successful! UID: ${authProvider.currentUser!.uid}');
-          // Sign-in successful - AuthWrapper will handle navigation
-          // Do nothing here, the auth state listener will trigger navigation
-        } else {
-          print('⚠️ ISSUE: No error message AND no currentUser - something went wrong silently');
-          print('   Showing generic error to user');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Sign in failed. Please check your email and password.'),
-              backgroundColor: AppColors.error,
-              duration: Duration(seconds: 4),
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred: $e'),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
       }
     }
   }

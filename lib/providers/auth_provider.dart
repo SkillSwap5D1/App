@@ -12,38 +12,66 @@ class AuthProvider extends ChangeNotifier {
   UserModel? currentUser;
   bool isLoading = false;
   String? errorMessage;
+  bool _authStateListenerFired = false;
 
   // ── Stream subscription ────────────────────────────────────────────────────
   StreamSubscription? _authStateSubscription;
 
   // ── Constructor - initialize auth state listener ──────────────────────────
   AuthProvider() {
-    _authStateSubscription = _authService.authStateChanges.listen((user) async {
-      print('🔵 authStateChanges listener fired! User: ${user?.uid ?? "null"}');
-      if (user != null) {
-        // Check custom claims
-        try {
-          final idToken = await user.getIdTokenResult();
-          final isUniversityUser = idToken.claims?['isUniversityUser'] ?? false;
-          final emailDomain = idToken.claims?['emailDomain'] ?? 'unknown';
-          print(
-            '🔵 Custom claims: isUniversityUser=$isUniversityUser, emailDomain=$emailDomain',
-          );
-        } catch (e) {
-          print('⚠️ Could not fetch custom claims: $e');
-        }
+    _setupAuthStateListener();
+  }
 
-        currentUser = _buildProvisionalUser(user);
-        print('✅ Set provisional currentUser from Firebase: ${user.uid}');
-        notifyListeners();
-        print('🔵 Calling _fetchUser to get full profile...');
-        _fetchUser(user.uid);
-      } else {
-        currentUser = null;
-        print('🔵 User logged out, currentUser set to null');
-        notifyListeners();
-      }
-    });
+  void _setupAuthStateListener() {
+    // Cancel existing subscription if any
+    _authStateSubscription?.cancel();
+    _authStateListenerFired = false;
+
+    _authStateSubscription = _authService.authStateChanges.listen(
+      (user) async {
+        try {
+          print(
+            '🔵 authStateChanges listener fired! User: ${user?.uid ?? "null"}',
+          );
+          _authStateListenerFired = true;
+
+          if (user != null) {
+            // Check custom claims
+            try {
+              final idToken = await user.getIdTokenResult();
+              final isUniversityUser =
+                  idToken.claims?['isUniversityUser'] ?? false;
+              final emailDomain = idToken.claims?['emailDomain'] ?? 'unknown';
+              print(
+                '🔵 Custom claims: isUniversityUser=$isUniversityUser, emailDomain=$emailDomain',
+              );
+            } catch (e) {
+              print('⚠️ Could not fetch custom claims: $e');
+            }
+
+            currentUser = _buildProvisionalUser(user);
+            print('✅ Set provisional currentUser from Firebase: ${user.uid}');
+            notifyListeners();
+            print('🔵 Called notifyListeners() from auth state listener');
+            print('🔵 Calling _fetchUser to get full profile...');
+            _fetchUser(user.uid);
+          } else {
+            currentUser = null;
+            print('🔵 User logged out, currentUser set to null');
+            notifyListeners();
+            print(
+              '🔵 Called notifyListeners() from auth state listener (logout)',
+            );
+          }
+        } catch (e) {
+          print('❌ ERROR in authStateChanges listener callback: $e');
+          print('   Stack trace: ${StackTrace.current}');
+        }
+      },
+      onError: (error) {
+        print('❌ ERROR in authStateChanges stream: $error');
+      },
+    );
   }
 
   UserModel _buildProvisionalUser(dynamic user) {
@@ -125,10 +153,6 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         print('⚠️ AuthService.signIn() returned null');
-        print(
-          '   The auth state listener should have fired via authStateChanges stream',
-        );
-        // Don't set errorMessage here - we'll wait for auth state listener to fire
       }
 
       // Verify custom claims after authentication
@@ -227,6 +251,18 @@ class AuthProvider extends ChangeNotifier {
       if (user != null) {
         currentUser = user;
         errorMessage = null;
+
+        // Wait a bit for the auth state listener to also fire
+        int attempts = 0;
+        while (attempts < 20) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          attempts++;
+          if (_authStateListenerFired) {
+            print('✅ Auth listener fired during registration');
+            break;
+          }
+        }
+
         notifyListeners();
       } else {
         errorMessage = 'Failed to create account. Please try again.';
@@ -248,8 +284,14 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _authService.signOut();
       currentUser = null;
+
+      // Reset auth state listener flag for next sign-in
+      _authStateListenerFired = false;
+
+      print('✅ Sign out successful, resetting state for next sign-in');
     } catch (e) {
       errorMessage = e.toString();
+      print('❌ Sign out error: $e');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -264,6 +306,22 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await _authService.signInWithGoogle();
+
+      // Wait for the auth state listener to fire and populate currentUser
+      int attempts = 0;
+      const maxAttempts = 30; // 3 seconds max
+      while (attempts < maxAttempts && currentUser == null) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        attempts++;
+      }
+
+      if (currentUser != null) {
+        print('✅ Google sign-in successful, currentUser: ${currentUser!.uid}');
+      } else {
+        print('⚠️ currentUser not set after Google sign-in');
+        errorMessage = 'Failed to load user profile. Please try again.';
+      }
+
       // Verify custom claims after authentication
       final verified = await _verifyUniversityClaims();
       if (!verified) {
@@ -271,7 +329,6 @@ class AuthProvider extends ChangeNotifier {
           '⚠️ Google claims not ready yet; continuing with provisional auth state',
         );
       }
-      // User fetch happens automatically via authStateChanges listener
     } catch (e) {
       errorMessage = _handleAuthError(e.toString());
     } finally {
@@ -423,7 +480,9 @@ class AuthProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    print('🔵 AuthProvider.dispose() called');
     _authStateSubscription?.cancel();
+    _authStateSubscription = null;
     super.dispose();
   }
 }
