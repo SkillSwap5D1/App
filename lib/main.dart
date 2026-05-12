@@ -15,6 +15,7 @@ import 'screens/auth/onboarding_screen.dart';
 import 'screens/home/home_shell_screen.dart';
 import 'screens/browse/browse_screen.dart';
 import 'screens/chat/chat_list_screen.dart';
+import 'screens/chat/chat_thread_screen.dart';
 import 'screens/listings/create_listing_screen.dart';
 import 'screens/listings/listing_detail_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
@@ -132,7 +133,30 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
         builder: (_) => CounterOfferScreen(originalRequest: request),
       );
     case AppRoutes.chatThread:
-      return MaterialPageRoute(builder: (_) => const SizedBox.shrink());
+      final args = settings.arguments;
+      final conversationId =
+          args is Map<String, dynamic>
+              ? args['conversationId'] as String?
+              : null;
+      final otherUserId =
+          args is Map<String, dynamic> ? args['otherUserId'] as String? : null;
+
+      if (conversationId == null || otherUserId == null) {
+        return MaterialPageRoute(
+          builder:
+              (_) => const Scaffold(
+                body: Center(child: Text('Missing chat route arguments')),
+              ),
+        );
+      }
+
+      return MaterialPageRoute(
+        builder:
+            (_) => ChatThreadScreen(
+              conversationId: conversationId,
+              otherUserId: otherUserId,
+            ),
+      );
     case AppRoutes.report:
       return MaterialPageRoute(
         builder:

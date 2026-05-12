@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/request_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/chat_service.dart';
+import '../chat/chat_thread_screen.dart';
 import '../../widgets/notification_icon_button.dart';
 import '../../models/request_model.dart';
 
@@ -94,7 +96,10 @@ class _RequestsScreenState extends State<RequestsScreen>
     List<RequestModel> requests,
     BuildContext context,
   ) {
-    if (requests.isEmpty) {
+    final pendingRequests =
+        requests.where((request) => request.isPending).toList();
+
+    if (pendingRequests.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,10 +123,10 @@ class _RequestsScreenState extends State<RequestsScreen>
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: requests.length,
+      itemCount: pendingRequests.length,
       itemBuilder: (context, index) {
         return _buildRequestCard(
-          requests[index],
+          pendingRequests[index],
           isReceived: true,
           context: context,
         );
@@ -333,9 +338,8 @@ class _RequestsScreenState extends State<RequestsScreen>
                     child: SizedBox(
                       height: 36,
                       child: OutlinedButton(
-                        onPressed: () {
-                          // Decline action
-                        },
+                        onPressed:
+                            () => _handleDeclineRequest(context, request),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: AppColors.error),
                           shape: RoundedRectangleBorder(
@@ -358,7 +362,11 @@ class _RequestsScreenState extends State<RequestsScreen>
                       height: 36,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Accept/Counter action
+                          if (request.isPending) {
+                            _handleAcceptRequest(context, request);
+                          } else {
+                            _showRequestDetails(context, request);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
@@ -384,9 +392,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                 width: double.infinity,
                 height: 36,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // View details or cancel
-                  },
+                  onPressed: () => _showRequestDetails(context, request),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     elevation: 0,
@@ -408,6 +414,224 @@ class _RequestsScreenState extends State<RequestsScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _handleDeclineRequest(
+    BuildContext context,
+    RequestModel request,
+  ) async {
+    final shouldDecline = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Decline Request'),
+            content: Text(
+              'Decline the request from ${request.fromUserName} for ${request.skillName}?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: Text(
+                  'Decline',
+                  style: TextStyle(color: AppColors.error),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    if (shouldDecline != true || !context.mounted) return;
+
+    final requestProvider = context.read<RequestProvider>();
+    await requestProvider.declineRequest(
+      request.id,
+      request.fromUserId,
+      request.skillName,
+    );
+
+    if (!context.mounted) return;
+
+    if (requestProvider.errorMessage != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(requestProvider.errorMessage!)));
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Request declined')));
+  }
+
+  Future<void> _handleAcceptRequest(
+    BuildContext context,
+    RequestModel request,
+  ) async {
+    if (request.proposedTimes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No proposed time is available to accept.'),
+        ),
+      );
+      return;
+    }
+
+    String selectedTime = request.proposedTimes.first;
+
+    final confirmedTime = await showDialog<String>(
+      context: context,
+      builder:
+          (dialogContext) => StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: const Text('Accept Request'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Choose the time slot to confirm for ${request.fromUserName}.',
+                      ),
+                      const SizedBox(height: 12),
+                      ...request.proposedTimes.map((time) {
+                        return RadioListTile<String>(
+                          value: time,
+                          groupValue: selectedTime,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(time),
+                          onChanged: (value) {
+                            if (value == null) return;
+                            setState(() => selectedTime = value);
+                          },
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext, selectedTime),
+                    child: const Text('Accept'),
+                  ),
+                ],
+              );
+            },
+          ),
+    );
+
+    if (confirmedTime == null || !context.mounted) return;
+
+    final confirmedSlot = _buildConfirmedSlot(confirmedTime);
+    final requestProvider = context.read<RequestProvider>();
+
+    await requestProvider.acceptRequest(
+      request.id,
+      confirmedSlot,
+      request.fromUserName,
+      request.skillName,
+      request.fromUserId,
+    );
+
+    if (!context.mounted) return;
+
+    if (requestProvider.errorMessage != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(requestProvider.errorMessage!)));
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Request accepted')));
+  }
+
+  void _showRequestDetails(BuildContext context, RequestModel request) {
+    showDialog<void>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text(request.skillName),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('From: ${request.fromUserName}'),
+                const SizedBox(height: 8),
+                Text('Status: ${request.status}'),
+                if (request.message.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text('Message: ${request.message}'),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Map<String, String> _buildConfirmedSlot(String proposedTime) {
+    final match = RegExp(
+      r'^(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}:\d{2}\s+[AP]M)\s+-\s+(\d{1,2}:\d{2}\s+[AP]M)$',
+    ).firstMatch(proposedTime);
+
+    if (match != null) {
+      final datePart = match.group(1)!;
+      final startDateTime = _parseDateTime(datePart, match.group(2)!);
+      final endDateTime = _parseDateTime(datePart, match.group(3)!);
+
+      return {
+        'startTime': startDateTime.toIso8601String(),
+        'endTime': endDateTime.toIso8601String(),
+      };
+    }
+
+    final fallbackStart = DateTime.now();
+    final fallbackEnd = fallbackStart.add(const Duration(hours: 1));
+
+    return {
+      'startTime': fallbackStart.toIso8601String(),
+      'endTime': fallbackEnd.toIso8601String(),
+    };
+  }
+
+  DateTime _parseDateTime(String datePart, String timePart) {
+    final dateSegments = datePart.split('/');
+    final timeMatch = RegExp(
+      r'^(\d{1,2}):(\d{2})\s*([AP]M)$',
+    ).firstMatch(timePart.trim());
+
+    if (dateSegments.length != 3 || timeMatch == null) {
+      return DateTime.now();
+    }
+
+    final month = int.tryParse(dateSegments[0]) ?? DateTime.now().month;
+    final day = int.tryParse(dateSegments[1]) ?? DateTime.now().day;
+    final year = int.tryParse(dateSegments[2]) ?? DateTime.now().year;
+    var hour = int.tryParse(timeMatch.group(1)!) ?? 0;
+    final minute = int.tryParse(timeMatch.group(2)!) ?? 0;
+    final period = timeMatch.group(3)!;
+
+    if (period == 'PM' && hour != 12) {
+      hour += 12;
+    } else if (period == 'AM' && hour == 12) {
+      hour = 0;
+    }
+
+    return DateTime(year, month, day, hour, minute);
   }
 
   Color _getStatusColor(String status) {
