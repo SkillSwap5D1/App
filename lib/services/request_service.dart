@@ -19,7 +19,13 @@ class RequestService {
   // ── Send a new lesson request ─────────────────────────────────────────────
   Future<String> sendRequest(RequestModel request) async {
     try {
+      print('📤 [SendRequest] Starting request send');
+      print('   From: ${request.fromUserId}');
+      print('   To: ${request.toUserId}');
+      print('   Listing: ${request.listingId}');
+
       // 1. Check no pending request already exists
+      print('🔍 [SendRequest] Checking for existing pending requests...');
       final existing =
           await _db
               .collection('requests')
@@ -29,66 +35,124 @@ class RequestService {
               .get();
 
       if (existing.docs.isNotEmpty) {
+        print('❌ [SendRequest] Already has pending request');
         throw Exception('You already have a pending request for this listing');
       }
 
       // 2. Write document to requests collection
+      print('💾 [SendRequest] Writing request document to Firestore...');
       final docRef = _db.collection('requests').doc();
       final newRequest = request.copyWith(id: docRef.id);
       await docRef.set(newRequest.toMap());
+      print('✅ [SendRequest] Request document created: ${newRequest.id}');
 
       // 3. Create or get conversation between the two users
+      print('💬 [SendRequest] Creating/getting conversation...');
       await _chatService.getOrCreateConversation(
         request.fromUserId,
         request.toUserId,
       );
+      print('✅ [SendRequest] Conversation handled');
 
       // 4. Send notification to the recipient
-      await _notificationService.sendNotification(
-        request.toUserId,
-        'new_request',
-        'New request from ${request.fromUserName}',
-        'wants to learn ${request.skillName}',
-        newRequest.id,
-      );
+      print('🔔 [SendRequest] Sending notification to ${request.toUserId}...');
+      try {
+        await _notificationService.sendNotification(
+          request.toUserId,
+          'new_request',
+          'New request from ${request.fromUserName}',
+          'wants to learn ${request.skillName}',
+          newRequest.id,
+        );
+        print('✅ [SendRequest] Notification sent successfully');
+      } catch (notifError) {
+        print(
+          '⚠️ [SendRequest] Notification error (non-blocking): $notifError',
+        );
+      }
 
-      // Note: Cloud Function onRequestCreated may also handle notifications
-
-      // 5. Return the new request ID
+      print('✅ [SendRequest] Complete! Request ID: ${newRequest.id}');
       return docRef.id;
     } catch (e) {
+      print('❌ [SendRequest] Failed: $e');
       throw Exception('Failed to send request: $e');
     }
   }
 
   // ── Get incoming requests — real time stream ───────────────────────────────
   Stream<List<RequestModel>> getIncomingRequests(String userId) {
+    print('📥 [GetIncomingRequests] Setting up stream for user: $userId');
     return _db
         .collection('requests')
         .where('toUserId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map(
-          (snapshot) =>
-              snapshot.docs
-                  .map((doc) => RequestModel.fromMap(doc.data()))
-                  .toList(),
-        );
+        .handleError((error) {
+          print('❌ [GetIncomingRequests] Stream ERROR (before map): $error');
+          print('   Error type: ${error.runtimeType}');
+          print('   Error message: ${error.toString()}');
+          return [];
+        })
+        .map((snapshot) {
+          print(
+            '📥 [GetIncomingRequests] Snapshot received with ${snapshot.docs.length} docs',
+          );
+          final requests =
+              snapshot.docs.map((doc) {
+                try {
+                  final request = RequestModel.fromMap(doc.data());
+                  print(
+                    '   - Request from ${request.fromUserName} (${request.status})',
+                  );
+                  return request;
+                } catch (e) {
+                  print('   ⚠️ Error parsing request doc: $e');
+                  rethrow;
+                }
+              }).toList();
+          print(
+            '📥 [GetIncomingRequests] Returning ${requests.length} requests',
+          );
+          return requests;
+        });
   }
 
   // ── Get outgoing requests — real time stream ──────────────────────────────
   Stream<List<RequestModel>> getOutgoingRequests(String userId) {
+    print('📤 [GetOutgoingRequests] Setting up stream for user: $userId');
     return _db
         .collection('requests')
         .where('fromUserId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map(
-          (snapshot) =>
-              snapshot.docs
-                  .map((doc) => RequestModel.fromMap(doc.data()))
-                  .toList(),
-        );
+        .handleError((error) {
+          print('❌ [GetOutgoingRequests] Stream ERROR (before map): $error');
+          print('   Error type: ${error.runtimeType}');
+          print('   Error message: ${error.toString()}');
+          return [];
+        })
+        .map((snapshot) {
+          print(
+            '📤 [GetOutgoingRequests] Snapshot received with ${snapshot.docs.length} docs',
+          );
+          final requests =
+              snapshot.docs.map((doc) {
+                try {
+                  final request = RequestModel.fromMap(doc.data());
+                  print(
+                    '   - Request to ${request.toUserName} (${request.status})',
+                  );
+                  return request;
+                } catch (e) {
+                  print('   ⚠️ Error parsing request doc: $e');
+                  rethrow;
+                }
+              }).toList();
+          print(
+            '📤 [GetOutgoingRequests] Returning ${requests.length} requests',
+          );
+          return requests;
+        });
   }
 
   // ── Accept a request ──────────────────────────────────────────────────────

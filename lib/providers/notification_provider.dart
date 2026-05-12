@@ -23,11 +23,18 @@ class NotificationProvider extends ChangeNotifier {
     try {
       _notificationsSubscription = _notificationService
           .getNotifications(uid)
-          .listen((notifs) {
-        notifications = notifs;
-        unreadCount = notifs.where((n) => !n.isRead).length;
-        notifyListeners();
-      });
+          .listen(
+            (notifs) {
+              notifications = notifs;
+              unreadCount = notifs.where((n) => !n.isRead).length;
+              notifyListeners();
+            },
+            onError: (error) {
+              print('❌ Error loading notifications: $error');
+              isLoading = false;
+              notifyListeners();
+            },
+          );
 
       isLoading = false;
       notifyListeners();
@@ -42,6 +49,9 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> markAllAsRead(String uid) async {
     try {
       await _notificationService.markAllRead(uid);
+      // Small delay to ensure Firestore updates propagate
+      await Future.delayed(const Duration(milliseconds: 300));
+      notifyListeners();
     } catch (e) {
       print('Error marking all as read: $e');
     }

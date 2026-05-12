@@ -19,6 +19,7 @@ class RequestProvider extends ChangeNotifier {
 
   // ── Load requests — starts real time streams ──────────────────────────────
   void loadRequests(String uid) {
+    print('📋 [RequestProvider] loadRequests() called for user: $uid');
     _activeUid = uid;
 
     _incomingSubscription?.cancel();
@@ -29,31 +30,39 @@ class RequestProvider extends ChangeNotifier {
     notifyListeners();
 
     // Listen to incoming requests
+    print('📋 [RequestProvider] Subscribing to incoming requests stream...');
     _incomingSubscription = _requestService
         .getIncomingRequests(uid)
         .listen(
           (data) {
+            print(
+              '📋 [RequestProvider] Incoming requests updated: ${data.length} requests',
+            );
             incoming = data;
             notifyListeners();
           },
           onError: (error) {
             errorMessage = 'Error loading incoming requests: $error';
-            print('❌ Incoming requests error: $error');
+            print('❌ [RequestProvider] Incoming requests error: $error');
             notifyListeners();
           },
         );
 
     // Listen to outgoing requests
+    print('📋 [RequestProvider] Subscribing to outgoing requests stream...');
     _outgoingSubscription = _requestService
         .getOutgoingRequests(uid)
         .listen(
           (data) {
+            print(
+              '📋 [RequestProvider] Outgoing requests updated: ${data.length} requests',
+            );
             outgoing = data;
             notifyListeners();
           },
           onError: (error) {
             errorMessage = 'Error loading outgoing requests: $error';
-            print('❌ Outgoing requests error: $error');
+            print('❌ [RequestProvider] Outgoing requests error: $error');
             notifyListeners();
           },
         );

@@ -21,6 +21,18 @@ class AuthProvider extends ChangeNotifier {
     _authStateSubscription = _authService.authStateChanges.listen((user) async {
       print('🔵 authStateChanges listener fired! User: ${user?.uid ?? "null"}');
       if (user != null) {
+        // Check custom claims
+        try {
+          final idToken = await user.getIdTokenResult();
+          final isUniversityUser = idToken.claims?['isUniversityUser'] ?? false;
+          final emailDomain = idToken.claims?['emailDomain'] ?? 'unknown';
+          print(
+            '🔵 Custom claims: isUniversityUser=$isUniversityUser, emailDomain=$emailDomain',
+          );
+        } catch (e) {
+          print('⚠️ Could not fetch custom claims: $e');
+        }
+
         currentUser = _buildProvisionalUser(user);
         print('✅ Set provisional currentUser from Firebase: ${user.uid}');
         notifyListeners();
@@ -74,16 +86,22 @@ class AuthProvider extends ChangeNotifier {
         final user = await _userService.getUser(uid);
         if (user != null) {
           currentUser = user;
-          print('✅ _fetchUser() got full profile for $uid on attempt ${attempt + 1}');
+          print(
+            '✅ _fetchUser() got full profile for $uid on attempt ${attempt + 1}',
+          );
           notifyListeners();
           return;
         }
-        print('⚠️ _fetchUser() attempt ${attempt + 1}/${maxAttempts}: user not found yet');
+        print(
+          '⚠️ _fetchUser() attempt ${attempt + 1}/${maxAttempts}: user not found yet',
+        );
 
         await Future.delayed(delay);
       }
 
-      print('⚠️ User profile not available yet for $uid after ${maxAttempts * 500}ms');
+      print(
+        '⚠️ User profile not available yet for $uid after ${maxAttempts * 500}ms',
+      );
     } catch (e) {
       print('❌ Error fetching user: $e');
     }
@@ -107,7 +125,9 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         print('⚠️ AuthService.signIn() returned null');
-        print('   The auth state listener should have fired via authStateChanges stream');
+        print(
+          '   The auth state listener should have fired via authStateChanges stream',
+        );
         // Don't set errorMessage here - we'll wait for auth state listener to fire
       }
 
@@ -263,70 +283,72 @@ class AuthProvider extends ChangeNotifier {
   // ── Handle auth errors ─────────────────────────────────────────────────────
   String _handleAuthError(String errorCode) {
     final error = errorCode.toLowerCase();
-    
+
     // Invalid credentials (new Firebase error format)
     if (error.contains('invalid-credential')) {
       return 'Invalid email or password';
     }
-    
+
     // Invalid credentials (old Firebase error format)
     if (error.contains('invalid_login_credentials')) {
       return 'Invalid email or password';
     }
-    
+
     // User not found
     if (error.contains('user-not-found') || error.contains('user_not_found')) {
       return 'No account found with this email';
     }
-    
+
     // Wrong password
     if (error.contains('wrong-password') || error.contains('wrong_password')) {
       return 'Incorrect password';
     }
-    
+
     // Email already exists
-    if (error.contains('email-already-in-use') || error.contains('email_exists')) {
+    if (error.contains('email-already-in-use') ||
+        error.contains('email_exists')) {
       return 'This email is already registered';
     }
-    
+
     // Weak password
     if (error.contains('weak-password') || error.contains('weak_password')) {
       return 'Password must be at least 6 characters';
     }
-    
+
     // Network errors
     if (error.contains('network') || error.contains('timeout')) {
       return 'Network error. Please check your connection';
     }
-    
+
     // Permission denied (Firestore access issues)
-    if (error.contains('permission-denied') || error.contains('permission_denied')) {
+    if (error.contains('permission-denied') ||
+        error.contains('permission_denied')) {
       return 'Your account is still being set up. Please wait a few seconds and try again.';
     }
-    
+
     // User profile loading issues
     if (error.contains('failed to load user profile')) {
       return 'Your profile is still being created. Please try again in a moment.';
     }
-    
+
     // University email validation
     if (error.contains('university of portsmouth')) {
       return 'Please use your University of Portsmouth email (@myport.ac.uk)';
     }
-    
+
     if (error.contains('@myport.ac.uk')) {
       return 'Please use your @myport.ac.uk email';
     }
-    
+
     // Google sign-in errors
     if (error.contains('cancelled')) {
       return 'Sign-in was cancelled';
     }
-    
+
     if (error.contains('google')) {
       return 'Google sign-in failed. Please try again';
     }
-    
+
     // Generic fallback
     return errorCode.replaceFirst('Exception: ', '').split('\n').first;
   }
