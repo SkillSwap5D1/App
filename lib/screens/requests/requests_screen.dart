@@ -388,7 +388,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                   width: double.infinity,
                   height: 36,
                   child: ElevatedButton(
-                    onPressed: () => _openChatForRequest(context, request),
+                    onPressed:
+                        () => _openChatForRequest(
+                          context,
+                          request,
+                          otherUserId: request.toUserId,
+                        ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       elevation: 0,
@@ -603,8 +608,9 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   Future<void> _openChatForRequest(
     BuildContext context,
-    RequestModel request,
-  ) async {
+    RequestModel request, {
+    required String otherUserId,
+  }) async {
     final currentUser = context.read<AuthProvider>().currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -616,7 +622,7 @@ class _RequestsScreenState extends State<RequestsScreen>
     try {
       final conversationId = await ChatService().getOrCreateConversation(
         currentUser.uid,
-        request.fromUserId,
+        otherUserId,
       );
 
       if (!context.mounted) return;
@@ -626,7 +632,7 @@ class _RequestsScreenState extends State<RequestsScreen>
           builder:
               (_) => ChatThreadScreen(
                 conversationId: conversationId,
-                otherUserId: request.fromUserId,
+                otherUserId: otherUserId,
                 requestId: request.id,
               ),
         ),
