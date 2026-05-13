@@ -1,4 +1,3 @@
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skillswap_app/models/conversation_model.dart';
@@ -20,57 +19,69 @@ void main() {
       required List<String> participants,
       required String lastMessage,
       required DateTime lastMessageTime,
-      required int unreadCount,
+      required Map<String, int> unreadCounts,
     }) async {
-      await firestore.collection('conversations').doc(id).set(
+      await firestore
+          .collection('conversations')
+          .doc(id)
+          .set(
             ConversationModel(
               id: id,
               participants: participants,
               lastMessage: lastMessage,
               lastMessageTime: lastMessageTime,
-              unreadCount: unreadCount,
+              unreadCounts: unreadCounts,
             ).toMap(),
           );
       return id;
     }
 
     test('getOrCreateConversation() creates new', () async {
-      final conversationId = await service.getOrCreateConversation('user_a', 'user_b');
+      final conversationId = await service.getOrCreateConversation(
+        'user_a',
+        'user_b',
+      );
 
-      final doc = await firestore.collection('conversations').doc(conversationId).get();
+      final doc =
+          await firestore.collection('conversations').doc(conversationId).get();
       expect(doc.exists, isTrue);
       expect(doc.data()?['participants'], ['user_a', 'user_b']);
-      expect(doc.data()?['unreadCount'], 0);
+      expect((doc.data()?['unreadCounts'] as Map)['user_a'], 0);
+      expect((doc.data()?['unreadCounts'] as Map)['user_b'], 0);
     });
 
     test('getOrCreateConversation() returns existing', () async {
       await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: 'Hello',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 0,
+        unreadCounts: {'user_a': 0, 'user_b': 0},
       );
 
-      final conversationId = await service.getOrCreateConversation('user_a', 'user_b');
+      final conversationId = await service.getOrCreateConversation(
+        'user_a',
+        'user_b',
+      );
 
-      expect(conversationId, 'conversation_1');
+      expect(conversationId, 'user_a_user_b');
       final conversations = await firestore.collection('conversations').get();
       expect(conversations.docs, hasLength(1));
     });
 
     test('sendMessage() creates message document', () async {
       final conversationId = await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: '',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 0,
+        unreadCounts: {'user_a': 0, 'user_b': 0},
       );
 
       await service.sendMessage(
         conversationId: conversationId,
         senderId: 'user_a',
+        senderName: 'User A',
         text: 'Hi there',
       );
 
@@ -82,70 +93,80 @@ void main() {
 
     test('sendMessage() updates lastMessage', () async {
       final conversationId = await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: '',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 0,
+        unreadCounts: {'user_a': 0, 'user_b': 0},
       );
 
       await service.sendMessage(
         conversationId: conversationId,
         senderId: 'user_a',
+        senderName: 'User A',
         text: 'Hi there',
       );
 
-      final doc = await firestore.collection('conversations').doc(conversationId).get();
+      final doc =
+          await firestore.collection('conversations').doc(conversationId).get();
       expect(doc.data()?['lastMessage'], 'Hi there');
     });
 
-    test('sendMessage() increments unreadCount', () async {
+    test('sendMessage() increments other user unreadCount', () async {
       final conversationId = await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: '',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 2,
+        unreadCounts: {'user_a': 0, 'user_b': 2},
       );
 
       await service.sendMessage(
         conversationId: conversationId,
         senderId: 'user_a',
+        senderName: 'User A',
         text: 'Hi there',
       );
 
-      final doc = await firestore.collection('conversations').doc(conversationId).get();
-      expect(doc.data()?['unreadCount'], 3);
+      final doc =
+          await firestore.collection('conversations').doc(conversationId).get();
+      expect((doc.data()?['unreadCounts'] as Map)['user_b'], 3);
+      expect((doc.data()?['unreadCounts'] as Map)['user_a'], 0);
     });
 
-    test('markAsRead() sets unreadCount to 0', () async {
+    test('markAsRead() sets only current user unreadCount to 0', () async {
       final conversationId = await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: '',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 5,
+        unreadCounts: {'user_a': 5, 'user_b': 5},
       );
 
-      await service.markAsRead(conversationId);
+      await service.markAsRead(conversationId, 'user_a');
 
-      final doc = await firestore.collection('conversations').doc(conversationId).get();
-      expect(doc.data()?['unreadCount'], 0);
+      final doc =
+          await firestore.collection('conversations').doc(conversationId).get();
+      expect((doc.data()?['unreadCounts'] as Map)['user_a'], 0);
+      expect((doc.data()?['unreadCounts'] as Map)['user_b'], 5);
     });
 
     test('messagesStream() emits correct messages', () async {
       await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: '',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 0,
+        unreadCounts: {'user_a': 0, 'user_b': 0},
       );
 
-      await firestore.collection('messages').doc('msg_1').set(
+      await firestore
+          .collection('messages')
+          .doc('msg_1')
+          .set(
             MessageModel(
               id: 'msg_1',
-              conversationId: 'conversation_1',
+              conversationId: 'user_a_user_b',
               senderId: 'user_a',
               text: 'First message',
               timestamp: DateTime(2024, 1, 1, 10, 0),
@@ -154,36 +175,41 @@ void main() {
           );
 
       await expectLater(
-        service.messagesStream('conversation_1'),
-        emits(predicate((List<MessageModel> messages) {
-          return messages.length == 1 && messages.first.text == 'First message';
-        })),
+        service.messagesStream('user_a_user_b'),
+        emits(
+          predicate((List<MessageModel> messages) {
+            return messages.length == 1 &&
+                messages.first.text == 'First message';
+          }),
+        ),
       );
     });
 
     test('conversationsStream() emits correct list', () async {
       await seedConversation(
-        id: 'conversation_1',
+        id: 'user_a_user_b',
         participants: ['user_a', 'user_b'],
         lastMessage: 'Newest',
         lastMessageTime: DateTime(2024, 1, 2),
-        unreadCount: 1,
+        unreadCounts: {'user_a': 1, 'user_b': 0},
       );
       await seedConversation(
-        id: 'conversation_2',
+        id: 'user_a_user_c',
         participants: ['user_a', 'user_c'],
         lastMessage: 'Oldest',
         lastMessageTime: DateTime(2024, 1, 1),
-        unreadCount: 0,
+        unreadCounts: {'user_a': 0, 'user_c': 0},
       );
 
       await expectLater(
         service.conversationsStream('user_a'),
-        emits(predicate((List<ConversationModel> conversations) {
-          return conversations.length == 2 &&
-              conversations.first.id == 'conversation_1' &&
-              conversations.last.id == 'conversation_2';
-        })),
+        emits(
+          predicate((List<ConversationModel> conversations) {
+            return conversations.length == 2 &&
+                conversations.first.id == 'user_a_user_b' &&
+                conversations.last.id == 'user_a_user_c';
+          }),
+        ),
       );
     });
   });

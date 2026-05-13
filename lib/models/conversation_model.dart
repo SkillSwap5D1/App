@@ -5,33 +5,34 @@ class ConversationModel {
   final List<String> participants;
   final String lastMessage;
   final DateTime lastMessageTime;
-  final int unreadCount;
+  final Map<String, int> unreadCounts; // Per-user unread counts
 
   const ConversationModel({
     required this.id,
     required this.participants,
     required this.lastMessage,
     required this.lastMessageTime,
-    required this.unreadCount,
-  });
+    Map<String, int>? unreadCounts,
+  }) : unreadCounts = unreadCounts ?? const {};
 
   factory ConversationModel.fromMap(Map<String, dynamic> map) {
     return ConversationModel(
-      id:              map['id']          ?? '',
-      participants:    List<String>.from(map['participants'] ?? []),
-      lastMessage:     map['lastMessage'] ?? '',
-      lastMessageTime: (map['lastMessageTime'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      unreadCount:     (map['unreadCount'] ?? 0).toInt(),
+      id: map['id'] ?? '',
+      participants: List<String>.from(map['participants'] ?? []),
+      lastMessage: map['lastMessage'] ?? '',
+      lastMessageTime:
+          (map['lastMessageTime'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      unreadCounts: Map<String, int>.from(map['unreadCounts'] ?? {}),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id':              id,
-      'participants':    participants,
-      'lastMessage':     lastMessage,
+      'id': id,
+      'participants': participants,
+      'lastMessage': lastMessage,
       'lastMessageTime': Timestamp.fromDate(lastMessageTime),
-      'unreadCount':     unreadCount,
+      'unreadCounts': unreadCounts,
     };
   }
 
@@ -40,14 +41,14 @@ class ConversationModel {
     List<String>? participants,
     String? lastMessage,
     DateTime? lastMessageTime,
-    int? unreadCount,
+    Map<String, int>? unreadCounts,
   }) {
     return ConversationModel(
-      id:              id              ?? this.id,
-      participants:    participants    ?? this.participants,
-      lastMessage:     lastMessage     ?? this.lastMessage,
+      id: id ?? this.id,
+      participants: participants ?? this.participants,
+      lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
-      unreadCount:     unreadCount     ?? this.unreadCount,
+      unreadCounts: unreadCounts ?? this.unreadCounts,
     );
   }
 
@@ -57,9 +58,11 @@ class ConversationModel {
       return '';
     }
 
-    return participants.firstWhere(
-      (id) => id != myUid,
-      orElse: () => '',
-    );
+    return participants.firstWhere((id) => id != myUid, orElse: () => '');
+  }
+
+  // ── Helper — get unread count for a specific user
+  int getUnreadCount(String uid) {
+    return unreadCounts[uid] ?? 0;
   }
 }

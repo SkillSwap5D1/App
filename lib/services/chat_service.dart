@@ -29,7 +29,7 @@ class ChatService {
         participants: participantIds,
         lastMessage: '',
         lastMessageTime: DateTime.now(),
-        unreadCount: 0,
+        unreadCounts: {uid1: 0, uid2: 0},
       );
 
       await docRef.set(conversation.toMap());
@@ -72,11 +72,11 @@ class ChatService {
         orElse: () => '',
       );
 
-      // Update conversation last message
+      // Update conversation last message and OTHER user's unread count
       await _db.collection('conversations').doc(conversationId).update({
         'lastMessage': text,
         'lastMessageTime': Timestamp.fromDate(DateTime.now()),
-        'unreadCount': FieldValue.increment(1),
+        'unreadCounts.$otherUserId': FieldValue.increment(1),
       });
 
       // Send notification to other participant
@@ -146,11 +146,11 @@ class ChatService {
         });
   }
 
-  // ── Mark conversation as read ─────────────────────────────────────────────
-  Future<void> markAsRead(String conversationId) async {
+  // ── Mark conversation as read for current user ──────────────────────────
+  Future<void> markAsRead(String conversationId, String userId) async {
     try {
       await _db.collection('conversations').doc(conversationId).update({
-        'unreadCount': 0,
+        'unreadCounts.$userId': 0,
       });
     } catch (e) {
       throw Exception('Failed to mark as read: $e');

@@ -40,7 +40,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // ── Open a conversation and load messages ─────────────────────────────────
-  Future<void> openConversation(String conversationId) async {
+  Future<void> openConversation(String conversationId, String userId) async {
     _messagesSubscription?.cancel();
     activeConversationId = conversationId;
     currentMessages = [];
@@ -57,9 +57,11 @@ class ChatProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      // Mark conversation as read
-      print('🔵 ChatProvider: Marking conversation $conversationId as read');
-      await markAsRead(conversationId);
+      // Mark conversation as read for current user
+      print(
+        '🔵 ChatProvider: Marking conversation $conversationId as read for $userId',
+      );
+      await markAsRead(conversationId, userId);
     } catch (e) {
       print('❌ Error loading messages: $e');
     }
@@ -96,9 +98,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // ── Mark conversation as read ───────────────────────────────────────────
-  Future<void> markAsRead(String conversationId) async {
+  Future<void> markAsRead(String conversationId, String userId) async {
     try {
-      await _chatService.markAsRead(conversationId);
+      await _chatService.markAsRead(conversationId, userId);
     } catch (e) {
       print('Error marking as read: $e');
     }
@@ -106,7 +108,14 @@ class ChatProvider extends ChangeNotifier {
 
   // ── Get total unread count ──────────────────────────────────────────────
   int get totalUnreadCount {
-    return conversations.fold(0, (sum, conv) => sum + conv.unreadCount);
+    return conversations.fold(
+      0,
+      (sum, conv) =>
+          sum +
+          (conv.unreadCounts.values.isNotEmpty
+              ? conv.unreadCounts.values.first
+              : 0),
+    );
   }
 
   // ── Cleanup subscriptions ────────────────────────────────────────────────

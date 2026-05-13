@@ -40,7 +40,11 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
 
     // Load messages
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ChatProvider>().openConversation(widget.conversationId);
+      final currentUid = context.read<AuthProvider>().currentUser?.uid ?? '';
+      context.read<ChatProvider>().openConversation(
+        widget.conversationId,
+        currentUid,
+      );
       _scrollToBottom();
     });
   }

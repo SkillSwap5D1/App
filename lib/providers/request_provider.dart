@@ -5,7 +5,6 @@ import 'dart:async';
 
 class RequestProvider extends ChangeNotifier {
   final RequestService _requestService = RequestService();
-  String? _activeUid;
 
   // ── State ─────────────────────────────────────────────────────────────────
   List<RequestModel> incoming = [];
@@ -20,7 +19,6 @@ class RequestProvider extends ChangeNotifier {
   // ── Load requests — starts real time streams ──────────────────────────────
   void loadRequests(String uid) {
     print('📋 [RequestProvider] loadRequests() called for user: $uid');
-    _activeUid = uid;
 
     _incomingSubscription?.cancel();
     _outgoingSubscription?.cancel();

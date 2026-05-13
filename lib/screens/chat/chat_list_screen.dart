@@ -204,9 +204,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        if (conv.unreadCount > 0)
+                                        if (conv.getUnreadCount(currentUid) > 0)
                                           const SizedBox(width: 8),
-                                        if (conv.unreadCount > 0)
+                                        if (conv.getUnreadCount(currentUid) > 0)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
@@ -218,7 +218,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                                   BorderRadius.circular(12),
                                             ),
                                             child: Text(
-                                              '${conv.unreadCount}',
+                                              '${conv.getUnreadCount(currentUid)}',
                                               style: AppTextStyles.caption
                                                   .copyWith(
                                                     color: Colors.white,
