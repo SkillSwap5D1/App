@@ -47,6 +47,10 @@ class ChatService {
     required String text,
   }) async {
     try {
+      print('🔵 ChatService.sendMessage(): Starting message send');
+      print('   conversationId: $conversationId');
+      print('   senderId: $senderId');
+
       // Create new message document
       final msgRef = _db.collection('messages').doc();
       final message = MessageModel(
@@ -60,17 +64,33 @@ class ChatService {
 
       // Save message
       await msgRef.set(message.toMap());
+      print('✅ Message saved: ${msgRef.id}');
 
       // Get conversation to find other participant
       final conversationDoc =
           await _db.collection('conversations').doc(conversationId).get();
+
+      if (!conversationDoc.exists) {
+        throw Exception(
+          'Conversation $conversationId does not exist! Message was saved but conversation is missing.',
+        );
+      }
+
       final participants = List<String>.from(
         conversationDoc.data()?['participants'] ?? [],
       );
+      print('🔵 Found conversation with participants: $participants');
+
       final otherUserId = participants.firstWhere(
         (uid) => uid != senderId,
         orElse: () => '',
       );
+
+      if (otherUserId.isEmpty) {
+        throw Exception('Could not find other participant in conversation');
+      }
+
+      print('🔵 Other user ID: $otherUserId');
 
       // Update conversation last message and OTHER user's unread count
       await _db.collection('conversations').doc(conversationId).update({
@@ -78,6 +98,8 @@ class ChatService {
         'lastMessageTime': Timestamp.fromDate(DateTime.now()),
         'unreadCounts.$otherUserId': FieldValue.increment(1),
       });
+
+      print('✅ Conversation updated with new message');
 
       // Send notification to other participant
       if (otherUserId.isNotEmpty) {
@@ -88,10 +110,12 @@ class ChatService {
           text.length > 50 ? '${text.substring(0, 50)}...' : text,
           conversationId,
         );
+        print('✅ Notification sent to $otherUserId');
       }
 
       return message;
     } catch (e) {
+      print('❌ Error sending message: $e');
       throw Exception('Failed to send message: $e');
     }
   }
@@ -132,16 +156,23 @@ class ChatService {
         .snapshots()
         .map((snapshot) {
           final conversations =
-              snapshot.docs
-                  .map((doc) => ConversationModel.fromMap(doc.data()))
-                  .toList();
+              snapshot.docs.map((doc) {
+                print('🔵   Found conversation: ${doc.id}');
+                print('       Participants: ${doc.data()['participants']}');
+                print('       Last message: ${doc.data()['lastMessage']}');
+                return ConversationModel.fromMap(doc.data());
+              }).toList();
           print(
-            '🔵 ChatService.conversationsStream(): Got ${conversations.length} conversations',
+            '🔵 ChatService.conversationsStream(): Got ${conversations.length} conversations for $uid',
           );
+          if (conversations.isEmpty) {
+            print('⚠️ WARNING: No conversations found for user $uid');
+          }
           return conversations;
         })
         .handleError((error) {
           print('❌ Error in conversationsStream: $error');
+          print('   Stack trace: $error');
           throw error;
         });
   }
