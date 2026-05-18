@@ -378,108 +378,171 @@ class _BrowseScreenState extends State<BrowseScreen>
   }
 
   Widget _buildBrowseTab(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: _buildSearchBar(),
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth > 600) {
+        // Wide screen layout
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 250,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 8, 8),
+                child: _buildFilters(isSidePanel: true),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildSearchBar(),
+                  ),
+                  Expanded(
+                    child: _buildListingResults(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      } else {
+        // Narrow screen layout
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildSearchBar(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              child: _buildFilters(isSidePanel: false),
+            ),
+            Expanded(
+              child: _buildListingResults(),
+            ),
+          ],
+        );
+      }
+    });
+  }
+
+  Widget _buildFilters({bool isSidePanel = false}) {
+    final filters = [
+      _buildFilterDropdown(
+        label: 'Category',
+        value: _selectedCategory,
+        items: _categories,
+        onChanged: (val) => setState(() => _selectedCategory = val!),
+      ),
+      _buildFilterDropdown(
+        label: 'Level',
+        value: _selectedLevel,
+        items: _levels,
+        onChanged: (val) => setState(() => _selectedLevel = val!),
+      ),
+      _buildFilterDropdown(
+        label: 'Format',
+        value: _selectedFormat,
+        items: _formats,
+        onChanged: (val) => setState(() => _selectedFormat = val!),
+      ),
+    ];
+
+    if (isSidePanel) {
+      return ListView.separated(
+        itemCount: filters.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) => filters[index],
+        padding: const EdgeInsets.only(top: 12),
+      );
+    } else {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: filters
+              .expand((widget) => [widget, const SizedBox(width: 12)])
+              .toList()
+            ..removeLast(),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+      );
+    }
+  }
+
+  Widget _buildListingResults() {
+    return Consumer2<ListingProvider, AuthProvider>(
+      builder: (context, listingProvider, authProvider, _) {
+        if (listingProvider.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: _accentColor,
+              strokeWidth: 2.5,
+            ),
+          );
+        }
+
+        final otherListings = _getOtherListings(
+          listingProvider,
+          authProvider,
+        );
+        final filteredListings = _filterListings(otherListings);
+
+        if (filteredListings.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildFilterDropdown(
-                  label: 'Category',
-                  value: _selectedCategory,
-                  items: _categories,
-                  onChanged: (val) => setState(() => _selectedCategory = val!),
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: _surfaceTint,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.search_off_rounded,
+                    color: _accentLightColor,
+                    size: 32,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                _buildFilterDropdown(
-                  label: 'Level',
-                  value: _selectedLevel,
-                  items: _levels,
-                  onChanged: (val) => setState(() => _selectedLevel = val!),
+                SizedBox(height: 16),
+                Text(
+                  'No skills found',
+                  style: TextStyle(
+                    color: _headingColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                _buildFilterDropdown(
-                  label: 'Format',
-                  value: _selectedFormat,
-                  items: _formats,
-                  onChanged: (val) => setState(() => _selectedFormat = val!),
+                SizedBox(height: 6),
+                Text(
+                  'Try different keywords or filters',
+                  style: TextStyle(color: _mutedColor, fontSize: 13),
                 ),
               ],
             ),
-          ),
-        ),
-        Expanded(
-          child: Consumer2<ListingProvider, AuthProvider>(
-            builder: (context, listingProvider, authProvider, _) {
-              if (listingProvider.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: _accentColor,
-                    strokeWidth: 2.5,
-                  ),
-                );
-              }
+          );
+        }
 
-              final otherListings = _getOtherListings(
-                listingProvider,
-                authProvider,
-              );
-              final filteredListings = _filterListings(otherListings);
-
-              if (filteredListings.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: _surfaceTint,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.search_off_rounded,
-                          color: _accentLightColor,
-                          size: 32,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'No skills found',
-                        style: TextStyle(
-                          color: _headingColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        'Try different keywords or filters',
-                        style: TextStyle(color: _mutedColor, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                children: _buildPairedRows(
-                  filteredListings,
-                  (listing) => _buildBrowseListingCard(listing, context),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = (constraints.maxWidth / 250).floor().clamp(1, 4);
+            return GridView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: filteredListings.length,
+              itemBuilder: (context, index) {
+                return _buildBrowseListingCard(filteredListings[index], context);
+              },
+            );
+          },
+        );
+      },
     );
   }
 
@@ -580,45 +643,26 @@ class _BrowseScreenState extends State<BrowseScreen>
           );
         }
 
-        return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          children: _buildPairedRows(
-            myListings,
-            (listing) => _buildMyListingCard(listing, context),
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = (constraints.maxWidth / 250).floor().clamp(1, 4);
+            return GridView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: myListings.length,
+              itemBuilder: (context, index) {
+                return _buildMyListingCard(myListings[index], context);
+              },
+            );
+          },
         );
       },
     );
-  }
-
-  List<Widget> _buildPairedRows(
-    List<ListingModel> listings,
-    Widget Function(ListingModel listing) cardBuilder,
-  ) {
-    final rows = <Widget>[];
-
-    for (var index = 0; index < listings.length; index += 2) {
-      final firstListing = listings[index];
-      final hasSecondListing = index + 1 < listings.length;
-
-      rows.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: cardBuilder(firstListing)),
-              if (hasSecondListing) ...[
-                const SizedBox(width: 12),
-                Expanded(child: cardBuilder(listings[index + 1])),
-              ],
-            ],
-          ),
-        ),
-      );
-    }
-
-    return rows;
   }
 
   Widget _buildSearchBar() {
