@@ -1,16 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/review_model.dart';
+import 'notification_service.dart';
+import 'user_service.dart';
 
 class ReviewService {
   // ── Firebase instance ─────────────────────────────────────────────────────
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final NotificationService _notificationService = NotificationService();
+  final UserService _userService = UserService();
 
   // ── Submit a review after a completed session ──────────────────────────────
   // 1. Write review document to reviews collection with isPublished=false
   // 2. Check if the OTHER user has also submitted their review for this request
   // 3. If yes: set isPublished=true on BOTH review documents
   //    then call recalculateRating() for the reviewee
-  // 4. If no: leave isPublished=false and wait
+  // 4. Send notifications appropriately
   Future<void> submitReview(
     String requestId,
     String reviewerId,
@@ -21,6 +25,10 @@ class ReviewService {
     try {
       final now = DateTime.now();
       final reviewId = _db.collection('reviews').doc().id;
+
+      // Get reviewer name for notifications
+      final reviewerUser = await _userService.getUser(reviewerId);
+      final reviewerName = reviewerUser?.displayName ?? 'A user';
 
       // 1. Create the review document with isPublished=false initially
       final reviewData = ReviewModel(
@@ -37,17 +45,33 @@ class ReviewService {
 
       await _db.collection('reviews').doc(reviewId).set(reviewData.toMap());
 
+      // 1.5 Send notification to reviewee that they have a pending review
+      try {
+        await _notificationService.sendNotification(
+          revieweeId,
+          'review_submitted',
+          '$reviewerName submitted a review',
+          '$reviewerName gave you a $rating star review',
+          requestId,
+        );
+      } catch (e) {
+        print('⚠️ [ReviewService] Could not send review_submitted notification: $e');
+      }
+
       // 2. Check if the OTHER user (revieweeId) has submitted their review
-      final otherReviewQuery =
-          await _db
-              .collection('reviews')
-              .where('requestId', isEqualTo: requestId)
-              .where('reviewerId', isEqualTo: revieweeId)
-              .where('revieweeId', isEqualTo: reviewerId)
-              .get();
+      final otherReviewQuery = await _db
+          .collection('reviews')
+          .where('requestId', isEqualTo: requestId)
+          .where('reviewerId', isEqualTo: revieweeId)
+          .where('revieweeId', isEqualTo: reviewerId)
+          .get();
 
       // 3. If yes: set isPublished=true on BOTH review documents
       if (otherReviewQuery.docs.isNotEmpty) {
+        print(
+          '✅ [ReviewService] Other user has also reviewed, publishing both...',
+        );
+
         // Both users have reviewed, publish both reviews
         await _db.collection('reviews').doc(reviewId).update({
           'isPublished': true,
@@ -64,8 +88,38 @@ class ReviewService {
         // Recalculate ratings for both reviewees
         await recalculateRating(revieweeId);
         await recalculateRating(reviewerId);
+
+        // 4. Send notifications that both reviews are now published
+        try {
+          // Notify reviewer that review is now published
+          await _notificationService.sendNotification(
+            reviewerId,
+            'review_published',
+            'Your review was published!',
+            'Both you and $reviewerName have reviewed each other',
+            requestId,
+          );
+
+          // Get reviewee name for the other notification
+          final revieweeUser = await _userService.getUser(revieweeId);
+          final revieweeName = revieweeUser?.displayName ?? 'A user';
+
+          // Notify reviewee that review is now published
+          await _notificationService.sendNotification(
+            revieweeId,
+            'review_published',
+            'Your review was published!',
+            'Both you and $revieweeName have reviewed each other',
+            requestId,
+          );
+        } catch (e) {
+          print('⚠️ [ReviewService] Could not send review_published notification: $e');
+        }
+      } else {
+        print(
+          '⏳ [ReviewService] Waiting for other user to submit their review...',
+        );
       }
-      // 4. If no: leave isPublished=false and wait (already done above)
     } catch (e) {
       throw Exception('Failed to submit review: $e');
     }
