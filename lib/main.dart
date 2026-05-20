@@ -117,12 +117,13 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const EditProfileScreen());
     case AppRoutes.rateReview:
       return MaterialPageRoute(
-        builder:
-            (_) => const RateReviewScreen(
-              skillTitle: 'Session',
-              otherUserName: 'User',
-              sessionDate: 'Today',
-            ),
+        builder: (_) => const RateReviewScreen(
+          requestId: 'mock_request_id',
+          skillTitle: 'Session',
+          otherUserId: 'mock_other_user_id',
+          otherUserName: 'User',
+          sessionDate: 'Today',
+        ),
       );
     case AppRoutes.counterOffer:
       final request =
