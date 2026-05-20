@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _isLoading = false;
+  final bool _isLoading = false;
   String? _emailError;
   String? _passwordError;
   bool _isPasswordVisible = false;
@@ -400,36 +400,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _buildCreateAccountButton(isLoading),
                               const SizedBox(height: AppSpacing.md),
 
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      color: AppColors.borderLight,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.md,
-                                    ),
-                                    child: Text(
-                                      'or',
-                                      style: AppTextStyles.caption.copyWith(
-                                        color: AppColors.textMuted,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: AppColors.borderLight,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-
-                              _buildGoogleSignInButton(isLoading),
-                              const SizedBox(height: AppSpacing.md),
-
                               Center(
                                 child: GestureDetector(
                                   onTap: _navigateToSignIn,
@@ -465,7 +435,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     // Sign-up guidance
                     Text(
-                      'Please sign up using your University of Portsmouth email (ending in @myport.ac.uk) or use Google.',
+                      'Please sign up using your University of Portsmouth email (ending in @myport.ac.uk).',
                       style: AppTextStyles.caption,
                       textAlign: TextAlign.center,
                     ),
@@ -528,78 +498,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildGoogleSignInButton(bool isLoading) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton(
-        onPressed: isLoading ? null : _handleGoogleSignIn,
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.borderLight),
-          backgroundColor: AppColors.accentUltraLight,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.account_circle_outlined,
-              size: 20,
-              color: AppColors.accentLight,
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              'Sign up with Google',
-              style: AppTextStyles.button.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _handleGoogleSignIn() async {
-    print('🔵 Starting Google Sign-In...');
-    if (mounted) {
-      try {
-        final authProvider = context.read<AuthProvider>();
-        print('🔵 Calling signInWithGoogle()...');
-        await authProvider.signInWithGoogle();
-        print('🔵 signInWithGoogle() completed');
-
-        // Check for errors
-        if (mounted) {
-          print('🔵 Error message: ${authProvider.errorMessage}');
-          if (authProvider.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(authProvider.errorMessage!),
-                backgroundColor: AppColors.error,
-                duration: const Duration(seconds: 5),
-              ),
-            );
-          } else {
-            print('✅ Google Sign-In successful!');
-          }
-        }
-      } catch (e) {
-        print('❌ Google Sign-In exception: $e');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: AppColors.error,
-              duration: const Duration(seconds: 5),
-            ),
-          );
-        }
-      }
-    }
-  }
 
   Widget _buildPasswordField() {
     return TextField(
