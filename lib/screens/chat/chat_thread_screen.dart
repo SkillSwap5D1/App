@@ -99,13 +99,15 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
     _messageController.clear();
     setState(() => _isComposing = false);
 
+    final pendingId = 'pending-${DateTime.now().microsecondsSinceEpoch}';
     final pendingMessage = MessageModel(
-      id: 'pending-${DateTime.now().microsecondsSinceEpoch}',
+      id: pendingId,
       conversationId: widget.conversationId,
       senderId: currentUid,
       text: text,
       timestamp: DateTime.now(),
       isRead: false,
+      status: MessageStatus.pending,
     );
 
     setState(() {
@@ -114,23 +116,55 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
-    await context.read<ChatProvider>().sendMessage(
-      conversationId: widget.conversationId,
-      senderId: currentUid,
-      senderName: senderName,
-      text: text,
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _optimisticMessages.removeWhere(
-        (message) => message.id == pendingMessage.id,
+    try {
+      await context.read<ChatProvider>().sendMessage(
+        conversationId: widget.conversationId,
+        senderId: currentUid,
+        senderName: senderName,
+        text: text,
       );
-    });
 
-    // Scroll to bottom after sending
-    Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
+      if (!mounted) return;
+
+      setState(() {
+        _optimisticMessages.removeWhere(
+          (message) => message.id == pendingId,
+        );
+      });
+
+      // Scroll to bottom after sending
+      Future.delayed(const Duration(milliseconds: 300), _scrollToBottom);
+    } catch (e) {
+      if (!mounted) return;
+
+      // Mark message as failed
+      setState(() {
+        final failedMessage = pendingMessage.copyWith(
+          status: MessageStatus.failed,
+        );
+        _optimisticMessages.removeWhere(
+          (message) => message.id == pendingId,
+        );
+        _optimisticMessages.add(failedMessage);
+      });
+
+      // Show error snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Failed to send message. Tap to retry.'),
+          backgroundColor: Colors.red,
+          action: SnackBarAction(
+            label: 'Retry',
+            textColor: Colors.white,
+            onPressed: () {
+              _messageController.text = text;
+              _handleTextChanged();
+              _sendMessage();
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _showReportSheet(String otherUserName) {
@@ -447,14 +481,52 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  _formatTime(message.timestamp),
-                                  style: AppTextStyles.caption.copyWith(
-                                    color:
-                                        isCurrentUser
-                                            ? AppColors.textSecondary
-                                            : AppColors.textMuted,
-                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (isCurrentUser) ...[
+                                      if (message.status ==
+                                          MessageStatus.pending)
+                                        SizedBox(
+                                          width: 12,
+                                          height: 12,
+                                          child:
+                                              CircularProgressIndicator(
+                                            strokeWidth: 1.5,
+                                            valueColor:
+                                                AlwaysStoppedAnimation(
+                                                  AppColors.textSecondary
+                                                      .withOpacity(0.5),
+                                                ),
+                                          ),
+                                        )
+                                      else if (message.status ==
+                                          MessageStatus.failed)
+                                        Icon(
+                                          Icons.error,
+                                          size: 12,
+                                          color: AppColors.error,
+                                        )
+                                      else
+                                        Icon(
+                                          Icons.done_all,
+                                          size: 12,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      const SizedBox(width: 4),
+                                    ],
+                                    Text(
+                                      _formatTime(message.timestamp),
+                                      style:
+                                          AppTextStyles.caption.copyWith(
+                                            color:
+                                                isCurrentUser
+                                                    ? AppColors
+                                                        .textSecondary
+                                                    : AppColors.textMuted,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
