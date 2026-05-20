@@ -27,11 +27,38 @@ class NotificationService {
   }
 
   void _handleForegroundNotification(RemoteMessage message) {
-    // TODO: Implement foreground notification handling
+    print('🔔 [NotificationService] Foreground notification received');
+    print('   Title: ${message.notification?.title}');
+    print('   Body: ${message.notification?.body}');
+
+    // Extract notification data
+    // ignore: unused_local_variable
+    final title = message.notification?.title ?? 'New Notification';
+    // ignore: unused_local_variable
+    final body = message.notification?.body ?? '';
+    final data = message.data;
+
+    // Show foreground notification using local notification
+    // This would typically use flutter_local_notifications package
+    print('   Data: $data');
+    // TODO: Implement local notification display
+    // For now, notifications are only shown when app is backgrounded or closed
   }
 
   void _handleBackgroundNotificationTap(RemoteMessage message) {
-    // TODO: Implement background notification tap handling
+    print('🔔 [NotificationService] Background notification tapped');
+    print('   Title: ${message.notification?.title}');
+    print('   Body: ${message.notification?.body}');
+    print('   Data: ${message.data}');
+
+    // Extract notification type and navigate accordingly
+    // ignore: unused_local_variable
+    final type = message.data['type'] as String?;
+    // ignore: unused_local_variable
+    final relatedId = message.data['relatedId'] as String?;
+
+    // TODO: Handle navigation based on notification type
+    // This would typically use navigation to go to relevant screen
   }
 
   Future<String?> getDeviceToken() async {
