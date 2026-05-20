@@ -3,7 +3,11 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart';
+import '../../models/review_model.dart';
 import '../../widgets/notification_icon_button.dart';
+import '../../widgets/review_tile.dart';
+import '../../services/user_service.dart';
+import '../../services/review_service.dart';
 import './edit_profile_screen.dart';
 import './edit_skills_screen.dart';
 
@@ -497,6 +501,128 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             value,
                             authProvider,
                           ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ─────────────── REVIEWS SECTION ────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_outline,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Reviews',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '${user.totalReviews}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    FutureBuilder<List<ReviewModel>>(
+                      future: ReviewService().getReviewsForUser(user.uid),
+                      builder: (context, reviewsSnapshot) {
+                        if (reviewsSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox(
+                            height: 100,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
+                        if (reviewsSnapshot.hasError) {
+                          return Container(
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            decoration: BoxDecoration(
+                              color: AppColors.error.withOpacity(0.1),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.md),
+                            ),
+                            child: Text(
+                              'Could not load reviews',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.error,
+                              ),
+                            ),
+                          );
+                        }
+
+                        final reviews = reviewsSnapshot.data ?? [];
+
+                        if (reviews.isEmpty) {
+                          return Container(
+                            padding: const EdgeInsets.all(AppSpacing.lg),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceElevated,
+                              border: Border.all(color: AppColors.border),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.md),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'No reviews yet',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: reviews.length,
+                          itemBuilder: (context, index) {
+                            return FutureBuilder<UserModel?>(
+                              future: UserService()
+                                  .getUser(reviews[index].reviewerId),
+                              builder: (context, userSnapshot) {
+                                final reviewer = userSnapshot.data;
+                                final reviewerName =
+                                    reviewer?.displayName ?? 'Unknown User';
+                                final reviewerInitial =
+                                    reviewerName.isNotEmpty
+                                        ? reviewerName[0].toUpperCase()
+                                        : '?';
+
+                                return ReviewTile(
+                                  review: reviews[index],
+                                  reviewerName: reviewerName,
+                                  reviewerInitial: reviewerInitial,
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
