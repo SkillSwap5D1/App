@@ -78,6 +78,9 @@ class ChatProvider extends ChangeNotifier {
       print(
         '🔵 ChatProvider.sendMessage(): Sending message to $conversationId',
       );
+      print('   Sender: $senderId ($senderName)');
+      print('   Text length: ${text.length}');
+      
       final sentMessage = await _chatService.sendMessage(
         conversationId: conversationId,
         senderId: senderId,
@@ -89,11 +92,12 @@ class ChatProvider extends ChangeNotifier {
         currentMessages = [...currentMessages, sentMessage];
         notifyListeners();
       }
-      print('✅ Message sent successfully');
+      print('✅ Message sent successfully: ${sentMessage.id}');
       return sentMessage;
     } catch (e) {
       print('❌ Error sending message: $e');
-      throw e;
+      print('   Stack trace: $e');
+      rethrow;
     }
   }
 
@@ -116,6 +120,27 @@ class ChatProvider extends ChangeNotifier {
               ? conv.unreadCounts.values.first
               : 0),
     );
+  }
+
+  // ── Start a new conversation ─────────────────────────────────────────────
+  Future<String> startConversation(
+    String currentUserId,
+    String otherUserId,
+  ) async {
+    try {
+      print(
+        '🔵 ChatProvider.startConversation(): Starting chat with $otherUserId',
+      );
+      final conversationId = await _chatService.getOrCreateConversation(
+        currentUserId,
+        otherUserId,
+      );
+      print('✅ Conversation created/fetched: $conversationId');
+      return conversationId;
+    } catch (e) {
+      print('❌ Error starting conversation: $e');
+      rethrow;
+    }
   }
 
   // ── Cleanup subscriptions ────────────────────────────────────────────────
