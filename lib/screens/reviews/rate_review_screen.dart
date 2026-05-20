@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/review_service.dart';
 
 class RateReviewScreen extends StatefulWidget {
+  final String requestId;
   final String skillTitle;
+  final String otherUserId;
   final String otherUserName;
   final String sessionDate;
 
   const RateReviewScreen({
     super.key,
+    required this.requestId,
     required this.skillTitle,
+    required this.otherUserId,
     required this.otherUserName,
     required this.sessionDate,
   });
@@ -20,6 +27,7 @@ class RateReviewScreen extends StatefulWidget {
 class _RateReviewScreenState extends State<RateReviewScreen> {
   int _selectedRating = 0;
   late TextEditingController _reviewController;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -33,9 +41,49 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
     super.dispose();
   }
 
-  void _submitReview() {
-    // TODO: Call API to submit review
-    _showSuccessDialog();
+  Future<void> _submitReview() async {
+    if (_selectedRating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a rating')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final authProvider = context.read<AuthProvider>();
+      final currentUserId = authProvider.currentUser?.uid;
+
+      if (currentUserId == null) {
+        throw Exception('User not authenticated');
+      }
+
+      final reviewService = ReviewService();
+
+      await reviewService.submitReview(
+        widget.requestId,
+        currentUserId,
+        widget.otherUserId,
+        _selectedRating,
+        _reviewController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      _showSuccessDialog();
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() => _isSubmitting = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error submitting review: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _skipReview() {
@@ -43,32 +91,33 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
   }
 
   void _showSuccessDialog() {
+    setState(() => _isSubmitting = false);
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder:
-          (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        title: const Text('Review Submitted'),
+        content: Text(
+          'Thank you! Your review will be published once ${widget.otherUserName} submits theirs.',
+          style: AppTextStyles.bodyMedium,
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.of(context).pushNamed('/requests');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
             ),
-            title: const Text('Review Submitted'),
-            content: Text(
-              'Thank you! Your review will be published once ${widget.otherUserName} submits theirs.',
-              style: AppTextStyles.bodyMedium,
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  Navigator.of(context).pushNamed('/requests');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                ),
-                child: const Text('Done'),
-              ),
-            ],
+            child: const Text('Done'),
           ),
+        ],
+      ),
     );
   }
 
