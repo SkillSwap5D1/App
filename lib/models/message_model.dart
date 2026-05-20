@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum MessageStatus { pending, sent, failed }
+
 class MessageModel {
   final String id;
   final String conversationId;
@@ -7,6 +9,7 @@ class MessageModel {
   final String text;
   final DateTime timestamp;
   final bool isRead;
+  final MessageStatus status;
 
   const MessageModel({
     required this.id,
@@ -15,6 +18,7 @@ class MessageModel {
     required this.text,
     required this.timestamp,
     required this.isRead,
+    this.status = MessageStatus.sent,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {
@@ -25,6 +29,10 @@ class MessageModel {
       text:           map['text']           ?? '',
       timestamp:      (map['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isRead:         map['isRead']         ?? false,
+      status:         MessageStatus.values.firstWhere(
+        (e) => e.toString() == 'MessageStatus.${map['status'] ?? 'sent'}',
+        orElse: () => MessageStatus.sent,
+      ),
     );
   }
 
@@ -36,6 +44,7 @@ class MessageModel {
       'text':           text,
       'timestamp':      Timestamp.fromDate(timestamp),
       'isRead':         isRead,
+      'status':         status.toString().split('.').last,
     };
   }
 
@@ -46,6 +55,7 @@ class MessageModel {
     String? text,
     DateTime? timestamp,
     bool? isRead,
+    MessageStatus? status,
   }) {
     return MessageModel(
       id:             id             ?? this.id,
@@ -54,6 +64,7 @@ class MessageModel {
       text:           text           ?? this.text,
       timestamp:      timestamp      ?? this.timestamp,
       isRead:         isRead         ?? this.isRead,
+      status:         status         ?? this.status,
     );
   }
 }
