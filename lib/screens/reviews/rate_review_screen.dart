@@ -357,7 +357,9 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _selectedRating > 0 ? _submitReview : null,
+                  onPressed: (_selectedRating > 0 && !_isSubmitting)
+                      ? _submitReview
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     disabledBackgroundColor: AppColors.surface,
@@ -366,29 +368,43 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    'Submit Review',
-                    style: AppTextStyles.button.copyWith(
-                      color: _selectedRating > 0 ? AppColors.surface : AppColors.textMuted,
-                    ),
-                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(
+                              AppColors.textMuted,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          'Submit Review',
+                          style: AppTextStyles.button.copyWith(
+                            color: _selectedRating > 0
+                                ? AppColors.surface
+                                : AppColors.textMuted,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
 
               // Skip Link
-              Center(
-                child: GestureDetector(
-                  onTap: _skipReview,
-                  child: Text(
-                    'Skip for now',
-                    style: AppTextStyles.label.copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline,
+              if (!_isSubmitting)
+                Center(
+                  child: GestureDetector(
+                    onTap: _skipReview,
+                    child: Text(
+                      'Skip for now',
+                      style: AppTextStyles.label.copyWith(
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ),
-              ),
               const SizedBox(height: AppSpacing.xl),
             ],
           ),
