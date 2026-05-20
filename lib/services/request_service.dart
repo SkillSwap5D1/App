@@ -262,8 +262,14 @@ class RequestService {
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
-      // Note: Notification is handled by Cloud Function onRequestStatusChanged
-      // when the request status is updated to 'countered'
+      // 2. Send notification to requester about the counter offer
+      await _notificationService.sendNotification(
+        requesterId,
+        'countered',
+        'Counter offer received',
+        'A counter offer was made for $skillName. Check new availability.',
+        requestId,
+      );
     } catch (e) {
       throw Exception('Failed to counter request: $e');
     }
