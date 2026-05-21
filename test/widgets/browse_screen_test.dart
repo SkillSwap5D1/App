@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:skillswap_app/models/listing_model.dart';
 import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/providers/listing_provider.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
+import 'package:skillswap_app/providers/notification_provider.dart';
 import 'package:skillswap_app/screens/browse/browse_screen.dart';
+import 'package:skillswap_app/theme/app_theme.dart';
 
 // ── Mock Providers ────────────────────────────────────────────────────────
 
@@ -55,6 +58,11 @@ class MockAuthProvider extends ChangeNotifier {
   MockAuthProvider({this.currentUser});
 
   bool get isLoading => loading;
+}
+
+class MockNotificationProvider extends Mock implements NotificationProvider {
+  @override
+  int get unreadCount => 0;
 }
 
 // ── Test Fixtures ──────────────────────────────────────────────────────
@@ -113,7 +121,7 @@ Widget buildTestApp({
   Provider.debugCheckInvalidValueType = null;
 
   return MaterialApp(
-    theme: ThemeData.dark(),
+    theme: AppTheme.theme,
     home: MultiProvider(
       providers: [
         ChangeNotifierProvider<ListingProvider>(
@@ -121,6 +129,9 @@ Widget buildTestApp({
         ),
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => authProvider as AuthProvider,
+        ),
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (_) => MockNotificationProvider() as NotificationProvider,
         ),
       ],
       child: const BrowseScreen(),
