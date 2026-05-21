@@ -10,7 +10,7 @@ class ChatService {
 
   ChatService({FirebaseFirestore? db, NotificationService? notificationService})
     : _db = db ?? FirebaseFirestore.instance,
-      _notificationService = notificationService ?? NotificationService();
+      _notificationService = notificationService ?? NotificationService(firestore: db ?? FirebaseFirestore.instance);
 
   // ── Get or create a conversation between 2 users ─────────────────────────
   Future<String> getOrCreateConversation(String uid1, String uid2) async {
