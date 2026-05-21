@@ -16,10 +16,12 @@ class ChatListScreen extends StatefulWidget {
 
 class _ChatListScreenState extends State<ChatListScreen> {
   final UserService _userService = UserService();
+  late VoidCallback _authListener;
 
   @override
   void initState() {
     super.initState();
+    // On first frame try to load conversations if user is already signed in.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
       final currentUid = authProvider.currentUser?.uid;
@@ -27,6 +29,17 @@ class _ChatListScreenState extends State<ChatListScreen> {
         print('🔵 ChatListScreen loading conversations for $currentUid');
         context.read<ChatProvider>().loadConversations(currentUid);
       }
+
+      // Also listen for future auth state changes so conversations are loaded
+      // automatically when the user signs in after this screen is mounted.
+      _authListener = () {
+        final uid = authProvider.currentUser?.uid;
+        if (uid != null) {
+          print('🔵 ChatListScreen detected sign-in for $uid, loading conversations');
+          context.read<ChatProvider>().loadConversations(uid);
+        }
+      };
+      authProvider.addListener(_authListener);
     });
   }
 
@@ -244,5 +257,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Remove auth listener if it was added.
+    try {
+      final authProvider = context.read<AuthProvider>();
+      authProvider.removeListener(_authListener);
+    } catch (_) {}
+    super.dispose();
   }
 }
