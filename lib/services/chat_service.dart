@@ -15,8 +15,10 @@ class ChatService {
   // ── Get or create a conversation between 2 users ─────────────────────────
   Future<String> getOrCreateConversation(String uid1, String uid2) async {
     try {
-      final participantIds = [uid1, uid2]..sort();
-      final conversationId = participantIds.join('_');
+      // Preserve the order provided by callers so conversation IDs are
+      // deterministic based on the caller's context (fromUserId, toUserId).
+      final participantIds = [uid1, uid2];
+      final conversationId = '${uid1}_${uid2}';
       final docRef = _db.collection('conversations').doc(conversationId);
 
       final existing = await docRef.get();
@@ -61,6 +63,9 @@ class ChatService {
         timestamp: DateTime.now(),
         isRead: false,
       );
+
+      // Debug log for Firestore message save
+      print('🔵 ChatService: Saving message to Firestore: ${message.toMap()}');
 
       // Save message
       await msgRef.set(message.toMap());
@@ -135,6 +140,8 @@ class ChatService {
               snapshot.docs
                   .map((doc) => MessageModel.fromMap(doc.data()))
                   .toList();
+          // Debug log for Firestore message fetch
+          print('🔵 ChatService: Fetched messages from Firestore: ${messages.map((m) => m.toMap()).toList()}');
           print(
             '🔵 ChatService.messagesStream(): Got ${messages.length} messages',
           );
