@@ -333,9 +333,9 @@ class AppTheme {
       unselectedLabelStyle: TextStyle(fontSize: 11),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: AppColors.accentVeryLight,
+      backgroundColor: AppColors.pastelGreen,
       labelStyle: AppTextStyles.caption.copyWith(
-        color: AppColors.primary,
+        color: AppColors.pastelGreenDeep,
         fontWeight: FontWeight.w500,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -352,7 +352,7 @@ class AppTheme {
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.textPrimary,
       contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
-      actionTextColor: AppColors.accentLight,
+      actionTextColor: AppColors.pastelGreen,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
