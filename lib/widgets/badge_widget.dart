@@ -11,7 +11,7 @@ class BadgeWidget extends StatelessWidget {
     super.key,
     required this.count,
     required this.child,
-    this.backgroundColor = AppColors.accent,
+    this.backgroundColor = AppColors.pastelGreenDeep,
     this.textColor = AppColors.surface,
   });
 
