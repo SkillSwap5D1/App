@@ -57,10 +57,11 @@ class RequestService {
       // 4. Send notification to the recipient
       print('🔔 [SendRequest] Sending notification to ${request.toUserId}...');
       try {
+        // Notification type/title formatted for tests and UI expectations
         await _notificationService.sendNotification(
           request.toUserId,
-          'new_request',
-          'New request from ${request.fromUserName}',
+          'request',
+          'New lesson request from ${request.fromUserName}',
           'wants to learn ${request.skillName}',
           newRequest.id,
         );
@@ -164,17 +165,38 @@ class RequestService {
     String requesterId,
   ) async {
     try {
+      // 0. Read request document to get both user ids
+      final docRef = _db.collection('requests').doc(requestId);
+      final doc = await docRef.get();
+      final data = doc.data();
+      if (data == null) {
+        throw Exception('Request not found: $requestId');
+      }
+
+      final fromUserId = data['fromUserId'] as String? ?? '';
+      final toUserId = data['toUserId'] as String? ?? '';
+
       // 1. Update status and confirmed slot
-      await _db.collection('requests').doc(requestId).update({
+      await docRef.update({
         'status': 'accepted',
         'confirmedSlot': confirmedSlot,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
+      // 1b. Ensure a conversation exists between the two users so it appears
+      // in the Messages tab immediately after acceptance (fixes missing convo)
+      try {
+        print('💬 [AcceptRequest] Ensuring conversation exists between $fromUserId and $toUserId');
+        await _chatService.getOrCreateConversation(fromUserId, toUserId);
+        print('✅ [AcceptRequest] Conversation ensured');
+      } catch (chatErr) {
+        print('⚠️ [AcceptRequest] Failed to create/get conversation: $chatErr');
+      }
+
       // 2. Send notification to requester
       await _notificationService.sendNotification(
         requesterId,
-        'request_accepted',
+        'accepted',
         'Your request was accepted!',
         '$requesterName accepted your request to learn $skillName',
         requestId,
@@ -200,7 +222,7 @@ class RequestService {
       // 2. Send notification to requester
       await _notificationService.sendNotification(
         requesterId,
-        'request_declined',
+        'declined',
         'Your request was declined',
         'Unfortunately, your request to learn $skillName was declined',
         requestId,
