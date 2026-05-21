@@ -17,7 +17,7 @@ class SnackBarHelper {
           color: AppColors.surface,
         ),
       ),
-      backgroundColor: isError ? AppColors.error : AppColors.primary,
+      backgroundColor: isError ? AppColors.error : AppColors.pastelGreenDeep,
       duration: duration,
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.all(AppSpacing.md),
@@ -27,7 +27,7 @@ class SnackBarHelper {
       action: actionLabel != null && onAction != null
           ? SnackBarAction(
               label: actionLabel,
-              textColor: AppColors.accent,
+              textColor: AppColors.pastelGreen,
               onPressed: onAction,
             )
           : null,
