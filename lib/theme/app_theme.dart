@@ -27,6 +27,9 @@ class AppColors {
   static const Color borderActive = Color(0x997C3AED);
 
   static const Color success = Color(0xFF059669);
+  // Pastel green for softer accents
+  static const Color pastelGreen = Color(0xFFD1FAE5);
+  static const Color pastelGreenDeep = Color(0xFF86E4B7);
   static const Color error = Color(0xFFDC2626);
   static const Color errorLight = Color(0x1ADC2626);
   static const Color warning = Color(0xFFF59E0B);
@@ -62,7 +65,7 @@ class AppColors {
         colors: [
           Colors.white.withValues(alpha: 0.90),
           Color(0xFFBFDBFE).withValues(alpha: 0.24),
-          Color(0xFFFBCFE8).withValues(alpha: 0.20),
+          Color(0xFFD1FAE5).withValues(alpha: 0.18),
           Color(0xFFFCD8B8).withValues(alpha: 0.18),
         ],
       ),
