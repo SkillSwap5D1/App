@@ -70,27 +70,47 @@ class RequestCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Proposed times:',
+          'Proposed times',
           style: AppTextStyles.bodySmall.copyWith(
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
         SizedBox(height: 8.0),
-        ...proposedTimeSlots.map((slot) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 4.0),
-            child: Row(
-              children: [
-                Icon(Icons.schedule, size: 14, color: AppColors.textMuted),
-                SizedBox(width: 6.0),
-                Text(
-                  slot,
-                  style: AppTextStyles.caption,
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 6.0,
+          children: proposedTimeSlots.map((slot) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.pastelGreen, AppColors.pastelGreenDeep],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-          );
-        }),
+                borderRadius: BorderRadius.circular(999),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.pastelGreenDeep.withOpacity(0.12),
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.schedule, size: 14, color: Colors.white70),
+                  SizedBox(width: 8.0),
+                  Text(
+                    slot,
+                    style: AppTextStyles.caption.copyWith(color: Colors.white),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
       ],
     );
   }
@@ -104,7 +124,7 @@ class RequestCard extends StatelessWidget {
             icon: Icon(Icons.check_circle, size: 16),
             label: Text('Accept'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.pastelGreenDeep,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(
                 vertical: 12.0,
