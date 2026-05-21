@@ -20,13 +20,13 @@ class TagChip extends StatelessWidget {
         vertical: 3.0,
       ),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.accentLight,
+        color: backgroundColor ?? AppColors.pastelGreen,
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Text(
         label,
         style: AppTextStyles.caption.copyWith(
-          color: textColor ?? AppColors.primary,
+          color: textColor ?? AppColors.pastelGreenDeep,
           fontWeight: FontWeight.w500,
         ),
       ),
