@@ -1,0 +1,1446 @@
+00:00 +0: loading /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart
+00:00 +0: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel fromMap() populates all fields correctly
+00:00 +1: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel fromMap() with null fields returns safe defaults
+00:00 +2: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel toMap() returns all expected fields
+00:00 +3: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel toMap() round trip preserves all fields
+00:00 +4: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel copyWith() changes one field and keeps others unchanged
+00:00 +5: /Applications/Software Engineering /skillswap_app/test/models/message_model_test.dart: MessageModel copyWith() with no changes returns equivalent object
+00:00 +6: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel fromMap() populates all fields correctly
+00:00 +7: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel fromMap() with null fields returns safe defaults
+00:00 +8: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel toMap() returns all expected fields
+00:00 +9: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel toMap() round trip preserves all fields
+00:00 +10: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel copyWith() changes one field and keeps others unchanged
+00:00 +11: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel copyWith() with no changes returns equivalent object
+00:00 +12: /Applications/Software Engineering /skillswap_app/test/models/listing_model_test.dart: ListingModel isActive defaults to true when null
+00:00 +13: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel fromMap() populates all fields correctly
+00:00 +14: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel fromMap() populates all fields correctly
+00:00 +15: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel fromMap() populates all fields correctly
+00:00 +16: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel toMap() returns all expected fields
+00:00 +17: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel fromMap() with null fields returns safe defaults
+00:00 +18: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel toMap() round trip preserves all fields
+00:00 +19: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel toMap() returns all expected fields
+00:00 +20: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel copyWith() changes one field and keeps others unchanged
+00:00 +21: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel toMap() round trip preserves all fields
+00:00 +22: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel copyWith() with no changes returns equivalent object
+00:00 +23: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel copyWith() changes one field and keeps others unchanged
+00:00 +24: /Applications/Software Engineering /skillswap_app/test/models/notification_model_test.dart: NotificationModel type helper getters return expected values
+00:00 +25: /Applications/Software Engineering /skillswap_app/test/models/review_model_test.dart: ReviewModel copyWith() with no changes returns equivalent object
+00:00 +26: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel fromMap() populates all fields correctly
+00:00 +27: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel fromMap() with null fields returns safe defaults
+00:00 +28: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel toMap() returns all expected fields
+00:00 +29: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel toMap() round trip preserves all fields
+00:00 +30: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel copyWith() changes one field and keeps others unchanged
+00:00 +31: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel copyWith() with no changes returns equivalent object
+00:00 +32: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel getOtherUserId() returns the correct other ID
+00:00 +33: /Applications/Software Engineering /skillswap_app/test/models/conversation_model_test.dart: ConversationModel getOtherUserId() returns empty string when myUid is not in participants
+00:00 +34: /Applications/Software Engineering /skillswap_app/test/models/user_model_test.dart: UserModel fromMap() populates all fields correctly
+00:00 +35: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel fromMap() populates all fields correctly
+00:00 +36: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel fromMap() populates all fields correctly
+00:00 +37: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel fromMap() populates all fields correctly
+00:00 +38: /Applications/Software Engineering /skillswap_app/test/models/user_model_test.dart: UserModel toMap() round trip preserves all fields
+00:00 +39: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel fromMap() with null fields returns safe defaults
+00:00 +40: /Applications/Software Engineering /skillswap_app/test/models/user_model_test.dart: UserModel copyWith() changes one field and keeps others unchanged
+00:00 +41: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel toMap() returns all expected fields
+00:00 +42: /Applications/Software Engineering /skillswap_app/test/models/user_model_test.dart: UserModel copyWith() with no changes returns equivalent object
+00:00 +43: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel toMap() round trip preserves all fields
+00:00 +44: /Applications/Software Engineering /skillswap_app/test/models/user_model_test.dart: UserModel fullName, displayName, and initials getters return expected values
+00:00 +45: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel copyWith() changes one field and keeps others unchanged
+00:00 +46: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel copyWith() with no changes returns equivalent object
+00:00 +47: /Applications/Software Engineering /skillswap_app/test/models/request_model_test.dart: RequestModel status helper getters return expected values
+00:00 +48: /Applications/Software Engineering /skillswap_app/test/widget_test.dart: SkillSwap theme loads correctly
+00:01 +49: /Applications/Software Engineering /skillswap_app/test/services/user_service_test.dart: UserService getUser() returns correct UserModel
+00:01 +50: /Applications/Software Engineering /skillswap_app/test/services/user_service_test.dart: UserService getUser() returns null when not found
+00:01 +51: /Applications/Software Engineering /skillswap_app/test/services/user_service_test.dart: UserService updateUser() only changes provided fields
+00:01 +52: /Applications/Software Engineering /skillswap_app/test/services/user_service_test.dart: UserService updatePrivacySettings() updates all 3 booleans
+00:01 +53: /Applications/Software Engineering /skillswap_app/test/services/user_service_test.dart: UserService userStream() emits UserModel on change
+00:01 +54: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService getOrCreateConversation() creates new
+00:02 +54 -1: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService getOrCreateConversation() creates new [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -1: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService getOrCreateConversation() returns existing
+00:02 +54 -2: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService getOrCreateConversation() returns existing [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -2: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() creates message document
+00:02 +54 -3: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() creates message document [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -3: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() updates lastMessage
+00:02 +54 -4: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() updates lastMessage [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -4: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() increments other user unreadCount
+00:02 +54 -5: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService sendMessage() increments other user unreadCount [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -5: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService markAsRead() sets only current user unreadCount to 0
+00:02 +54 -6: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService markAsRead() sets only current user unreadCount to 0 [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -6: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService messagesStream() emits correct messages
+00:02 +54 -7: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService messagesStream() emits correct messages [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+00:02 +54 -7: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService conversationsStream() emits correct list
+00:02 +54 -8: /Applications/Software Engineering /skillswap_app/test/services/chat_service_test.dart: ChatService conversationsStream() emits correct list [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/chat_service_test.dart 14:17                                                      main.<fn>.<fn>
+  
+test/widgets/browse_screen_test.dart:132:26: Error: A value of type 'MockNotificationProvider' can't be returned from a function with return type 'NotificationProvider'.
+ - 'MockNotificationProvider' is from 'test/widgets/browse_screen_test.dart'.
+ - 'NotificationProvider' is from 'package:skillswap_app/providers/notification_provider.dart' ('lib/providers/notification_provider.dart').
+          create: (_) => MockNotificationProvider(),
+                         ^
+00:02 +54 -9: loading /Applications/Software Engineering /skillswap_app/test/widgets/browse_screen_test.dart [E]
+  Failed to load "/Applications/Software Engineering /skillswap_app/test/widgets/browse_screen_test.dart":
+  Compilation failed for testPath=/Applications/Software Engineering /skillswap_app/test/widgets/browse_screen_test.dart: test/widgets/browse_screen_test.dart:132:26: Error: A value of type 'MockNotificationProvider' can't be returned from a function with return type 'NotificationProvider'.
+   - 'MockNotificationProvider' is from 'test/widgets/browse_screen_test.dart'.
+   - 'NotificationProvider' is from 'package:skillswap_app/providers/notification_provider.dart' ('lib/providers/notification_provider.dart').
+            create: (_) => MockNotificationProvider(),
+                           ^
+  .
+00:02 +54 -9: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService sendRequest() writes document status=pending
+00:02 +54 -10: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -10: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService sendRequest() writes document status=pending [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +54 -11: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -11: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService sendRequest() duplicate throws exception [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +54 -12: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -12: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService sendRequest() creates conversation [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +54 -13: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -13: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService sendRequest() creates notification for provider [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +54 -14: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -14: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService acceptRequest() sets status=accepted [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +54 -15: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getAllListings() returns only isActive=true
+00:02 +54 -15: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService acceptRequest() creates notification for requester [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +55 -15: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService declineRequest() sets status=declined
+00:02 +56 -15: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService declineRequest() sets status=declined
+00:02 +56 -16: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService getMyListings() returns only correct owner
+00:02 +56 -16: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService declineRequest() sets status=declined [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +57 -16: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService declineRequest() creates notification
+00:02 +57 -17: /Applications/Software Engineering /skillswap_app/test/services/listing_service_test.dart: ListingService createListing() document appears in Firestore
+00:02 +57 -17: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService declineRequest() creates notification [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +58 -17: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +59 -17: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +59 -18: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +59 -18: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService counterRequest() sets status=countered [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +59 -19: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +59 -19: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService counterRequest() replaces proposedTimes [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +60 -19: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +60 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +61 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +61 -20: /Applications/Software Engineering /skillswap_app/test/services/request_service_test.dart: RequestService getIncomingRequests() stream correct [E]
+  [core/no-app] No Firebase App '[DEFAULT]' has been created - call Firebase.initializeApp()
+  package:firebase_core_platform_interface/src/method_channel/method_channel_firebase.dart 190:5  MethodChannelFirebase.app
+  package:firebase_core/src/firebase.dart 79:41                                                   Firebase.app
+  package:cloud_firestore/src/firestore.dart 33:21                                                FirebaseFirestore.instance
+  package:skillswap_app/services/notification_service.dart 11:53                                  new NotificationService
+  package:skillswap_app/services/chat_service.dart 13:53                                          new ChatService
+  test/services/request_service_test.dart 18:21                                                   main.<fn>.<fn>
+  
+00:02 +62 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +63 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +64 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+00:02 +65 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with valid @myport.ac.uk email succeeds
+🔵 AuthService.signIn() starting
+   Raw email: "jamie@myport.ac.uk" (18 chars)
+   Normalized email: "jamie@myport.ac.uk" (18 chars)
+   Raw password: "password123" (11 chars)
+   Normalized password: "password123" (11 chars)
+   Password chars: p(112), a(97), s(115), s(115), w(119), o(111), r(114), d(100), 1(49), 2(50), 3(51)
+🔵 Attempting Firebase Auth.signInWithEmailAndPassword()...
+   Sending email: "jamie@myport.ac.uk"
+   Sending password: "password123"
+🔵 Firebase Auth succeeded immediately
+✅ Firebase Auth successful! UID: user_123
+   Account email: jamie@myport.ac.uk
+   Account disabled?: true
+🔵 Waiting for user document in Firestore...
+🔵 _waitForUserDocument() looking for UID: user_123
+✅ Found user document for user_123 on attempt 1
+✅ AuthService.signIn() returning user: user_123
+00:03 +66 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with @gmail.com email throws before Firebase call
+🔵 AuthService.signIn() starting
+   Raw email: "jamie@gmail.com" (15 chars)
+   Normalized email: "jamie@gmail.com" (15 chars)
+   Raw password: "password123" (11 chars)
+   Normalized password: "password123" (11 chars)
+   Password chars: p(112), a(97), s(115), s(115), w(119), o(111), r(114), d(100), 1(49), 2(50), 3(51)
+❌ Unexpected error during signIn: Exception: Please use your University of Portsmouth email
+   Type: _Exception
+00:03 +67 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with wrong password throws FirebaseAuthException
+🔵 AuthService.signIn() starting
+   Raw email: "jamie@myport.ac.uk" (18 chars)
+   Normalized email: "jamie@myport.ac.uk" (18 chars)
+   Raw password: "wrongpass" (9 chars)
+   Normalized password: "wrongpass" (9 chars)
+   Password chars: w(119), r(114), o(111), n(110), g(103), p(112), a(97), s(115), s(115)
+🔵 Attempting Firebase Auth.signInWithEmailAndPassword()...
+   Sending email: "jamie@myport.ac.uk"
+   Sending password: "wrongpass"
+❌ FirebaseAuthException caught!
+   Code: wrong-password
+   Message: Wrong password
+   Plugin: firebase_auth
+00:03 +68 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signIn() with unregistered email throws FirebaseAuthException
+🔵 AuthService.signIn() starting
+   Raw email: "jamie@myport.ac.uk" (18 chars)
+   Normalized email: "jamie@myport.ac.uk" (18 chars)
+   Raw password: "password123" (11 chars)
+   Normalized password: "password123" (11 chars)
+   Password chars: p(112), a(97), s(115), s(115), w(119), o(111), r(114), d(100), 1(49), 2(50), 3(51)
+🔵 Attempting Firebase Auth.signInWithEmailAndPassword()...
+   Sending email: "jamie@myport.ac.uk"
+   Sending password: "password123"
+❌ FirebaseAuthException caught!
+   Code: user-not-found
+   Message: No user found
+   Plugin: firebase_auth
+00:03 +69 -20: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +69 -20: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 1 — renders incoming request cards
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building _InheritedProviderScope<RequestProvider?>(value: <not
+yet loaded>):
+Bad state: Tried to read a provider that threw during the creation of its value.
+The exception occurred during the creation of type AuthProvider.
+
+══╡ EXCEPTION CAUGHT BY PROVIDER ╞═══════════════════════════════
+The following _TypeError was thrown:
+type 'MockAuthProvider' is not a subtype of type 'AuthProvider'
+in type cast
+
+When the exception was thrown, this was the stack:
+#0      buildTestApp.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:124:39)
+#1      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:749:36)
+#2      _InheritedProviderScopeElement.value (package:provider/src/inherited_provider.dart:603:33)
+#3      Provider.of (package:provider/src/provider.dart:337:37)
+#4      WatchContext.watch (package:provider/src/provider.dart:727:21)
+#5      _RequestsScreenState.didChangeDependencies
+(package:skillswap_app/screens/requests/requests_screen.dart:33:34)
+#6      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5968:11)
+#7      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+...     Normal element mounting (7 frames)
+#14     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#21     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#28     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#35     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#42     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#230    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#231    MultiChildRenderObjectElement.inflateWidget
+(package:flutter/src/widgets/framework.dart:7264:36)
+#232    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#699    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#700    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#701    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#702    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#703    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#704    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#708    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#709    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#713    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#714    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#718    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#719    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#728    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#729    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#730    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#731    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#737    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#738    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#739    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#740    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#741    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#742    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#743    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#744    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#745    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#746    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#747    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#748    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#749    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#750    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#751    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#756    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#757    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#758    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#759    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#760    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#761    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#762    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#763    RendererBinding._handlePersistentFrameCallback
+(package:flutter/src/rendering/binding.dart:495:5)
+#764    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#765    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#766    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure>
+(package:flutter_test/src/binding.dart:1960:9)
+#769    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#770    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#771    WidgetTester.pumpWidget.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:598:22)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#776    main.<anonymous closure>.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:147:20)
+#777    testWidgets.<anonymous closure>.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#778    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+═════════════════════════════════════════════════════════════════
+
+The relevant error-causing widget was:
+  _InheritedProviderScope<RequestProvider?>
+  _InheritedProviderScope:file:///Users/alaeibnoucheikh/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib/src/inherited_provider.dart:164:12
+
+When the exception was thrown, this was the stack:
+#0      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:722:7)
+#1      _CreateInheritedProviderState.debugFillProperties (package:provider/src/inherited_provider.dart:819:44)
+#2      _InheritedProviderScopeElement.debugFillProperties (package:provider/src/inherited_provider.dart:644:20)
+#3      DiagnosticableNode.builder.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:2922:17)
+#4      DiagnosticableNode.builder (package:flutter/src/foundation/diagnostics.dart:2925:8)
+#5      DiagnosticableNode.getProperties (package:flutter/src/foundation/diagnostics.dart:2943:68)
+#6      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1270:63)
+#7      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#8      DiagnosticsNode.toStringDeep.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1818:75)
+#9      DiagnosticsNode.toStringDeep (package:flutter/src/foundation/diagnostics.dart:1825:6)
+#10     DiagnosticsNode.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1745:18)
+#11     DiagnosticsNode.toString (package:flutter/src/foundation/diagnostics.dart:1758:6)
+#12     Diagnosticable.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:3103:9)
+#13     Diagnosticable.toString (package:flutter/src/foundation/diagnostics.dart:3105:6)
+#14     _StringBase._interpolate (dart:core-patch/string_patch.dart:902:19)
+#15     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5846:44)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5799:5)
+#18     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+#19     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#26     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#33     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#40     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#47     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#235    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#236    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7264:36)
+#237    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#704    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#708    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#709    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#713    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#714    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#718    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#719    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#728    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#729    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#730    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#731    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#737    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#738    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#739    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#740    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#741    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#742    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#743    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#744    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#745    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#746    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#747    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#748    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#749    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#750    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#751    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#756    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#757    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#758    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#759    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#760    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#761    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#762    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#763    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#764    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#765    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#766    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#767    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#768    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#769    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#770    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#771    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1960:9)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#776    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#779    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#780    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#781    main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:147:20)
+#782    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#783    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Alice Smith": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:155:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart line 155
+The test description was:
+  TEST 1 — renders incoming request cards
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +69 -21: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +69 -21: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 1 — renders incoming request cards [E]
+  Test failed. See exception logs above.
+  The test description was: TEST 1 — renders incoming request cards
+  
+00:04 +69 -21: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 2 — Decline button shows confirmation dialog
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building _InheritedProviderScope<RequestProvider?>(value: <not
+yet loaded>):
+Bad state: Tried to read a provider that threw during the creation of its value.
+The exception occurred during the creation of type AuthProvider.
+
+══╡ EXCEPTION CAUGHT BY PROVIDER ╞═══════════════════════════════
+The following _TypeError was thrown:
+type 'MockAuthProvider' is not a subtype of type 'AuthProvider'
+in type cast
+
+When the exception was thrown, this was the stack:
+#0      buildTestApp.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:124:39)
+#1      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:749:36)
+#2      _InheritedProviderScopeElement.value (package:provider/src/inherited_provider.dart:603:33)
+#3      Provider.of (package:provider/src/provider.dart:337:37)
+#4      WatchContext.watch (package:provider/src/provider.dart:727:21)
+#5      _RequestsScreenState.didChangeDependencies
+(package:skillswap_app/screens/requests/requests_screen.dart:33:34)
+#6      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5968:11)
+#7      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+...     Normal element mounting (7 frames)
+#14     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#21     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#28     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#35     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#42     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#230    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#231    MultiChildRenderObjectElement.inflateWidget
+(package:flutter/src/widgets/framework.dart:7264:36)
+#232    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#699    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#700    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#701    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#702    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#703    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#704    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#708    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#709    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#713    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#714    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#718    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#719    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#728    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#729    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#730    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#731    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#737    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#738    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#739    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#740    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#741    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#742    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#743    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#744    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#745    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#746    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#747    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#748    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#749    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#750    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#751    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#756    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#757    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#758    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#759    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#760    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#761    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#762    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#763    RendererBinding._handlePersistentFrameCallback
+(package:flutter/src/rendering/binding.dart:495:5)
+#764    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#765    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#766    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure>
+(package:flutter_test/src/binding.dart:1960:9)
+#769    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#770    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#771    WidgetTester.pumpWidget.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:598:22)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#776    main.<anonymous closure>.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:162:20)
+#777    testWidgets.<anonymous closure>.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#778    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+═════════════════════════════════════════════════════════════════
+
+The relevant error-causing widget was:
+  _InheritedProviderScope<RequestProvider?>
+  _InheritedProviderScope:file:///Users/alaeibnoucheikh/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib/src/inherited_provider.dart:164:12
+
+When the exception was thrown, this was the stack:
+#0      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:722:7)
+#1      _CreateInheritedProviderState.debugFillProperties (package:provider/src/inherited_provider.dart:819:44)
+#2      _InheritedProviderScopeElement.debugFillProperties (package:provider/src/inherited_provider.dart:644:20)
+#3      DiagnosticableNode.builder.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:2922:17)
+#4      DiagnosticableNode.builder (package:flutter/src/foundation/diagnostics.dart:2925:8)
+#5      DiagnosticableNode.getProperties (package:flutter/src/foundation/diagnostics.dart:2943:68)
+#6      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1270:63)
+#7      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#8      DiagnosticsNode.toStringDeep.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1818:75)
+#9      DiagnosticsNode.toStringDeep (package:flutter/src/foundation/diagnostics.dart:1825:6)
+#10     DiagnosticsNode.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1745:18)
+#11     DiagnosticsNode.toString (package:flutter/src/foundation/diagnostics.dart:1758:6)
+#12     Diagnosticable.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:3103:9)
+#13     Diagnosticable.toString (package:flutter/src/foundation/diagnostics.dart:3105:6)
+#14     _StringBase._interpolate (dart:core-patch/string_patch.dart:902:19)
+#15     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5846:44)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5799:5)
+#18     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+#19     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#26     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#33     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#40     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#47     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#235    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#236    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7264:36)
+#237    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#704    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#708    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#709    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#713    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#714    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#718    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#719    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#728    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#729    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#730    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#731    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#737    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#738    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#739    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#740    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#741    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#742    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#743    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#744    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#745    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#746    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#747    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#748    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#749    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#750    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#751    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#756    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#757    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#758    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#759    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#760    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#761    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#762    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#763    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#764    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#765    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#766    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#767    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#768    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#769    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#770    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#771    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1960:9)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#776    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#779    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#780    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#781    main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:162:20)
+#782    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#783    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +69 -22: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +69 -22: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 2 — Decline button shows confirmation dialog [E]
+  Test failed. See exception logs above.
+  The test description was: TEST 2 — Decline button shows confirmation dialog
+  
+00:04 +69 -22: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 3 — switching to Outgoing tab works
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building _InheritedProviderScope<RequestProvider?>(value: <not
+yet loaded>):
+Bad state: Tried to read a provider that threw during the creation of its value.
+The exception occurred during the creation of type AuthProvider.
+
+══╡ EXCEPTION CAUGHT BY PROVIDER ╞═══════════════════════════════
+The following _TypeError was thrown:
+type 'MockAuthProvider' is not a subtype of type 'AuthProvider'
+in type cast
+
+When the exception was thrown, this was the stack:
+#0      buildTestApp.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:124:39)
+#1      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:749:36)
+#2      _InheritedProviderScopeElement.value (package:provider/src/inherited_provider.dart:603:33)
+#3      Provider.of (package:provider/src/provider.dart:337:37)
+#4      WatchContext.watch (package:provider/src/provider.dart:727:21)
+#5      _RequestsScreenState.didChangeDependencies
+(package:skillswap_app/screens/requests/requests_screen.dart:33:34)
+#6      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5968:11)
+#7      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+...     Normal element mounting (7 frames)
+#14     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#21     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#28     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#35     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#42     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#230    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#231    MultiChildRenderObjectElement.inflateWidget
+(package:flutter/src/widgets/framework.dart:7264:36)
+#232    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#699    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#700    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#701    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#702    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#703    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#704    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#708    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#709    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#713    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#714    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#718    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#719    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#728    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#729    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#730    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#731    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#737    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#738    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#739    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#740    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#741    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#742    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#743    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#744    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#745    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#746    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#747    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#748    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#749    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#750    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#751    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#756    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#757    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#758    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#759    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#760    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#761    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#762    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#763    RendererBinding._handlePersistentFrameCallback
+(package:flutter/src/rendering/binding.dart:495:5)
+#764    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#765    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#766    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure>
+(package:flutter_test/src/binding.dart:1960:9)
+#769    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#770    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#771    WidgetTester.pumpWidget.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:598:22)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#776    main.<anonymous closure>.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:192:20)
+#777    testWidgets.<anonymous closure>.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#778    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+═════════════════════════════════════════════════════════════════
+
+The relevant error-causing widget was:
+  _InheritedProviderScope<RequestProvider?>
+  _InheritedProviderScope:file:///Users/alaeibnoucheikh/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib/src/inherited_provider.dart:164:12
+
+When the exception was thrown, this was the stack:
+#0      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:722:7)
+#1      _CreateInheritedProviderState.debugFillProperties (package:provider/src/inherited_provider.dart:819:44)
+#2      _InheritedProviderScopeElement.debugFillProperties (package:provider/src/inherited_provider.dart:644:20)
+#3      DiagnosticableNode.builder.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:2922:17)
+#4      DiagnosticableNode.builder (package:flutter/src/foundation/diagnostics.dart:2925:8)
+#5      DiagnosticableNode.getProperties (package:flutter/src/foundation/diagnostics.dart:2943:68)
+#6      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1270:63)
+#7      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#8      DiagnosticsNode.toStringDeep.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1818:75)
+#9      DiagnosticsNode.toStringDeep (package:flutter/src/foundation/diagnostics.dart:1825:6)
+#10     DiagnosticsNode.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1745:18)
+#11     DiagnosticsNode.toString (package:flutter/src/foundation/diagnostics.dart:1758:6)
+#12     Diagnosticable.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:3103:9)
+#13     Diagnosticable.toString (package:flutter/src/foundation/diagnostics.dart:3105:6)
+#14     _StringBase._interpolate (dart:core-patch/string_patch.dart:902:19)
+#15     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5846:44)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5799:5)
+#18     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+#19     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#26     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#33     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#40     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#47     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#235    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#236    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7264:36)
+#237    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#704    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#708    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#709    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#713    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#714    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#718    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#719    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#728    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#729    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#730    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#731    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#737    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#738    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#739    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#740    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#741    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#742    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#743    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#744    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#745    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#746    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#747    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#748    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#749    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#750    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#751    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#756    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#757    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#758    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#759    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#760    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#761    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#762    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#763    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#764    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#765    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#766    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#767    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#768    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#769    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#770    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#771    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1960:9)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#776    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#779    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#780    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#781    main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:192:20)
+#782    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#783    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Alice Smith": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:200:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart line 200
+The test description was:
+  TEST 3 — switching to Outgoing tab works
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +69 -23: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +69 -23: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 3 — switching to Outgoing tab works [E]
+  Test failed. See exception logs above.
+  The test description was: TEST 3 — switching to Outgoing tab works
+  
+00:04 +69 -23: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 4 — empty incoming shows empty state
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building _InheritedProviderScope<RequestProvider?>(value: <not
+yet loaded>):
+Bad state: Tried to read a provider that threw during the creation of its value.
+The exception occurred during the creation of type AuthProvider.
+
+══╡ EXCEPTION CAUGHT BY PROVIDER ╞═══════════════════════════════
+The following _TypeError was thrown:
+type 'MockAuthProvider' is not a subtype of type 'AuthProvider'
+in type cast
+
+When the exception was thrown, this was the stack:
+#0      buildTestApp.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:124:39)
+#1      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:749:36)
+#2      _InheritedProviderScopeElement.value (package:provider/src/inherited_provider.dart:603:33)
+#3      Provider.of (package:provider/src/provider.dart:337:37)
+#4      WatchContext.watch (package:provider/src/provider.dart:727:21)
+#5      _RequestsScreenState.didChangeDependencies
+(package:skillswap_app/screens/requests/requests_screen.dart:33:34)
+#6      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5968:11)
+#7      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+...     Normal element mounting (7 frames)
+#14     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#21     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#28     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#35     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#42     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#230    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#231    MultiChildRenderObjectElement.inflateWidget
+(package:flutter/src/widgets/framework.dart:7264:36)
+#232    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#699    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#700    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#701    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#702    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#703    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#704    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#708    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#709    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#713    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#714    _InheritedNotifierElement.update
+(package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#718    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#719    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#728    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#729    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#730    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#731    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#737    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#738    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#739    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#740    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#741    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#742    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#743    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#744    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#745    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#746    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#747    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#748    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#749    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#750    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#751    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#756    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#757    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#758    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#759    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#760    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#761    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#762    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#763    RendererBinding._handlePersistentFrameCallback
+(package:flutter/src/rendering/binding.dart:495:5)
+#764    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#765    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#766    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure>
+(package:flutter_test/src/binding.dart:1960:9)
+#769    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#770    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#771    WidgetTester.pumpWidget.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:598:22)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#776    main.<anonymous closure>.<anonymous closure>
+(file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:213:20)
+#777    testWidgets.<anonymous closure>.<anonymous closure>
+(package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#778    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+═════════════════════════════════════════════════════════════════
+
+The relevant error-causing widget was:
+  _InheritedProviderScope<RequestProvider?>
+  _InheritedProviderScope:file:///Users/alaeibnoucheikh/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib/src/inherited_provider.dart:164:12
+
+When the exception was thrown, this was the stack:
+#0      _CreateInheritedProviderState.value (package:provider/src/inherited_provider.dart:722:7)
+#1      _CreateInheritedProviderState.debugFillProperties (package:provider/src/inherited_provider.dart:819:44)
+#2      _InheritedProviderScopeElement.debugFillProperties (package:provider/src/inherited_provider.dart:644:20)
+#3      DiagnosticableNode.builder.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:2922:17)
+#4      DiagnosticableNode.builder (package:flutter/src/foundation/diagnostics.dart:2925:8)
+#5      DiagnosticableNode.getProperties (package:flutter/src/foundation/diagnostics.dart:2943:68)
+#6      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1270:63)
+#7      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#8      DiagnosticsNode.toStringDeep.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1818:75)
+#9      DiagnosticsNode.toStringDeep (package:flutter/src/foundation/diagnostics.dart:1825:6)
+#10     DiagnosticsNode.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:1745:18)
+#11     DiagnosticsNode.toString (package:flutter/src/foundation/diagnostics.dart:1758:6)
+#12     Diagnosticable.toString.<anonymous closure> (package:flutter/src/foundation/diagnostics.dart:3103:9)
+#13     Diagnosticable.toString (package:flutter/src/foundation/diagnostics.dart:3105:6)
+#14     _StringBase._interpolate (dart:core-patch/string_patch.dart:902:19)
+#15     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5846:44)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5799:5)
+#18     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5793:5)
+#19     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#26     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#33     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#40     _NestedHookElement.mount (package:nested/nested.dart:187:11)
+...     Normal element mounting (7 frames)
+#47     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (188 frames)
+#235    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#236    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7264:36)
+#237    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7279:32)
+...     Normal element mounting (467 frames)
+#704    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4587:20)
+#705    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#706    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#707    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#708    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#709    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#710    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#711    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#712    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#713    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#714    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#715    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#716    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#717    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#718    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#719    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#720    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#721    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#722    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#723    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#724    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#725    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#726    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#727    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#728    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#729    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#730    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#731    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#732    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#733    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#734    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#735    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#736    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#737    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#738    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#739    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#740    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#741    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#742    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#743    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#744    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#745    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#746    ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#747    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#748    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#749    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#750    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#751    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#752    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#753    StatelessElement.update (package:flutter/src/widgets/framework.dart:5895:5)
+#754    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#755    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#756    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#757    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#758    StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#759    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#760    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1822:16)
+#761    RootElement.update (package:flutter/src/widgets/binding.dart:1800:5)
+#762    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1814:7)
+#763    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#764    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#765    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#766    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#767    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2131:19)
+#768    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#769    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#770    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#771    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1960:9)
+#774    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#775    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1949:27)
+#776    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#779    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#780    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#781    main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:213:20)
+#782    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#783    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Incoming (0)": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart:221:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Applications/Software%20Engineering%20/skillswap_app/test/widgets/requests_screen_test.dart line 221
+The test description was:
+  TEST 4 — empty incoming shows empty state
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +69 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +69 -24: /Applications/Software Engineering /skillswap_app/test/widgets/requests_screen_test.dart: RequestsScreen Tests TEST 4 — empty incoming shows empty state [E]
+  Test failed. See exception logs above.
+  The test description was: TEST 4 — empty incoming shows empty state
+  
+00:04 +70 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +71 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() with valid all fields creates user in Firestore
+00:04 +72 -24: /Applications/Software Engineering /skillswap_app/test/widgets/register_screen_test.dart: RegisterScreen submit with mismatched passwords shows error message
+00:04 +73 -24: /Applications/Software Engineering /skillswap_app/test/widgets/register_screen_test.dart: RegisterScreen submit with mismatched passwords shows error message
+00:04 +74 -24: /Applications/Software Engineering /skillswap_app/test/widgets/register_screen_test.dart: RegisterScreen submit with mismatched passwords shows error message
+00:04 +75 -24: /Applications/Software Engineering /skillswap_app/test/widgets/register_screen_test.dart: RegisterScreen submit with mismatched passwords shows error message
+00:04 +76 -24: /Applications/Software Engineering /skillswap_app/test/widgets/register_screen_test.dart: RegisterScreen submit with mismatched passwords shows error message
+00:04 +77 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:04 +78 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:04 +79 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:04 +80 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:04 +81 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:04 +82 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService register() password exactly 6 chars succeeds
+00:05 +83 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService signOut() sets currentUser to null
+00:05 +84 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService _handleAuthError("user-not-found") returns correct message
+00:05 +85 -24: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService _handleAuthError("wrong-password") returns correct message
+00:05 +85 -25: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService _handleAuthError("wrong-password") returns correct message [E]
+  Expected: 'Incorrect password'
+    Actual: 'Incorrect email or password. Please try again.'
+     Which: is different.
+            Expected: Incorrect password
+              Actual: Incorrect email or p ...
+                                ^
+             Differ at offset 10
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test/services/auth_service_test.dart 270:7          main.<fn>.<fn>
+  
+00:05 +85 -25: /Applications/Software Engineering /skillswap_app/test/services/auth_service_test.dart: AuthService _handleAuthError("unknown-code") returns generic fallback message
+00:05 +86 -25: Some tests failed.
