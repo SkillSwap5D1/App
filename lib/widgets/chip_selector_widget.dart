@@ -64,9 +64,9 @@ class _ChipSelectorState extends State<ChipSelector> {
           onTap: () => _toggleItem(item),
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.accentLight : Color(0xFFFAF8F5),
+              color: isSelected ? AppColors.pastelGreen : Color(0xFFFAF8F5),
               border: Border.all(
-                color: isSelected ? AppColors.accent : Color(0xFFEDE9E3),
+                color: isSelected ? AppColors.pastelGreenDeep : Color(0xFFEDE9E3),
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(AppRadius.md),
@@ -77,7 +77,7 @@ class _ChipSelectorState extends State<ChipSelector> {
                 if (isSelected)
                   Icon(
                     Icons.check_circle,
-                    color: AppColors.accent,
+                    color: AppColors.pastelGreenDeep,
                     size: 20,
                   )
                 else
@@ -89,7 +89,7 @@ class _ChipSelectorState extends State<ChipSelector> {
                     item,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: isSelected ? AppColors.accent : AppColors.textPrimary,
+                      color: isSelected ? AppColors.pastelGreenDeep : AppColors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                     maxLines: 2,
