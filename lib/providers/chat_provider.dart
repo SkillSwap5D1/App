@@ -47,6 +47,9 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Debug log for re-subscribing to messagesStream
+      print('🔵 ChatProvider: Re-subscribing to messagesStream for conversation $conversationId');
+
       _messagesSubscription = _chatService.messagesStream(conversationId).listen((
         messages,
       ) {
