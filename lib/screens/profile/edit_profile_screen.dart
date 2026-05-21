@@ -36,19 +36,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = Provider.of<AuthProvider>(context, listen: false).currentUser!;
-    _firstNameController = TextEditingController(text: user.firstName);
-    _lastNameController = TextEditingController(text: user.lastName);
-    _bioController = TextEditingController(text: user.bio);
-    _selectedCourse = user.course;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
+    
+    // Initialize controllers with empty strings first as fallback
+    _firstNameController = TextEditingController(text: user?.firstName ?? '');
+    _lastNameController = TextEditingController(text: user?.lastName ?? '');
+    _bioController = TextEditingController(text: user?.bio ?? '');
+    _selectedCourse = user?.course ?? '';
 
     _firstNameController.addListener(_checkForChanges);
     _lastNameController.addListener(_checkForChanges);
     _bioController.addListener(_checkForChanges);
+    
+    if (user == null) {
+      print('❌ EditProfileScreen: currentUser is null!');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error: User not loaded. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      });
+    }
   }
 
   void _checkForChanges() {
-    final user = Provider.of<AuthProvider>(context, listen: false).currentUser!;
+    final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+    if (user == null) return;
+    
     bool changed =
         _firstNameController.text != user.firstName ||
         _lastNameController.text != user.lastName ||
@@ -60,6 +80,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _handleSave() async {
     final authProvider = context.read<AuthProvider>();
+    final currentUser = authProvider.currentUser;
+    
+    if (currentUser == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: User not loaded'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
     final userService = UserService();
 
     try {
@@ -70,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'course': _selectedCourse,
       };
 
-      await userService.updateUser(authProvider.currentUser!.uid, updates);
+      await userService.updateUser(currentUser.uid, updates);
 
       // Refresh auth provider with updated user
       await authProvider.refreshUser();
