@@ -80,35 +80,7 @@ class RequestCard extends StatelessWidget {
           spacing: 8.0,
           runSpacing: 6.0,
           children: proposedTimeSlots.map((slot) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.pastelGreen, AppColors.pastelGreenDeep],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.pastelGreenDeep.withOpacity(0.12),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.schedule, size: 14, color: Colors.white70),
-                  SizedBox(width: 8.0),
-                  Text(
-                    slot,
-                    style: AppTextStyles.caption.copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-            );
+            return _AnimatedTimeChip(label: slot);
           }).toList(),
         ),
       ],
@@ -266,5 +238,70 @@ class RequestCard extends StatelessWidget {
       default:
         return AppColors.textMuted;
     }
+  }
+}
+
+class _AnimatedTimeChip extends StatefulWidget {
+  final String label;
+
+  const _AnimatedTimeChip({required this.label});
+
+  @override
+  State<_AnimatedTimeChip> createState() => _AnimatedTimeChipState();
+}
+
+class _AnimatedTimeChipState extends State<_AnimatedTimeChip> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value) return;
+    setState(() => _pressed = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _pressed
+                  ? [AppColors.pastelGreenDeep, AppColors.pastelGreen]
+                  : [AppColors.pastelGreen, AppColors.pastelGreenDeep],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.pastelGreenDeep.withOpacity(_pressed ? 0.18 : 0.12),
+                blurRadius: _pressed ? 10 : 8,
+                offset: Offset(0, _pressed ? 2 : 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.schedule, size: 14, color: Colors.white70),
+              const SizedBox(width: 8.0),
+              Text(
+                widget.label,
+                style: AppTextStyles.caption.copyWith(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
