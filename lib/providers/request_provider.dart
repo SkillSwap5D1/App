@@ -64,6 +64,10 @@ class RequestProvider extends ChangeNotifier {
             notifyListeners();
           },
         );
+
+    _requestService.checkSessionsDue(uid).catchError((error) {
+      print('❌ [RequestProvider] Session due check error: $error');
+    });
   }
 
   // ── Send a request ────────────────────────────────────────────────────────
