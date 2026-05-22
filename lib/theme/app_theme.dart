@@ -101,7 +101,8 @@ class AppTextStyles {
     double letterSpacing = 0,
     double height = 1.0,
   }) {
-    return GoogleFonts.inter(
+    // Body text uses a clean sans-serif for readability
+    return GoogleFonts.sourceSans3(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -110,26 +111,48 @@ class AppTextStyles {
     );
   }
 
-  static final TextStyle h1 = _base(
+  static final TextStyle h1 = GoogleFonts.playfairDisplay(
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
     letterSpacing: -0.5,
   );
 
-  static final TextStyle h2 = _base(
+  static final TextStyle h2 = GoogleFonts.playfairDisplay(
     fontSize: 22,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
     letterSpacing: -0.4,
   );
 
-  static final TextStyle h3 = _base(
+  static final TextStyle h3 = GoogleFonts.playfairDisplay(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     letterSpacing: -0.3,
   );
+
+  // Override headings with a more elegant serif for a professional feel
+  static TextStyle get heading1 => GoogleFonts.playfairDisplay(
+        fontSize: 32,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+        letterSpacing: -0.5,
+      );
+
+  static TextStyle get heading2 => GoogleFonts.playfairDisplay(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+        letterSpacing: -0.4,
+      );
+
+  static TextStyle get heading3 => GoogleFonts.playfairDisplay(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+        letterSpacing: -0.3,
+      );
 
   static final TextStyle bodyLarge = _base(
     fontSize: 16,
@@ -212,7 +235,7 @@ class AppTheme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.background,
     primaryColor: AppColors.primary,
-    fontFamily: GoogleFonts.inter().fontFamily,
+    fontFamily: GoogleFonts.sourceSans3().fontFamily,
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: Colors.white,
@@ -221,10 +244,37 @@ class AppTheme {
       onSurface: AppColors.textPrimary,
       error: AppColors.error,
     ),
-    textTheme: GoogleFonts.interTextTheme().apply(
-      bodyColor: AppColors.textPrimary,
-      displayColor: AppColors.textPrimary,
-    ),
+    // Use Source Sans 3 for body text, but map heading/textual display styles
+    // to Playfair Display to ensure headings across the app pick up the serif.
+    textTheme: (() {
+      final base = GoogleFonts.sourceSans3TextTheme();
+      final withHeadings = base.copyWith(
+        headlineLarge: GoogleFonts.playfairDisplay(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+        headlineMedium: GoogleFonts.playfairDisplay(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: GoogleFonts.playfairDisplay(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        titleLarge: GoogleFonts.playfairDisplay(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+      );
+      return withHeadings.apply(
+        bodyColor: AppColors.textPrimary,
+        displayColor: AppColors.textPrimary,
+      );
+    })(),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
@@ -232,7 +282,7 @@ class AppTheme {
       scrolledUnderElevation: 0,
       shadowColor: Colors.transparent,
       centerTitle: false,
-      titleTextStyle: GoogleFonts.inter(
+      titleTextStyle: GoogleFonts.playfairDisplay(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
