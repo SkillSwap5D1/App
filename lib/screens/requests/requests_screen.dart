@@ -5,6 +5,7 @@ import '../../providers/request_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/chat_service.dart';
 import '../chat/chat_thread_screen.dart';
+import '../reviews/rate_review_screen.dart';
 import '../../widgets/notification_icon_button.dart';
 import '../../models/request_model.dart';
 
@@ -24,6 +25,77 @@ class _RequestsScreenState extends State<RequestsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  Future<void> _handleEndRequest(
+    BuildContext context,
+    RequestModel request,
+  ) async {
+    final shouldEnd = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('End session'),
+        content: Text(
+          'Mark the session for ${request.skillName} as completed? This will allow both users to leave a review.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text('End', style: TextStyle(color: AppColors.error)),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldEnd != true || !context.mounted) return;
+
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be signed in to end a session.')),
+      );
+      return;
+    }
+
+    final requestProvider = context.read<RequestProvider>();
+    await requestProvider.endRequest(request.id, currentUser.uid);
+
+    if (!context.mounted) return;
+
+    if (requestProvider.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(requestProvider.errorMessage!)),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Session marked as completed')),
+    );
+
+    // Open rate/review screen so the user can leave a review immediately
+    final isFrom = currentUser.uid == request.fromUserId;
+    final otherUserId = isFrom ? request.toUserId : request.fromUserId;
+    final otherUserName = isFrom ? request.toUserName : request.fromUserName;
+    final sessionDate = request.proposedTimes.isNotEmpty
+        ? request.proposedTimes.first
+        : request.createdAt.toLocal().toString().split(' ').first;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RateReviewScreen(
+          requestId: request.id,
+          skillTitle: request.skillName,
+          otherUserId: otherUserId,
+          otherUserName: otherUserName,
+          sessionDate: sessionDate,
+        ),
+      ),
+    );
   }
 
   @override
@@ -383,6 +455,59 @@ class _RequestsScreenState extends State<RequestsScreen>
                     ),
                   ],
                 )
+              else if (request.isAccepted)
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: () => _openChatForRequest(
+                            context,
+                            request,
+                            otherUserId: request.fromUserId,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Open Chat',
+                            style: AppTextStyles.caption.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: OutlinedButton(
+                          onPressed: () => _handleEndRequest(context, request),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: AppColors.accent),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Mark ended',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               else
                 SizedBox(
                   width: double.infinity,
@@ -411,27 +536,77 @@ class _RequestsScreenState extends State<RequestsScreen>
                   ),
                 ),
             ] else ...[
-              SizedBox(
-                width: double.infinity,
-                height: 36,
-                child: ElevatedButton(
-                  onPressed: () => _showRequestDetails(context, request),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              if (request.isAccepted)
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: () => _showRequestDetails(context, request),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'View Details',
+                            style: AppTextStyles.caption.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'View Details',
-                    style: AppTextStyles.caption.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: OutlinedButton(
+                          onPressed: () => _handleEndRequest(context, request),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: AppColors.accent),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Mark ended',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  height: 36,
+                  child: ElevatedButton(
+                    onPressed: () => _showRequestDetails(context, request),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'View Details',
+                      style: AppTextStyles.caption.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ],
         ),
