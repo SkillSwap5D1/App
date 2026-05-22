@@ -262,6 +262,31 @@ class RequestService {
           requestId,
         );
       }
+
+      // Also notify both users that a review is due now (so they see the 'leave a review' reminder)
+      try {
+        if (fromUserId.isNotEmpty) {
+          await _notificationService.sendNotification(
+            fromUserId,
+            'review_due',
+            'Class finished',
+            'Leave a review for $skillName',
+            requestId,
+          );
+        }
+
+        if (toUserId.isNotEmpty) {
+          await _notificationService.sendNotification(
+            toUserId,
+            'review_due',
+            'Class finished',
+            'Leave a review for $skillName',
+            requestId,
+          );
+        }
+      } catch (e) {
+        print('⚠️ [RequestService] Could not send review_due notifications: $e');
+      }
     } catch (e) {
       throw Exception('Failed to end request: $e');
     }
