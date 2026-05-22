@@ -102,7 +102,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
         ),
         title: const Text('Review Submitted'),
         content: Text(
-          'Thank you! Your review will be published once ${widget.otherUserName} submits theirs.',
+          'Thank you! Your review has been submitted.',
           style: AppTextStyles.bodyMedium,
         ),
         actions: [
