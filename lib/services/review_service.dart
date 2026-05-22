@@ -30,7 +30,7 @@ class ReviewService {
       final reviewerUser = await _userService.getUser(reviewerId);
       final reviewerName = reviewerUser?.displayName ?? 'A user';
 
-      // 1. Create the review document with isPublished=false initially
+      // 1. Create the review document and publish immediately
       final reviewData = ReviewModel(
         id: reviewId,
         requestId: requestId,
@@ -38,88 +38,29 @@ class ReviewService {
         revieweeId: revieweeId,
         rating: rating,
         text: text,
-        isPublished: false,
+        isPublished: true,
         createdAt: now,
         updatedAt: now,
       );
 
       await _db.collection('reviews').doc(reviewId).set(reviewData.toMap());
 
-      // 1.5 Send notification to reviewee that they have a pending review
+      // 1.5 Send notification to the reviewee that their review is published
       try {
         await _notificationService.sendNotification(
           revieweeId,
-          'review_submitted',
-          '$reviewerName submitted a review',
+          'review_published',
+          '$reviewerName left a review',
           '$reviewerName gave you a $rating star review',
           requestId,
         );
       } catch (e) {
-        print('⚠️ [ReviewService] Could not send review_submitted notification: $e');
+        print('⚠️ [ReviewService] Could not send review_published notification: $e');
       }
 
-      // 2. Check if the OTHER user (revieweeId) has submitted their review
-      final otherReviewQuery = await _db
-          .collection('reviews')
-          .where('requestId', isEqualTo: requestId)
-          .where('reviewerId', isEqualTo: revieweeId)
-          .where('revieweeId', isEqualTo: reviewerId)
-          .get();
-
-      // 3. If yes: set isPublished=true on BOTH review documents
-      if (otherReviewQuery.docs.isNotEmpty) {
-        print(
-          '✅ [ReviewService] Other user has also reviewed, publishing both...',
-        );
-
-        // Both users have reviewed, publish both reviews
-        await _db.collection('reviews').doc(reviewId).update({
-          'isPublished': true,
-          'updatedAt': Timestamp.now(),
-        });
-
-        // Update the other review
-        final otherReviewId = otherReviewQuery.docs.first.id;
-        await _db.collection('reviews').doc(otherReviewId).update({
-          'isPublished': true,
-          'updatedAt': Timestamp.now(),
-        });
-
-        // Recalculate ratings for both reviewees
-        await recalculateRating(revieweeId);
-        await recalculateRating(reviewerId);
-
-        // 4. Send notifications that both reviews are now published
-        try {
-          // Notify reviewer that review is now published
-          await _notificationService.sendNotification(
-            reviewerId,
-            'review_published',
-            'Your review was published!',
-            'Both you and $reviewerName have reviewed each other',
-            requestId,
-          );
-
-          // Get reviewee name for the other notification
-          final revieweeUser = await _userService.getUser(revieweeId);
-          final revieweeName = revieweeUser?.displayName ?? 'A user';
-
-          // Notify reviewee that review is now published
-          await _notificationService.sendNotification(
-            revieweeId,
-            'review_published',
-            'Your review was published!',
-            'Both you and $revieweeName have reviewed each other',
-            requestId,
-          );
-        } catch (e) {
-          print('⚠️ [ReviewService] Could not send review_published notification: $e');
-        }
-      } else {
-        print(
-          '⏳ [ReviewService] Waiting for other user to submit their review...',
-        );
-      }
+      // Recalculate rating for the reviewee immediately
+      await recalculateRating(revieweeId);
+      print('✅ [ReviewService] Review published immediately for $revieweeId');
     } catch (e) {
       throw Exception('Failed to submit review: $e');
     }
