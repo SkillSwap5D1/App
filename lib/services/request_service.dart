@@ -336,16 +336,16 @@ class RequestService {
           // Send notification to both users
           await _notificationService.sendNotification(
             data['fromUserId'],
-            'reminder',
-            'How was your session?',
+            'review_due',
+            'Class finished',
             'Leave a review for ${data['skillName']}',
             doc.id,
           );
 
           await _notificationService.sendNotification(
             data['toUserId'],
-            'reminder',
-            'How was your session?',
+            'review_due',
+            'Class finished',
             'Leave a review for ${data['skillName']}',
             doc.id,
           );
