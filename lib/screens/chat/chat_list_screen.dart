@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/notification_icon_button.dart';
 import '../../services/user_service.dart';
 import 'chat_thread_screen.dart';
 
@@ -66,11 +65,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
+        appBar: AppBar(
         title: const Text('Messages'),
         backgroundColor: AppColors.surface,
         elevation: 0,
-        actions: const [NotificationIconButton()],
       ),
       body: Consumer<ChatProvider>(
         builder: (context, chatProvider, _) {
