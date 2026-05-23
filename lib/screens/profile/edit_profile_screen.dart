@@ -16,7 +16,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _lastNameController;
   late TextEditingController _bioController;
 
-  String _selectedCourse = '';
+  String? _selectedCourse;
   bool _hasChanges = false;
 
   final List<String> _courses = [
@@ -43,7 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController = TextEditingController(text: user?.firstName ?? '');
     _lastNameController = TextEditingController(text: user?.lastName ?? '');
     _bioController = TextEditingController(text: user?.bio ?? '');
-    _selectedCourse = user?.course ?? '';
+    _selectedCourse = _courses.contains(user?.course) ? user?.course : null;
 
     _firstNameController.addListener(_checkForChanges);
     _lastNameController.addListener(_checkForChanges);
@@ -101,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'firstName': _firstNameController.text,
         'lastName': _lastNameController.text,
         'bio': _bioController.text,
-        'course': _selectedCourse,
+        'course': _selectedCourse ?? '',
       };
 
       await userService.updateUser(currentUser.uid, updates);
