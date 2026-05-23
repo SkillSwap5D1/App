@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/auth_provider.dart';
-import '../../providers/request_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/listing_provider.dart';
 import '../../providers/notification_provider.dart';
+import '../../providers/request_provider.dart';
 import '../../theme/app_theme.dart';
 import '../browse/browse_screen.dart';
-import '../requests/requests_screen.dart';
 import '../chat/chat_list_screen.dart';
 import '../profile/profile_screen.dart';
+import '../requests/requests_screen.dart';
+import '../notifications/notifications_screen.dart';
 
 class HomeShellScreen extends StatefulWidget {
   const HomeShellScreen({super.key});
@@ -22,11 +24,11 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   int _selectedIndex = 0;
   String? _initializedForUid;
 
-  final List<Widget> _screens = [
-    const BrowseScreen(),
-    const RequestsScreen(),
-    const ChatListScreen(),
-    const ProfileScreen(),
+  final List<Widget> _screens = const [
+    BrowseScreen(),
+    RequestsScreen(),
+    ChatListScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -40,52 +42,38 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
       if (!mounted) return;
 
       final auth = context.read<AuthProvider>();
-
-      // If still loading or no user, retry
       if (auth.currentUser == null || auth.isLoading) {
-        print(
-          '⚠️ HomeShellScreen._loadData(): currentUser is null or still loading, retrying...',
-        );
         _loadData();
         return;
       }
 
       final uid = auth.currentUser?.uid;
+      if (uid == null || uid == _initializedForUid) return;
 
-      if (uid == null || uid == _initializedForUid) {
-        return;
-      }
-
-      print('✅ HomeShellScreen._loadData(): Loading data for user $uid');
       _initializedForUid = uid;
 
       try {
         context.read<ListingProvider>().loadListings();
-        print('✅ Started loading listings');
-      } catch (e) {
-        print('❌ Error loading listings: $e');
-      }
+      } catch (_) {}
 
       try {
         context.read<RequestProvider>().loadRequests(uid);
-        print('✅ Started loading requests');
-      } catch (e) {
-        print('❌ Error loading requests: $e');
-      }
+      } catch (_) {}
 
       try {
         context.read<ChatProvider>().loadConversations(uid);
-        print('✅ Started loading conversations');
-      } catch (e) {
-        print('❌ Error loading conversations: $e');
-      }
+      } catch (_) {}
 
       try {
         context.read<NotificationProvider>().loadNotifications(uid);
-        print('✅ Started loading notifications');
-      } catch (e) {
-        print('❌ Error loading notifications: $e');
-      }
+      } catch (_) {}
+    });
+  }
+
+  void _setSelectedIndex(int index) {
+    if (_selectedIndex == index) return;
+    setState(() {
+      _selectedIndex = index;
     });
   }
 
@@ -100,67 +88,182 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
         }
 
         return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: _screens[_selectedIndex],
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.90),
-              border: Border(
-                top: BorderSide(
-                  color: AppColors.accent.withValues(alpha: 0.08),
-                  width: 1,
-                ),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accent.withValues(alpha: 0.06),
-                  blurRadius: 20,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: BottomNavigationBar(
-                currentIndex: _selectedIndex,
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                selectedItemColor: AppColors.accent,
-                unselectedItemColor: AppColors.textMuted,
-                selectedLabelStyle: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: const TextStyle(fontSize: 11),
-                onTap: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home_rounded),
-                    label: 'Browse',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.inbox_rounded),
-                    label: 'Requests',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.message_rounded),
-                    label: 'Messages',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person_rounded),
-                    label: 'Profile',
-                  ),
-                ],
-              ),
-            ),
+          backgroundColor: AppColors.background,
+          body: Column(
+            children: [
+              _buildTopNavigation(context),
+              Expanded(child: _screens[_selectedIndex]),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTopNavigation(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final compact = width < 760;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.94),
+        border: Border(
+          bottom: BorderSide(color: AppColors.borderLight, width: 1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: Row(
+            children: [
+              if (!compact) ...[
+                const Icon(Icons.school_rounded, color: AppColors.primary, size: 26),
+                const SizedBox(width: 10),
+                Text('SkillSwap', style: AppTextStyles.h3),
+                const SizedBox(width: 16),
+              ],
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _TopNavButton(
+                      icon: Icons.home_rounded,
+                      label: 'Browse',
+                      active: _selectedIndex == 0,
+                      onTap: () => _setSelectedIndex(0),
+                    ),
+                    _TopNavButton(
+                      icon: Icons.inbox_rounded,
+                      label: 'Requests',
+                      active: _selectedIndex == 1,
+                      onTap: () => _setSelectedIndex(1),
+                    ),
+                    _TopNavButton(
+                      icon: Icons.message_rounded,
+                      label: 'Messages',
+                      active: _selectedIndex == 2,
+                      onTap: () => _setSelectedIndex(2),
+                    ),
+                    Consumer<NotificationProvider>(
+                      builder: (context, notificationProvider, _) {
+                        final active = _selectedIndex == 4;
+                        final hasUnread = notificationProvider.unreadCount > 0;
+                        return _TopNavButton(
+                          icon: Icons.notifications_rounded,
+                          label: 'Alerts',
+                          active: active,
+                          showBadge: hasUnread,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationsScreen(),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    _TopNavButton(
+                      icon: Icons.person_rounded,
+                      label: 'Profile',
+                      active: _selectedIndex == 3,
+                      onTap: () => _setSelectedIndex(3),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TopNavButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final bool showBadge;
+  final VoidCallback onTap;
+
+  const _TopNavButton({
+    required this.icon,
+    required this.label,
+    required this.active,
+    this.showBadge = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: active ? AppColors.primary.withValues(alpha: 0.10) : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: active ? AppColors.primary.withValues(alpha: 0.20) : Colors.transparent,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: active ? AppColors.primary : AppColors.textMuted,
+                  ),
+                  if (showBadge)
+                    const Positioned(
+                      right: -3,
+                      top: -3,
+                      child: SizedBox(
+                        width: 8,
+                        height: 8,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: active ? AppColors.primary : AppColors.textSecondary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
