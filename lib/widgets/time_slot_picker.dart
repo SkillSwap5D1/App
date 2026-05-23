@@ -30,7 +30,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
   Future<void> _selectDate() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year, now.month, now.day);
-    
+
     final selected = await showDatePicker(
       context: context,
       initialDate: _slot.date ?? now,
@@ -39,18 +39,18 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.primary,
-              surface: AppColors.surfaceElevated,
-              onSurface: AppColors.textPrimary,
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFB7DEC7),
+              surface: Colors.white,
+              onSurface: Color(0xFF0F172A),
             ),
             datePickerTheme: const DatePickerThemeData(
-              backgroundColor: AppColors.surfaceElevated,
-              headerBackgroundColor: AppColors.accentDeep,
-              headerForegroundColor: AppColors.textPrimary,
-              dayForegroundColor: MaterialStatePropertyAll(AppColors.textPrimary),
-              todayForegroundColor: MaterialStatePropertyAll(AppColors.accentLight),
-              todayBackgroundColor: MaterialStatePropertyAll(Color(0x1AA78BFA)),
+              backgroundColor: Colors.white,
+              headerBackgroundColor: Color(0xFFF0FDF9),
+              headerForegroundColor: Color(0xFF0F172A),
+              dayForegroundColor: MaterialStatePropertyAll(Color(0xFF0F172A)),
+              todayForegroundColor: MaterialStatePropertyAll(Color(0xFFB7DEC7)),
+              todayBackgroundColor: MaterialStatePropertyAll(Color(0x1AB7DEC7)),
               dayBackgroundColor: MaterialStatePropertyAll(Colors.transparent),
             ),
           ),
@@ -73,20 +73,20 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.primary,
-              surface: AppColors.surfaceElevated,
-              onSurface: AppColors.textPrimary,
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFB7DEC7),
+              surface: Colors.white,
+              onSurface: Color(0xFF0F172A),
             ),
             timePickerTheme: const TimePickerThemeData(
-              backgroundColor: AppColors.surfaceElevated,
-              hourMinuteColor: Color(0x1A6B21A8),
-              hourMinuteTextColor: AppColors.textPrimary,
-              dialBackgroundColor: AppColors.surface,
-              dialHandColor: AppColors.primary,
-              dayPeriodColor: Color(0x1A6B21A8),
-              dayPeriodTextColor: AppColors.textPrimary,
-              entryModeIconColor: AppColors.textPrimary,
+              backgroundColor: Colors.white,
+              hourMinuteColor: Color(0xFFF0FDF9),
+              hourMinuteTextColor: Color(0xFF0F172A),
+              dialBackgroundColor: Color(0xFFF8FAFC),
+              dialHandColor: Color(0xFFB7DEC7),
+              dayPeriodColor: Color(0xFFF0FDF9),
+              dayPeriodTextColor: Color(0xFF0F172A),
+              entryModeIconColor: Color(0xFF0F172A),
             ),
           ),
           child: child ?? const SizedBox.shrink(),
@@ -108,20 +108,20 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.primary,
-              surface: AppColors.surfaceElevated,
-              onSurface: AppColors.textPrimary,
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFB7DEC7),
+              surface: Colors.white,
+              onSurface: Color(0xFF0F172A),
             ),
             timePickerTheme: const TimePickerThemeData(
-              backgroundColor: AppColors.surfaceElevated,
-              hourMinuteColor: Color(0x1A6B21A8),
-              hourMinuteTextColor: AppColors.textPrimary,
-              dialBackgroundColor: AppColors.surface,
-              dialHandColor: AppColors.primary,
-              dayPeriodColor: Color(0x1A6B21A8),
-              dayPeriodTextColor: AppColors.textPrimary,
-              entryModeIconColor: AppColors.textPrimary,
+              backgroundColor: Colors.white,
+              hourMinuteColor: Color(0xFFF0FDF9),
+              hourMinuteTextColor: Color(0xFF0F172A),
+              dialBackgroundColor: Color(0xFFF8FAFC),
+              dialHandColor: Color(0xFFB7DEC7),
+              dayPeriodColor: Color(0xFFF0FDF9),
+              dayPeriodTextColor: Color(0xFF0F172A),
+              entryModeIconColor: Color(0xFF0F172A),
             ),
           ),
           child: child ?? const SizedBox.shrink(),
@@ -154,7 +154,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
 
   Widget _buildDateField() {
     final isSet = _slot.date != null;
-    final dateText = isSet 
+    final dateText = isSet
         ? _formatDateForDisplay(_slot.date!)
         : 'Select date';
 
@@ -163,17 +163,17 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSet ? AppColors.borderActive : AppColors.border,
+            color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFFE2E8F0),
             width: isSet ? 1.5 : 1,
           ),
           boxShadow: [
             if (isSet)
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                blurRadius: 8,
+                color: const Color(0xFFB7DEC7).withOpacity(0.08),
+                blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
           ],
@@ -183,22 +183,23 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             Icon(
               Icons.calendar_today_rounded,
               size: 18,
-              color: isSet ? AppColors.primary : AppColors.textMuted,
+              color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFF94A3B8),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 dateText,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: isSet ? AppColors.textPrimary : AppColors.textMuted,
-                  fontWeight: isSet ? FontWeight.w500 : FontWeight.normal,
+                style: TextStyle(
+                  color: isSet ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+                  fontSize: 14,
+                  fontWeight: isSet ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),
             const Icon(
               Icons.chevron_right_rounded,
               size: 20,
-              color: AppColors.textMuted,
+              color: Color(0xFF94A3B8),
             ),
           ],
         ),
@@ -221,8 +222,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
           children: [
             Text(
               label,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.textSecondary,
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -230,16 +232,16 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSet ? AppColors.borderActive : AppColors.border,
+                  color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFFE2E8F0),
                   width: isSet ? 1.5 : 1,
                 ),
                 boxShadow: [
                   if (isSet)
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: const Color(0xFFB7DEC7).withOpacity(0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -250,15 +252,16 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   Icon(
                     Icons.access_time_rounded,
                     size: 16,
-                    color: isSet ? AppColors.primary : AppColors.textMuted,
+                    color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFF94A3B8),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       isSet ? time.format(context) : 'Select',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: isSet ? AppColors.textPrimary : AppColors.textMuted,
-                        fontWeight: isSet ? FontWeight.w500 : FontWeight.normal,
+                      style: TextStyle(
+                        color: isSet ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+                        fontSize: 14,
+                        fontWeight: isSet ? FontWeight.w600 : FontWeight.w400,
                       ),
                     ),
                   ),
@@ -277,26 +280,34 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
     final isComplete = _slot.date != null && _slot.startTime != null && _slot.endTime != null;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasError ? AppColors.error : (isComplete ? AppColors.primary.withValues(alpha: 0.3) : AppColors.border),
+          color: hasError
+              ? const Color(0xFFEF4444)
+              : (isComplete
+                  ? const Color(0xFFB7DEC7).withOpacity(0.3)
+                  : const Color(0xFFE2E8F0)),
           width: hasError ? 1.5 : 1,
         ),
         boxShadow: [
           if (isComplete)
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: const Color(0xFFB7DEC7).withOpacity(0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
-          ...AppShadows.card,
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -309,23 +320,24 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: const Color(0xFFB7DEC7).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Icon(
                           Icons.schedule_rounded,
                           size: 14,
-                          color: AppColors.primary,
+                          color: const Color(0xFFB7DEC7),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       'Time Slot',
-                      style: AppTextStyles.label.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
+                      style: const TextStyle(
+                        color: Color(0xFF0F172A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -336,23 +348,23 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: AppColors.error.withValues(alpha: 0.1),
+                        color: const Color(0xFFEF4444).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Icon(
                         Icons.close_rounded,
                         size: 16,
-                        color: AppColors.error,
+                        color: Color(0xFFEF4444),
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: 16),
 
             // Date field
             _buildDateField(),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: 16),
 
             // Time range
             Row(
@@ -384,12 +396,12 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             if (hasError) ...[
               const SizedBox(height: AppSpacing.md),
               Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.error.withValues(alpha: 0.3),
+                    color: const Color(0xFFEF4444).withOpacity(0.3),
                   ),
                 ),
                 child: Row(
@@ -397,14 +409,15 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                     const Icon(
                       Icons.error_outline_rounded,
                       size: 16,
-                      color: AppColors.error,
+                      color: Color(0xFFEF4444),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         _slot.errorMessage,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.error,
+                        style: const TextStyle(
+                          color: Color(0xFFEF4444),
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -427,8 +440,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   const SizedBox(width: 8),
                   Text(
                     'Time slot configured',
-                    style: AppTextStyles.caption.copyWith(
-                      color: const Color(0xFF10B981),
+                    style: const TextStyle(
+                      color: Color(0xFF10B981),
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
