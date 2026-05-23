@@ -13,6 +13,7 @@ void main() {
         'text': 'Hello there',
         'timestamp': Timestamp.fromDate(timestamp),
         'isRead': true,
+        'status': 'failed',
       });
 
       expect(model.id, 'message_1');
@@ -21,6 +22,7 @@ void main() {
       expect(model.text, 'Hello there');
       expect(model.timestamp, timestamp);
       expect(model.isRead, isTrue);
+      expect(model.status, MessageStatus.failed);
     });
 
     test('fromMap() with null fields returns safe defaults', () {
@@ -32,6 +34,7 @@ void main() {
       expect(model.text, '');
       expect(model.timestamp, isNotNull);
       expect(model.isRead, isFalse);
+      expect(model.status, MessageStatus.sent);
     });
 
     test('toMap() returns all expected fields', () {
@@ -43,6 +46,7 @@ void main() {
         text: 'Hello there',
         timestamp: timestamp,
         isRead: true,
+        status: MessageStatus.pending,
       );
 
       final map = model.toMap();
@@ -53,6 +57,7 @@ void main() {
       expect(map['text'], 'Hello there');
       expect(map['timestamp'], Timestamp.fromDate(timestamp));
       expect(map['isRead'], isTrue);
+      expect(map['status'], 'pending');
     });
 
     test('toMap() round trip preserves all fields', () {
@@ -63,6 +68,7 @@ void main() {
         text: 'Hello there',
         timestamp: DateTime(2024, 4, 15, 16, 45),
         isRead: true,
+        status: MessageStatus.failed,
       );
 
       final roundTrip = MessageModel.fromMap(original.toMap());
@@ -73,6 +79,7 @@ void main() {
       expect(roundTrip.text, original.text);
       expect(roundTrip.timestamp, original.timestamp);
       expect(roundTrip.isRead, original.isRead);
+      expect(roundTrip.status, original.status);
     });
 
     test('copyWith() changes one field and keeps others unchanged', () {
@@ -83,6 +90,7 @@ void main() {
         text: 'Hello there',
         timestamp: DateTime(2024, 4, 15, 16, 45),
         isRead: true,
+        status: MessageStatus.sent,
       );
 
       final updated = original.copyWith(text: 'Updated message');
@@ -93,6 +101,7 @@ void main() {
       expect(updated.senderId, original.senderId);
       expect(updated.timestamp, original.timestamp);
       expect(updated.isRead, original.isRead);
+      expect(updated.status, original.status);
     });
 
     test('copyWith() with no changes returns equivalent object', () {
@@ -103,6 +112,7 @@ void main() {
         text: 'Hello there',
         timestamp: DateTime(2024, 4, 15, 16, 45),
         isRead: true,
+        status: MessageStatus.sent,
       );
 
       final copied = original.copyWith();
@@ -113,6 +123,7 @@ void main() {
       expect(copied.text, original.text);
       expect(copied.timestamp, original.timestamp);
       expect(copied.isRead, original.isRead);
+      expect(copied.status, original.status);
     });
   });
 }
