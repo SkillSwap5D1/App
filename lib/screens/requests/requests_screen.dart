@@ -237,7 +237,7 @@ class _RequestsScreenState extends State<RequestsScreen>
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isActive ? const Color(0xFFB7DEC7) : Colors.transparent,
+              color: isActive ? const Color(0xFF064E3B) : Colors.transparent,
               width: 2,
             ),
           ),
@@ -245,7 +245,7 @@ class _RequestsScreenState extends State<RequestsScreen>
         child: Text(
           label,
           style: TextStyle(
-            color: isActive ? const Color(0xFFB7DEC7) : const Color(0xFF64748B),
+            color: isActive ? const Color(0xFF064E3B) : const Color(0xFF64748B),
             fontSize: 14,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),
@@ -487,14 +487,14 @@ class _RequestsScreenState extends State<RequestsScreen>
                     color: const Color(0xFFF0FDF9),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFFB7DEC7).withOpacity(0.2),
+                      color: const Color(0xFF064E3B).withOpacity(0.2),
                     ),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.access_time_rounded,
-                        color: Color(0xFFB7DEC7),
+                        color: Color(0xFF064E3B),
                         size: 14,
                       ),
                       const SizedBox(width: 8),
@@ -569,7 +569,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                         child: ElevatedButton(
                           onPressed: () => _handleAcceptRequest(context, request),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB7DEC7),
+                            backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -601,7 +601,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                             otherUserId: request.fromUserId,
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB7DEC7),
+                            backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -653,7 +653,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                       otherUserId: request.fromUserId,
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB7DEC7),
+                      backgroundColor: const Color(0xFF064E3B),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -679,7 +679,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                         child: ElevatedButton(
                           onPressed: () => _showRequestDetails(context, request),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB7DEC7),
+                            backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -727,7 +727,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                   child: ElevatedButton(
                     onPressed: () => _showRequestDetails(context, request),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB7DEC7),
+                      backgroundColor: const Color(0xFF064E3B),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
