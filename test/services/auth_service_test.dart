@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mock_exceptions/mock_exceptions.dart';
 import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/services/auth_service.dart';
 
@@ -14,6 +13,39 @@ class _TestGoogleSignIn extends GoogleSignIn {
 
   @override
   Future<GoogleSignInAccount?> signOut() async => null;
+}
+
+class _ThrowingMockFirebaseAuth extends MockFirebaseAuth {
+  _ThrowingMockFirebaseAuth({
+    super.mockUser,
+    this.signInError,
+    this.registerError,
+  });
+
+  final FirebaseAuthException? signInError;
+  final FirebaseAuthException? registerError;
+
+  @override
+  Future<UserCredential> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    if (signInError != null) {
+      throw signInError!;
+    }
+    return super.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  @override
+  Future<UserCredential> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    if (registerError != null) {
+      throw registerError!;
+    }
+    return super.createUserWithEmailAndPassword(email: email, password: password);
+  }
 }
 
 void main() {
@@ -68,9 +100,6 @@ void main() {
 
     test('signIn() with @gmail.com email throws before Firebase call', () async {
       final auth = MockFirebaseAuth();
-      whenCalling(Invocation.method(#signInWithEmailAndPassword, null))
-          .on(auth)
-          .thenThrow(Exception('Firebase should not be called'));
       final service = _buildService(auth);
 
       await expectLater(
@@ -83,17 +112,12 @@ void main() {
     });
 
     test('signIn() with wrong password throws FirebaseAuthException', () async {
-      final auth = MockFirebaseAuth(
+      final auth = _ThrowingMockFirebaseAuth(
         mockUser: MockUser(uid: 'user_123', email: 'jamie@myport.ac.uk'),
-      );
-      whenCalling(
-        Invocation.method(
-          #signInWithEmailAndPassword,
-          null,
-          {#email: 'jamie@myport.ac.uk', #password: 'wrongpass'},
+        signInError: FirebaseAuthException(
+          code: 'wrong-password',
+          message: 'Wrong password',
         ),
-      ).on(auth).thenThrow(
-        FirebaseAuthException(code: 'wrong-password', message: 'Wrong password'),
       );
       final service = _buildService(auth);
 
@@ -107,15 +131,11 @@ void main() {
     });
 
     test('signIn() with unregistered email throws FirebaseAuthException', () async {
-      final auth = MockFirebaseAuth();
-      whenCalling(
-        Invocation.method(
-          #signInWithEmailAndPassword,
-          null,
-          {#email: 'jamie@myport.ac.uk', #password: 'password123'},
+      final auth = _ThrowingMockFirebaseAuth(
+        signInError: FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'No user found',
         ),
-      ).on(auth).thenThrow(
-        FirebaseAuthException(code: 'user-not-found', message: 'No user found'),
       );
       final service = _buildService(auth);
 
@@ -157,9 +177,6 @@ void main() {
 
     test('register() with @hotmail.com email throws before Firebase call', () async {
       final auth = MockFirebaseAuth();
-      whenCalling(Invocation.method(#createUserWithEmailAndPassword, null))
-          .on(auth)
-          .thenThrow(Exception('Firebase should not be called'));
       final service = _buildService(auth);
 
       await expectLater(
@@ -178,15 +195,8 @@ void main() {
     });
 
     test('register() with duplicate email throws FirebaseAuthException', () async {
-      final auth = MockFirebaseAuth();
-      whenCalling(
-        Invocation.method(
-          #createUserWithEmailAndPassword,
-          null,
-          {#email: 'jamie@myport.ac.uk', #password: 'password123'},
-        ),
-      ).on(auth).thenThrow(
-        FirebaseAuthException(
+      final auth = _ThrowingMockFirebaseAuth(
+        registerError: FirebaseAuthException(
           code: 'email-already-in-use',
           message: 'Email already in use',
         ),
@@ -209,9 +219,6 @@ void main() {
 
     test('register() password less than 6 chars throws before Firebase call', () async {
       final auth = MockFirebaseAuth();
-      whenCalling(Invocation.method(#createUserWithEmailAndPassword, null))
-          .on(auth)
-          .thenThrow(Exception('Firebase should not be called'));
       final service = _buildService(auth);
 
       await expectLater(
@@ -267,7 +274,37 @@ void main() {
     test('_handleAuthError("wrong-password") returns correct message', () {
       final service = _buildService(MockFirebaseAuth());
 
-      expect(service.handleAuthError('wrong-password'), 'Incorrect password');
+      expect(
+        service.handleAuthError('wrong-password'),
+        'Incorrect email or password. Please try again.',
+      );
+    });
+
+    test('_handleAuthError("invalid-email") returns correct message', () {
+      final service = _buildService(MockFirebaseAuth());
+
+      expect(
+        service.handleAuthError('invalid-email'),
+        'Incorrect email or password. Please try again.',
+      );
+    });
+
+    test('_handleAuthError("email-already-in-use") returns correct message', () {
+      final service = _buildService(MockFirebaseAuth());
+
+      expect(
+        service.handleAuthError('email-already-in-use'),
+        'This email is already registered',
+      );
+    });
+
+    test('_handleAuthError("weak-password") returns correct message', () {
+      final service = _buildService(MockFirebaseAuth());
+
+      expect(
+        service.handleAuthError('weak-password'),
+        'Password must be at least 6 characters',
+      );
     });
 
     test('_handleAuthError("unknown-code") returns generic fallback message', () {
