@@ -4,27 +4,23 @@ import 'package:provider/provider.dart';
 import '../../models/listing_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/listing_provider.dart';
-import '../../providers/notification_provider.dart';
 import '../listings/create_listing_screen.dart';
 import '../listings/listing_detail_screen.dart';
-import '../notifications/notifications_screen.dart';
 
-const Color _bgTopLeft = Color(0xFFEDE9F6);
-const Color _bgMidLeft = Color(0xFFEAF2FF);
-const Color _bgMidRight = Color(0xFFFFF4E8);
-const Color _bgBottomRight = Color(0xFFF5F3FF);
-
-const Color _headingColor = Color(0xFF1E1B4B);
-const Color _bodyColor = Color(0xFF6B7280);
-const Color _mutedColor = Color(0xFF9CA3AF);
-const Color _accentColor = Color(0xFF7C3AED);
-const Color _accentLightColor = Color(0xFFA78BFA);
-const Color _pastelBlue = Color(0xFFBFDBFE);
-const Color _pastelOrange = Color(0xFFFCD8B8);
-const Color _pastelPink = Color(0xFFFBCFE8);
-const Color _surfaceTint = Color(0xFFF5F3FF);
-const Color _errorColor = Color(0xFFDC2626);
-const Color _successColor = Color(0xFF059669);
+const Color _pageBg = Color(0xFFF8FAFC);
+const Color _surface = Color(0xFFFFFFFF);
+const Color _surfaceAlt = Color(0xFFF1F5F9);
+const Color _line = Color(0xFFE2E8F0);
+const Color _textPrimary = Color(0xFF0F172A);
+const Color _textSecondary = Color(0xFF475569);
+const Color _textMuted = Color(0xFF94A3B8);
+const Color _accent = Color(0xFF0F766E);
+const Color _accentSoft = Color(0xFFCCFBF1);
+const Color _accentTeal = Color(0xFFB7DEC7);
+const Color _accentBlue = Color(0xFF60A5FA);
+const Color _cardShadow = Color(0x140F172A);
+const Color _chipBg = Color(0xFFF8FAFC);
+const Color _chipBorder = Color(0xFFE2E8F0);
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -35,8 +31,8 @@ class BrowseScreen extends StatefulWidget {
 
 class _BrowseScreenState extends State<BrowseScreen>
     with TickerProviderStateMixin {
-  late TabController _tabController;
-  late TextEditingController _searchController;
+  late final TabController _tabController;
+  late final TextEditingController _searchController;
 
   String _searchQuery = '';
   String _selectedCategory = 'All';
@@ -92,9 +88,7 @@ class _BrowseScreenState extends State<BrowseScreen>
       final matchesSearch =
           _searchQuery.isEmpty ||
           listing.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          listing.description.toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
+          listing.description.toLowerCase().contains(_searchQuery.toLowerCase());
 
       final matchesCategory =
           _selectedCategory == 'All' || listing.category == _selectedCategory;
@@ -113,9 +107,7 @@ class _BrowseScreenState extends State<BrowseScreen>
     AuthProvider authProvider,
   ) {
     final currentUid = authProvider.currentUser?.uid ?? '';
-    return provider.listings
-        .where((listing) => listing.ownerId != currentUid)
-        .toList();
+    return provider.listings.where((listing) => listing.ownerId != currentUid).toList();
   }
 
   List<ListingModel> _getMyListings(
@@ -123,67 +115,29 @@ class _BrowseScreenState extends State<BrowseScreen>
     AuthProvider authProvider,
   ) {
     final currentUid = authProvider.currentUser?.uid ?? '';
-    return provider.listings
-        .where((listing) => listing.ownerId == currentUid)
-        .toList();
+    return provider.listings.where((listing) => listing.ownerId == currentUid).toList();
   }
 
   bool get _isBrowseTabSelected => _tabController.index == 0;
 
-  BoxDecoration get _glassDecoration {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(0.90),
-          _pastelBlue.withOpacity(0.26),
-          _pastelPink.withOpacity(0.22),
-          _pastelOrange.withOpacity(0.20),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.white.withOpacity(0.85), width: 1.5),
-      boxShadow: [
-        BoxShadow(
-          color: _accentColor.withOpacity(0.07),
-          blurRadius: 20,
-          spreadRadius: 0,
-          offset: const Offset(0, 6),
-        ),
-        BoxShadow(
-          color: Colors.white.withOpacity(0.9),
-          blurRadius: 0,
-          spreadRadius: 0,
-          offset: const Offset(0, 0),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: _pageBg,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [_bgTopLeft, _bgMidLeft, _bgMidRight, _bgBottomRight],
+            colors: [Color(0xFFF8FAFC), Color(0xFFF0FDFA), Color(0xFFFEF3C7)],
+            stops: [0.0, 0.52, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
-                child: _buildTopBar(context),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                child: _buildTabToggle(),
-              ),
+              _buildHero(context),
+              _buildSegmentedTabs(),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
@@ -200,1026 +154,840 @@ class _BrowseScreenState extends State<BrowseScreen>
     );
   }
 
-  Widget _buildTopBar(BuildContext context) {
-    return Row(
-      children: [
-        const Text(
-          'SkillSwap',
-          style: TextStyle(
-            color: _headingColor,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.2,
+  Widget _buildHero(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF0F172A), Color(0xFF0F766E), Color(0xFF115E59)],
           ),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: const [
+            BoxShadow(color: Color(0x240F172A), blurRadius: 30, offset: Offset(0, 14)),
+          ],
         ),
-        const Spacer(),
-        Consumer<NotificationProvider>(
-          builder: (context, notificationProvider, _) {
-            final hasUnread = notificationProvider.unreadCount > 0;
-
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsScreen(),
+        padding: const EdgeInsets.all(24),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 700;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: const [
+                    _HeroBadge(text: 'Discover'),
+                    _HeroBadge(text: 'Exchange'),
+                    _HeroBadge(text: 'Learn'),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Find skills worth swapping.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isCompact ? 30 : 40,
+                    fontWeight: FontWeight.w900,
+                    height: 1.0,
+                    letterSpacing: -1.0,
                   ),
-                );
-              },
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.55),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: _accentColor.withOpacity(0.10)),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_outlined,
-                      color: _bodyColor,
-                      size: 22,
+                ),
+                const SizedBox(height: 10),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: Text(
+                    'Browse lessons, trade expertise, and connect with people who can teach what you need next.',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.86),
+                      fontSize: 15,
+                      height: 1.5,
                     ),
                   ),
-                  if (hasUnread)
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: _accentColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    _HeroStat(label: 'Active listings', value: '${context.watch<ListingProvider>().listings.length}'),
+                    _HeroStat(label: 'Filtered results', value: '${_filterListings(_getOtherListings(context.watch<ListingProvider>(), context.watch<AuthProvider>())).length}'),
+                  ],
+                ),
+              ],
             );
           },
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildTabToggle() {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              _tabController.animateTo(0);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                gradient:
-                    _isBrowseTabSelected
-                        ? const LinearGradient(
-                          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        )
-                        : null,
-                color:
-                    _isBrowseTabSelected
-                        ? null
-                        : Colors.white.withOpacity(0.60),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color:
-                      _isBrowseTabSelected
-                          ? Colors.transparent
-                          : _accentColor.withOpacity(0.20),
-                ),
-                boxShadow:
-                    _isBrowseTabSelected
-                        ? [
-                          BoxShadow(
-                            color: _accentColor.withOpacity(0.30),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                        : const [],
-              ),
-              child: Text(
-                'Browse',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: _isBrowseTabSelected ? Colors.white : _bodyColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+  Widget _buildSegmentedTabs() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: _surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: _line),
+          boxShadow: const [
+            BoxShadow(color: _cardShadow, blurRadius: 16, offset: Offset(0, 6)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _SegmentTab(
+                label: 'Browse',
+                active: _isBrowseTabSelected,
+                onTap: () => _tabController.animateTo(0),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              _tabController.animateTo(1);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                gradient:
-                    !_isBrowseTabSelected
-                        ? const LinearGradient(
-                          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        )
-                        : null,
-                color:
-                    !_isBrowseTabSelected
-                        ? null
-                        : Colors.white.withOpacity(0.60),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color:
-                      !_isBrowseTabSelected
-                          ? Colors.transparent
-                          : _accentColor.withOpacity(0.20),
-                ),
-                boxShadow:
-                    !_isBrowseTabSelected
-                        ? [
-                          BoxShadow(
-                            color: _accentColor.withOpacity(0.30),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                        : const [],
-              ),
-              child: Text(
-                'My Listings',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: !_isBrowseTabSelected ? Colors.white : _bodyColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _SegmentTab(
+                label: 'My Listings',
+                active: !_isBrowseTabSelected,
+                onTap: () => _tabController.animateTo(1),
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildBrowseTab(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth > 600) {
-        // Wide screen layout
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 250,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 8, 8),
-                child: _buildFilters(isSidePanel: true),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _buildSearchBar(),
-                  ),
-                  Expanded(
-                    child: _buildListingResults(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      } else {
-        // Narrow screen layout
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildSearchBar(),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: _buildFilters(isSidePanel: false),
-            ),
-            Expanded(
-              child: _buildListingResults(),
-            ),
-          ],
-        );
-      }
-    });
-  }
+    final listingProvider = context.watch<ListingProvider>();
+    final authProvider = context.watch<AuthProvider>();
+    final filtered = _filterListings(_getOtherListings(listingProvider, authProvider));
 
-  Widget _buildFilters({bool isSidePanel = false}) {
-    final filters = [
-      _buildFilterDropdown(
-        label: 'Category',
-        value: _selectedCategory,
-        items: _categories,
-        onChanged: (val) => setState(() => _selectedCategory = val!),
-      ),
-      _buildFilterDropdown(
-        label: 'Level',
-        value: _selectedLevel,
-        items: _levels,
-        onChanged: (val) => setState(() => _selectedLevel = val!),
-      ),
-      _buildFilterDropdown(
-        label: 'Format',
-        value: _selectedFormat,
-        items: _formats,
-        onChanged: (val) => setState(() => _selectedFormat = val!),
-      ),
-    ];
-
-    if (isSidePanel) {
-      return ListView.separated(
-        itemCount: filters.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => filters[index],
-        padding: const EdgeInsets.only(top: 12),
-      );
-    } else {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: filters
-              .expand((widget) => [widget, const SizedBox(width: 12)])
-              .toList()
-            ..removeLast(),
-        ),
-      );
-    }
-  }
-
-  Widget _buildListingResults() {
-    return Consumer2<ListingProvider, AuthProvider>(
-      builder: (context, listingProvider, authProvider, _) {
-        if (listingProvider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: _accentColor,
-              strokeWidth: 2.5,
-            ),
-          );
-        }
-
-        final otherListings = _getOtherListings(
-          listingProvider,
-          authProvider,
-        );
-        final filteredListings = _filterListings(otherListings);
-
-        if (filteredListings.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final showSidebar = constraints.maxWidth >= 1080;
+          return SingleChildScrollView(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: _surfaceTint,
-                    shape: BoxShape.circle,
+                if (showSidebar) ...[
+                  SizedBox(width: 300, child: _buildFilterPanel(context)),
+                  const SizedBox(width: 16),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildSearchBar(context),
+                      const SizedBox(height: 14),
+                      _buildQuickFilters(context),
+                      const SizedBox(height: 14),
+                      filtered.isEmpty
+                          ? _buildEmptyState()
+                          : GridView.builder(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: constraints.maxWidth >= 700 ? 2 : 1,
+                                crossAxisSpacing: 14,
+                                mainAxisSpacing: 14,
+                                mainAxisExtent: 164,
+                              ),
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                return _buildListingCard(context, filtered[index]);
+                              },
+                            ),
+                    ],
                   ),
-                  child: Icon(
-                    Icons.search_off_rounded,
-                    color: _accentLightColor,
-                    size: 32,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'No skills found',
-                  style: TextStyle(
-                    color: _headingColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  'Try different keywords or filters',
-                  style: TextStyle(color: _mutedColor, fontSize: 13),
                 ),
               ],
             ),
           );
-        }
-
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            int crossAxisCount = (constraints.maxWidth / 250).floor().clamp(1, 4);
-            return GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: filteredListings.length,
-              itemBuilder: (context, index) {
-                return _buildBrowseListingCard(filteredListings[index], context);
-              },
-            );
-          },
-        );
-      },
+        },
+      ),
     );
   }
 
   Widget _buildMyListingsTab(BuildContext context) {
-    return Consumer2<ListingProvider, AuthProvider>(
-      builder: (context, listingProvider, authProvider, _) {
-        if (listingProvider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: _accentColor,
-              strokeWidth: 2.5,
+    final listingProvider = context.watch<ListingProvider>();
+    final authProvider = context.watch<AuthProvider>();
+    final myListings = _getMyListings(listingProvider, authProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Your listings',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateListingScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Create Listing'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _accent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  minimumSize: const Size(0, 48),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Expanded(
+            child: myListings.isEmpty
+                ? _buildEmptyOwnedState()
+                : ListView.separated(
+                    itemCount: myListings.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      return _buildListingCard(context, myListings[index]);
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterPanel(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _line),
+        boxShadow: const [
+          BoxShadow(color: _cardShadow, blurRadius: 16, offset: Offset(0, 6)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Filters',
+            style: TextStyle(
+              color: _textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
             ),
-          );
-        }
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Refine by category, level, and format.',
+            style: TextStyle(color: _textSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: 18),
+          _FilterGroup(
+            title: 'Category',
+            value: _selectedCategory,
+            options: _categories,
+            onChanged: (value) => setState(() => _selectedCategory = value),
+          ),
+          const SizedBox(height: 16),
+          _FilterGroup(
+            title: 'Level',
+            value: _selectedLevel,
+            options: _levels,
+            onChanged: (value) => setState(() => _selectedLevel = value),
+          ),
+          const SizedBox(height: 16),
+          _FilterGroup(
+            title: 'Format',
+            value: _selectedFormat,
+            options: _formats,
+            onChanged: (value) => setState(() => _selectedFormat = value),
+          ),
+        ],
+      ),
+    );
+  }
 
-        final myListings = _getMyListings(listingProvider, authProvider);
+  Widget _buildSearchBar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _line),
+        boxShadow: const [
+          BoxShadow(color: _cardShadow, blurRadius: 16, offset: Offset(0, 6)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: _surfaceAlt,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.search_rounded, color: _textSecondary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: 'Search skills, topics, or teachers',
+                border: InputBorder.none,
+              ),
+              onChanged: (value) => setState(() => _searchQuery = value),
+            ),
+          ),
+          if (_searchQuery.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _searchQuery = '';
+                  _searchController.clear();
+                });
+              },
+              icon: const Icon(Icons.close_rounded, color: _textMuted),
+            ),
+        ],
+      ),
+    );
+  }
 
-        if (myListings.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildQuickFilters(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 700;
+        final chips = [
+          _QuickFilterChip(
+            label: 'All',
+            active: _selectedCategory == 'All' && _selectedLevel == 'All Levels' && _selectedFormat == 'All Formats',
+            onTap: () {
+              setState(() {
+                _selectedCategory = 'All';
+                _selectedLevel = 'All Levels';
+                _selectedFormat = 'All Formats';
+              });
+            },
+          ),
+          _QuickFilterChip(
+            label: 'Programming',
+            active: _selectedCategory == 'Programming',
+            onTap: () => setState(() => _selectedCategory = 'Programming'),
+          ),
+          _QuickFilterChip(
+            label: 'Languages',
+            active: _selectedCategory == 'Languages',
+            onTap: () => setState(() => _selectedCategory = 'Languages'),
+          ),
+          if (!compact)
+            _QuickFilterChip(
+              label: 'Online',
+              active: _selectedFormat == 'Online',
+              onTap: () => setState(() => _selectedFormat = 'Online'),
+            ),
+        ];
+
+        if (compact) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(
-                    color: _surfaceTint,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.search_off_rounded,
-                    color: _accentLightColor,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'No skills found',
-                  style: TextStyle(
-                    color: _headingColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Create your first listing to get started',
-                  style: TextStyle(color: _mutedColor, fontSize: 13),
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateListingScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 22,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.92),
-                          _pastelOrange.withOpacity(0.52),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _pastelOrange.withOpacity(0.45),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _pastelOrange.withOpacity(0.20),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Text(
-                      'Create Listing',
-                      style: TextStyle(
-                        color: _headingColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                for (var index = 0; index < chips.length; index++) ...[
+                  if (index > 0) const SizedBox(width: 10),
+                  chips[index],
+                ],
               ],
             ),
           );
         }
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            int crossAxisCount = (constraints.maxWidth / 250).floor().clamp(1, 4);
-            return GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: myListings.length,
-              itemBuilder: (context, index) {
-                return _buildMyListingCard(myListings[index], context);
-              },
-            );
-          },
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: chips,
         );
       },
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildEmptyState() {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.80),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _accentColor.withOpacity(0.12)),
-        boxShadow: [
-          BoxShadow(
-            color: _accentColor.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+        color: _surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _line),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: _accentSoft,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: const Icon(Icons.search_off_rounded, color: _accent, size: 34),
+              ),
+              const SizedBox(height: 14),
+              const Text(
+                'No listings match this search',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Try a different category or clear the filters to see more results.',
+                style: TextStyle(color: _textSecondary),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyOwnedState() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _line),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: _accentSoft,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: const Icon(Icons.lightbulb_outline_rounded, color: _accent, size: 34),
+              ),
+              const SizedBox(height: 14),
+              const Text(
+                'No listings yet',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Create your first listing to start trading skills.',
+                style: TextStyle(color: _textSecondary),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListingCard(BuildContext context, ListingModel listing) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListingDetailScreen(listing: listing),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: _surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: _line),
+          boxShadow: const [
+            BoxShadow(color: _cardShadow, blurRadius: 16, offset: Offset(0, 8)),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [_accentTeal, _accentBlue],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Text(
+                  listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    listing.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: _textPrimary,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    listing.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: _textSecondary,
+                      fontSize: 13,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _InfoChip(text: listing.category),
+                      _InfoChip(text: listing.level),
+                      _InfoChip(text: listing.modality),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _accentSoft,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: const Text(
+                    'Available',
+                    style: TextStyle(
+                      color: _accent,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/send-request',
+                      arguments: listing,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _accent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    minimumSize: const Size(0, 44),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Request',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroBadge extends StatelessWidget {
+  final String text;
+
+  const _HeroBadge({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withOpacity(0.16)),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroStat extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _HeroStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withOpacity(0.14)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.search_rounded, color: _mutedColor, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() => _searchQuery = value);
-              },
-              cursorColor: _accentColor,
-              decoration: const InputDecoration(
-                hintText: 'Search skills...',
-                hintStyle: TextStyle(color: _mutedColor, fontSize: 14),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              style: const TextStyle(color: _headingColor, fontSize: 14),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.82),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildBrowseListingCard(ListingModel listing, BuildContext context) {
-    final initialLetter =
-        listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
+class _SegmentTab extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListingDetailScreen(listing: listing),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: _glassDecoration,
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF7C3AED), Color(0xFFA78BFA)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        initialLetter,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          listing.title,
-                          style: const TextStyle(
-                            color: _headingColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          listing.ownerName,
-                          style: const TextStyle(
-                            color: _bodyColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: _surfaceTint,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  listing.category,
-                  style: const TextStyle(
-                    color: _accentColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                listing.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: _bodyColor,
-                  fontSize: 13,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.signal_cellular_alt_rounded,
-                    color: _accentLightColor,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      listing.level,
-                      style: const TextStyle(color: _bodyColor, fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Icon(
-                    Icons.location_on_outlined,
-                    color: _accentLightColor,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      listing.modality,
-                      style: const TextStyle(color: _bodyColor, fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => ListingDetailScreen(listing: listing),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withOpacity(0.92),
-                        _pastelBlue.withOpacity(0.55),
-                        _accentLightColor.withOpacity(0.30),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _pastelBlue.withOpacity(0.55)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _pastelBlue.withOpacity(0.22),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'View Details',
-                      style: TextStyle(
-                        color: _headingColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  const _SegmentTab({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        height: 46,
+        decoration: BoxDecoration(
+          color: active ? _accent : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMyListingCard(ListingModel listing, BuildContext context) {
-    final initialLetter =
-        listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?';
-
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListingDetailScreen(listing: listing),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: _glassDecoration,
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF7C3AED), Color(0xFFA78BFA)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        initialLetter,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          listing.title,
-                          style: const TextStyle(
-                            color: _headingColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          listing.ownerName,
-                          style: const TextStyle(
-                            color: _bodyColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color:
-                          listing.isActive
-                              ? _successColor.withOpacity(0.10)
-                              : _errorColor.withOpacity(0.10),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      listing.isActive ? 'Active' : 'Inactive',
-                      style: TextStyle(
-                        color: listing.isActive ? _successColor : _errorColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: _surfaceTint,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  listing.category,
-                  style: const TextStyle(
-                    color: _accentColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                listing.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: _bodyColor,
-                  fontSize: 13,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.signal_cellular_alt_rounded,
-                    color: _accentLightColor,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      listing.level,
-                      style: const TextStyle(color: _bodyColor, fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Icon(
-                    Icons.location_on_outlined,
-                    color: _accentLightColor,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      listing.modality,
-                      style: const TextStyle(color: _bodyColor, fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    CreateListingScreen(listing: listing),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withOpacity(0.92),
-                              _pastelBlue.withOpacity(0.34),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _pastelBlue.withOpacity(0.50),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: _pastelBlue.withOpacity(0.18),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    ListingDetailScreen(listing: listing),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withOpacity(0.92),
-                              _pastelOrange.withOpacity(0.40),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _pastelOrange.withOpacity(0.55),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: _pastelOrange.withOpacity(0.20),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'View',
-                            style: TextStyle(
-                              color: _headingColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterDropdown({
-    required String label,
-    required String value,
-    required List<String> items,
-    required Function(String?) onChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.70),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: _accentColor.withOpacity(0.15)),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          icon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: _accentLightColor,
-            size: 16,
-          ),
-          iconSize: 16,
-          dropdownColor: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          style: const TextStyle(
-            color: _headingColor,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-          hint: Text(
+        child: Center(
+          child: Text(
             label,
-            style: const TextStyle(color: _headingColor, fontSize: 13),
+            style: TextStyle(
+              color: active ? Colors.white : _textSecondary,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-          items:
-              items.map((item) {
-                return DropdownMenuItem(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(color: _headingColor, fontSize: 13),
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterGroup extends StatelessWidget {
+  final String title;
+  final String value;
+  final List<String> options;
+  final ValueChanged<String> onChanged;
+
+  const _FilterGroup({
+    required this.title,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: _textPrimary,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((option) {
+            final active = option == value;
+            return InkWell(
+              onTap: () => onChanged(option),
+              borderRadius: BorderRadius.circular(999),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: active ? _accentSoft : _chipBg,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: active ? _accentSoft : _chipBorder),
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    color: active ? _accent : _textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
                   ),
-                );
-              }).toList(),
-          onChanged: onChanged,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickFilterChip extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _QuickFilterChip({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: active ? _accent : _surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: active ? _accent : _line),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: active ? Colors.white : _textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoChip extends StatelessWidget {
+  final String text;
+
+  const _InfoChip({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: _chipBg,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _chipBorder),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: _textSecondary,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
