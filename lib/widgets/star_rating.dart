@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:skillswap_app/theme/app_theme.dart';
+
+import '../theme/app_theme.dart';
 
 class StarRating extends StatelessWidget {
   final double rating;
   final int reviewCount;
   final double size;
 
-  const StarRating({super.key, 
+  const StarRating({
+    super.key,
     required this.rating,
     required this.reviewCount,
-    this.size = 16,
+    this.size = 14,
   });
 
   @override
@@ -17,8 +19,12 @@ class StarRating extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.star, color: AppColors.accent, size: size),
-        SizedBox(width: 4),
+        Icon(
+          Icons.star_rounded,
+          color: AppColors.warning,
+          size: size,
+        ),
+        const SizedBox(width: 4),
         Text(
           '$rating',
           style: TextStyle(
@@ -27,7 +33,7 @@ class StarRating extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
         ),
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         Text(
           '($reviewCount)',
           style: TextStyle(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:skillswap_app/theme/app_theme.dart';
+
+import '../theme/app_theme.dart';
 
 class TagChip extends StatelessWidget {
   final String label;
   final Color? backgroundColor;
   final Color? textColor;
 
-  const TagChip({super.key, 
+  const TagChip({
+    super.key,
     required this.label,
     this.backgroundColor,
     this.textColor,
@@ -15,18 +17,15 @@ class TagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 8.0,
-        vertical: 3.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.pastelGreen,
-        borderRadius: BorderRadius.circular(12.0),
+        color: backgroundColor ?? AppColors.accentLight,
+        borderRadius: BorderRadius.circular(AppRadius.full),
       ),
       child: Text(
         label,
         style: AppTextStyles.caption.copyWith(
-          color: textColor ?? AppColors.pastelGreenDeep,
+          color: textColor ?? AppColors.primary,
           fontWeight: FontWeight.w500,
         ),
       ),

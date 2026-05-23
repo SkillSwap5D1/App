@@ -123,47 +123,101 @@ class _BrowseScreenState extends State<BrowseScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _pageBg,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFF8FAFC), Color(0xFFF0FDFA), Color(0xFFFEF3C7)],
-            stops: [0.0, 0.52, 1.0],
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          _buildHero(),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildSidebar(), Expanded(child: _buildListingGrid())],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHero(context),
-              _buildSegmentedTabs(),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildBrowseTab(context),
-                    _buildMyListingsTab(context),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildHero(BuildContext context) {
+  // ── TOP NAVBAR ─────────────────────────────────────────────────────────────
+  Widget _buildNavBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Logo
+          Row(
+            children: [
+              const Icon(
+                Icons.handshake_outlined,
+                color: AppColors.primary,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'SkillSwap',
+                style: AppTextStyles.h3.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          // Nav items
+          Row(
+            spacing: 32,
+            children: [
+              _buildNavItem('Browse', Icons.search_rounded),
+              _buildNavItem('Requests', Icons.mail_outline_rounded),
+              _buildNavItem('Saved', Icons.bookmark_outline_rounded),
+              _buildNavItem('Chat', Icons.chat_bubble_outline_rounded),
+              _buildNavItem('Profile', Icons.person_outline_rounded),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.logout_rounded,
+                  color: AppColors.textMuted,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String label, IconData icon) {
+    return Row(
+      spacing: 6,
+      children: [
+        Icon(icon, color: AppColors.textMuted, size: 18),
+        Text(
+          label,
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        ),
+      ],
+    );
+  }
+
+  // ── LISTING GRID ────────────────────────────────────────────────────────────
+  Widget _buildListingGrid() {
+    final listings = _filteredListings;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F172A), Color(0xFF0F766E), Color(0xFF115E59)],
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           borderRadius: BorderRadius.circular(28),
           boxShadow: const [
