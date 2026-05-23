@@ -160,7 +160,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
             child: IconButton(
               icon: const Icon(
                 Icons.arrow_back_rounded,
-                color: Color(0xFFB7DEC7),
+                color: Color(0xFF064E3B),
               ),
               onPressed: () => Navigator.pop(context),
               splashRadius: 20,
@@ -245,7 +245,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
           child: ElevatedButton(
             onPressed: _submitRequest,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB7DEC7),
+              backgroundColor: const Color(0xFF064E3B),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -309,7 +309,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                 ),
               ),
               CircleAvatar(
-                backgroundColor: const Color(0xFFB7DEC7),
+                backgroundColor: const Color(0xFF064E3B),
                 child: Text(
                   widget.listing.ownerName
                       .split(' ')
@@ -475,7 +475,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFB7DEC7), width: 1.5),
+              borderSide: const BorderSide(color: Color(0xFF064E3B), width: 1.5),
             ),
             contentPadding: const EdgeInsets.all(AppSpacing.md),
           ),
