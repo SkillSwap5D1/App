@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:skillswap_app/models/request_model.dart';
 import 'package:skillswap_app/models/user_model.dart';
@@ -7,41 +8,7 @@ import 'package:skillswap_app/providers/request_provider.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/screens/requests/requests_screen.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
-
-// ── Mock Providers ───────────────────────────────────────────────────────
-
-class MockRequestProvider extends ChangeNotifier {
-  List<RequestModel> incoming = [];
-  List<RequestModel> outgoing = [];
-  bool isLoading = false;
-
-  void setIncoming(List<RequestModel> requests) {
-    incoming = requests;
-    notifyListeners();
-  }
-
-  void setOutgoing(List<RequestModel> requests) {
-    outgoing = requests;
-    notifyListeners();
-  }
-
-  int get pendingCount => incoming.where((r) => r.isPending).length;
-
-  void loadRequests(String uid) {}
-  Future<String?> sendRequest(RequestModel request) async => null;
-  Future<void> acceptRequest(String requestId, Map<String, String> confirmedSlot,
-      String requesterName, String skillName, String requesterId) async {}
-  Future<void> declineRequest(String requestId, String requesterId, String skillName) async {}
-  Future<void> counterRequest(String requestId, List<Map<String, dynamic>> newSlots, String note,
-      String requesterId, String skillName) async {}
-}
-
-class MockAuthProvider extends ChangeNotifier {
-  UserModel? currentUser;
-  bool get isLoading => false;
-
-  MockAuthProvider({this.currentUser});
-}
+import '../mocks.mocks.dart';
 
 // ── Test Fixtures ───────────────────────────────────────────────────────
 
@@ -108,8 +75,8 @@ final testOutgoingRequest = RequestModel(
 // ── Test Widget Builder ──────────────────────────────────────────────────
 
 Widget buildTestApp({
-  required MockRequestProvider requestProvider,
-  required MockAuthProvider authProvider,
+  required RequestProvider requestProvider,
+  required AuthProvider authProvider,
 }) {
   Provider.debugCheckInvalidValueType = null;
 
@@ -117,12 +84,8 @@ Widget buildTestApp({
     theme: AppTheme.theme,
     home: MultiProvider(
       providers: [
-        ChangeNotifierProvider<RequestProvider>(
-          create: (_) => requestProvider as RequestProvider,
-        ),
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => authProvider as AuthProvider,
-        ),
+        Provider<RequestProvider>.value(value: requestProvider),
+        Provider<AuthProvider>.value(value: authProvider),
       ],
       child: const RequestsScreen(),
     ),
@@ -138,11 +101,18 @@ void main() {
 
     setUp(() {
       mockRequestProvider = MockRequestProvider();
-      mockAuthProvider = MockAuthProvider(currentUser: testUser);
+      mockAuthProvider = MockAuthProvider();
+      when(mockRequestProvider.incoming).thenReturn([]);
+      when(mockRequestProvider.outgoing).thenReturn([]);
+      when(mockRequestProvider.isLoading).thenReturn(false);
+      when(mockRequestProvider.errorMessage).thenReturn(null);
+      when(mockAuthProvider.isLoading).thenReturn(false);
+      when(mockAuthProvider.currentUser).thenReturn(testUser);
     });
 
-    testWidgets('TEST 1 — renders incoming request cards', (WidgetTester tester) async {
-      mockRequestProvider.setIncoming([testIncomingRequest1, testIncomingRequest2]);
+    testWidgets('renders incoming request cards', (WidgetTester tester) async {
+      when(mockRequestProvider.incoming).thenReturn([testIncomingRequest1, testIncomingRequest2]);
+      when(mockRequestProvider.outgoing).thenReturn([]);
 
       await tester.pumpWidget(
         buildTestApp(
@@ -156,8 +126,9 @@ void main() {
       expect(find.text(testIncomingRequest2.fromUserName), findsWidgets);
     });
 
-    testWidgets('TEST 2 — Decline button shows confirmation dialog', (WidgetTester tester) async {
-      mockRequestProvider.setIncoming([testIncomingRequest1]);
+    testWidgets('decline button shows confirmation dialog', (WidgetTester tester) async {
+      when(mockRequestProvider.incoming).thenReturn([testIncomingRequest1]);
+      when(mockRequestProvider.outgoing).thenReturn([]);
 
       await tester.pumpWidget(
         buildTestApp(
@@ -167,27 +138,27 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Find and tap Decline button
-      final declineButtons = find.byWidgetPredicate(
-        (widget) =>
-            widget is OutlinedButton &&
-            widget.child is Text &&
-            (widget.child as Text).data == 'Decline',
-      );
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Decline').first);
+      await tester.pumpAndSettle();
 
-      if (declineButtons.evaluate().isNotEmpty) {
-        await tester.tap(declineButtons.first);
-        await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Decline Request'), findsOneWidget);
 
-        // Verify dialog
-        expect(find.byType(AlertDialog), findsOneWidget);
-        expect(find.text('Decline Request'), findsWidgets);
-      }
+      await tester.tap(find.widgetWithText(TextButton, 'Decline').last);
+      await tester.pumpAndSettle();
+
+      verify(
+        mockRequestProvider.declineRequest(
+          testIncomingRequest1.id,
+          testIncomingRequest1.fromUserId,
+          testIncomingRequest1.skillName,
+        ),
+      ).called(1);
     });
 
-    testWidgets('TEST 3 — switching to Outgoing tab works', (WidgetTester tester) async {
-      mockRequestProvider.setIncoming([testIncomingRequest1]);
-      mockRequestProvider.setOutgoing([testOutgoingRequest]);
+    testWidgets('switching to outgoing tab works', (WidgetTester tester) async {
+      when(mockRequestProvider.incoming).thenReturn([testIncomingRequest1]);
+      when(mockRequestProvider.outgoing).thenReturn([testOutgoingRequest]);
 
       await tester.pumpWidget(
         buildTestApp(
@@ -199,16 +170,15 @@ void main() {
 
       expect(find.text(testIncomingRequest1.fromUserName), findsWidgets);
 
-      // Simulate tab switch
-      mockRequestProvider.setIncoming([]);
-      mockRequestProvider.setOutgoing([testOutgoingRequest]);
+      await tester.tap(find.text('Sent'));
       await tester.pumpAndSettle();
 
-      expect(find.text(testOutgoingRequest.fromUserName), findsWidgets);
+      expect(find.text(testOutgoingRequest.skillName), findsWidgets);
     });
 
-    testWidgets('TEST 4 — empty incoming shows empty state', (WidgetTester tester) async {
-      mockRequestProvider.setIncoming([]);
+    testWidgets('empty incoming shows empty state', (WidgetTester tester) async {
+      when(mockRequestProvider.incoming).thenReturn([]);
+      when(mockRequestProvider.outgoing).thenReturn([]);
 
       await tester.pumpWidget(
         buildTestApp(
@@ -218,7 +188,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Incoming (0)'), findsWidgets);
+      expect(find.text('No requests received yet'), findsOneWidget);
     });
   });
 }
