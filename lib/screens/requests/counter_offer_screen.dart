@@ -62,25 +62,29 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
       appBar: AppBar(
         title: const Text('Counter Offer'),
         elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: AppSpacing.sm),
-              _buildOriginalRequestCard(),
-              SizedBox(height: AppSpacing.xl),
-              _buildProposeHeading(),
-              SizedBox(height: AppSpacing.md),
-              _buildTimeSlotsSection(),
-              SizedBox(height: AppSpacing.xl),
-              _buildMessageField(),
-              SizedBox(height: AppSpacing.lg),
-              _buildSubmitButton(),
-              SizedBox(height: AppSpacing.lg),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: AppSpacing.sm),
+                _buildOriginalRequestCard(),
+                SizedBox(height: AppSpacing.xl),
+                _buildProposeHeading(),
+                SizedBox(height: AppSpacing.md),
+                _buildTimeSlotsSection(),
+                SizedBox(height: AppSpacing.xl),
+                _buildMessageField(),
+                SizedBox(height: AppSpacing.lg),
+                _buildSubmitButton(),
+                SizedBox(height: AppSpacing.lg),
+              ],
+            ),
           ),
         ),
       ),
@@ -91,9 +95,9 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     return Container(
       padding: EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surfaceElevated,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border, width: 1.0),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.borderLight, width: 1.0),
         boxShadow: AppShadows.card,
       ),
       child: Column(
@@ -199,9 +203,9 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
               icon: const Icon(Icons.add, color: AppColors.primary),
               label: const Text('Add another time slot'),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.border, width: 1.0),
+                side: BorderSide(color: AppColors.borderLight, width: 1.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 foregroundColor: AppColors.textPrimary,
               ),
@@ -221,9 +225,10 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
         ),
         SizedBox(height: AppSpacing.sm),
         Container(
+          color: Colors.white,
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: AppColors.borderLight),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: TextField(
             controller: _messageController,
@@ -253,7 +258,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           backgroundColor: AppColors.primary,
           disabledBackgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(16),
           ),
           elevation: 0,
         ),
