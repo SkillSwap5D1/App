@@ -40,7 +40,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFB7DEC7),
+              primary: Color(0xFF064E3B),
               surface: Colors.white,
               onSurface: Color(0xFF0F172A),
             ),
@@ -49,8 +49,8 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               headerBackgroundColor: Color(0xFFF0FDF9),
               headerForegroundColor: Color(0xFF0F172A),
               dayForegroundColor: MaterialStatePropertyAll(Color(0xFF0F172A)),
-              todayForegroundColor: MaterialStatePropertyAll(Color(0xFFB7DEC7)),
-              todayBackgroundColor: MaterialStatePropertyAll(Color(0x1AB7DEC7)),
+              todayForegroundColor: MaterialStatePropertyAll(Color(0xFF064E3B)),
+              todayBackgroundColor: MaterialStatePropertyAll(Color(0x14064E3B)),
               dayBackgroundColor: MaterialStatePropertyAll(Colors.transparent),
             ),
           ),
@@ -74,7 +74,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFB7DEC7),
+              primary: Color(0xFF064E3B),
               surface: Colors.white,
               onSurface: Color(0xFF0F172A),
             ),
@@ -83,7 +83,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               hourMinuteColor: Color(0xFFF0FDF9),
               hourMinuteTextColor: Color(0xFF0F172A),
               dialBackgroundColor: Color(0xFFF8FAFC),
-              dialHandColor: Color(0xFFB7DEC7),
+              dialHandColor: Color(0xFF064E3B),
               dayPeriodColor: Color(0xFFF0FDF9),
               dayPeriodTextColor: Color(0xFF0F172A),
               entryModeIconColor: Color(0xFF0F172A),
@@ -109,7 +109,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFB7DEC7),
+              primary: Color(0xFF064E3B),
               surface: Colors.white,
               onSurface: Color(0xFF0F172A),
             ),
@@ -118,7 +118,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               hourMinuteColor: Color(0xFFF0FDF9),
               hourMinuteTextColor: Color(0xFF0F172A),
               dialBackgroundColor: Color(0xFFF8FAFC),
-              dialHandColor: Color(0xFFB7DEC7),
+              dialHandColor: Color(0xFF064E3B),
               dayPeriodColor: Color(0xFFF0FDF9),
               dayPeriodTextColor: Color(0xFF0F172A),
               entryModeIconColor: Color(0xFF0F172A),
@@ -166,13 +166,13 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFFE2E8F0),
+            color: isSet ? const Color(0xFF064E3B) : const Color(0xFFE2E8F0),
             width: isSet ? 1.5 : 1,
           ),
           boxShadow: [
             if (isSet)
               BoxShadow(
-                color: const Color(0xFFB7DEC7).withOpacity(0.08),
+                color: const Color(0xFF064E3B).withOpacity(0.08),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -183,7 +183,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             Icon(
               Icons.calendar_today_rounded,
               size: 18,
-              color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFF94A3B8),
+              color: isSet ? const Color(0xFF064E3B) : const Color(0xFF94A3B8),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -235,13 +235,13 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFFE2E8F0),
+                  color: isSet ? const Color(0xFF064E3B) : const Color(0xFFE2E8F0),
                   width: isSet ? 1.5 : 1,
                 ),
                 boxShadow: [
                   if (isSet)
                     BoxShadow(
-                      color: const Color(0xFFB7DEC7).withOpacity(0.08),
+                      color: const Color(0xFF064E3B).withOpacity(0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -252,7 +252,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   Icon(
                     Icons.access_time_rounded,
                     size: 16,
-                    color: isSet ? const Color(0xFFB7DEC7) : const Color(0xFF94A3B8),
+                    color: isSet ? const Color(0xFF064E3B) : const Color(0xFF94A3B8),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -288,14 +288,14 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
           color: hasError
               ? const Color(0xFFEF4444)
               : (isComplete
-                  ? const Color(0xFFB7DEC7).withOpacity(0.3)
+                  ? const Color(0xFF064E3B).withOpacity(0.3)
                   : const Color(0xFFE2E8F0)),
           width: hasError ? 1.5 : 1,
         ),
         boxShadow: [
           if (isComplete)
             BoxShadow(
-              color: const Color(0xFFB7DEC7).withOpacity(0.08),
+              color: const Color(0xFF064E3B).withOpacity(0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -320,14 +320,14 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFB7DEC7).withOpacity(0.1),
+                        color: const Color(0xFF064E3B).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Icon(
                           Icons.schedule_rounded,
                           size: 14,
-                          color: const Color(0xFFB7DEC7),
+                          color: const Color(0xFF064E3B),
                         ),
                       ),
                     ),
