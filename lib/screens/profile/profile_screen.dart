@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFFB7DEC7)),
+          Icon(icon, size: 16, color: const Color(0xFF064E3B)),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -250,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFFB7DEC7),
+            activeColor: const Color(0xFF064E3B),
           ),
         ],
       ),
@@ -338,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 88,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFFB7DEC7),
+                            color: Color(0xFF064E3B),
                           ),
                           alignment: Alignment.center,
                           child: Text(
@@ -422,7 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.info_outline, color: Color(0xFFB7DEC7), size: 18),
+                              Icon(Icons.info_outline, color: Color(0xFF064E3B), size: 18),
                               SizedBox(width: 8),
                               Text(
                                 'About',
@@ -452,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.mail_outline, color: Color(0xFFB7DEC7), size: 18),
+                            Icon(Icons.mail_outline, color: Color(0xFF064E3B), size: 18),
                             SizedBox(width: 8),
                             Text(
                               'Contact',
@@ -477,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.school_outlined, color: Color(0xFFB7DEC7), size: 18),
+                            Icon(Icons.school_outlined, color: Color(0xFF064E3B), size: 18),
                             SizedBox(width: 8),
                             Text(
                               'Skills',
@@ -502,7 +502,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             label: const Text('Edit Skills'),
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFFB7DEC7),
+                              foregroundColor: const Color(0xFF064E3B),
                               side: const BorderSide(color: Color(0xFFE2E8F0)),
                               minimumSize: const Size.fromHeight(48),
                               shape: RoundedRectangleBorder(
@@ -520,7 +520,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.lock_outline, color: Color(0xFFB7DEC7), size: 18),
+                            Icon(Icons.lock_outline, color: Color(0xFF064E3B), size: 18),
                             SizedBox(width: 8),
                             Text(
                               'Privacy Settings',
@@ -565,7 +565,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             const Row(
                               children: [
-                                Icon(Icons.star_outline, color: Color(0xFFB7DEC7), size: 18),
+                                Icon(Icons.star_outline, color: Color(0xFF064E3B), size: 18),
                                 SizedBox(width: 8),
                                 Text(
                                   'Reviews',
@@ -580,7 +580,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Text(
                               '${reviews.length}',
                               style: const TextStyle(
-                                color: Color(0xFFB7DEC7),
+                                color: Color(0xFF064E3B),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -641,7 +641,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: const Icon(Icons.edit_rounded),
                       label: const Text('Edit Profile'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFB7DEC7),
+                        backgroundColor: const Color(0xFF064E3B),
                         foregroundColor: Colors.white,
                         minimumSize: const Size(double.infinity, 48),
                         elevation: 0,
