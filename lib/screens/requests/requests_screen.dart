@@ -6,7 +6,6 @@ import '../../providers/auth_provider.dart';
 import '../../services/chat_service.dart';
 import '../chat/chat_thread_screen.dart';
 import '../reviews/rate_review_screen.dart';
-import '../../widgets/notification_icon_button.dart';
 import '../../models/request_model.dart';
 
 class RequestsScreen extends StatefulWidget {
@@ -125,40 +124,131 @@ class _RequestsScreenState extends State<RequestsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        title: const Text('Requests'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: const [NotificationIconButton()],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.accentLight,
-          labelColor: AppColors.textPrimary,
-          unselectedLabelColor: AppColors.textSecondary,
-          labelStyle: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600),
-          unselectedLabelStyle: AppTextStyles.label,
-          tabs: [const Tab(text: 'Received'), const Tab(text: 'Sent')],
-        ),
-      ),
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
-        child: Consumer2<RequestProvider, AuthProvider>(
-          builder: (context, requestProvider, authProvider, _) {
-            return TabBarView(
-              controller: _tabController,
-              children: [
-                // ═════════════════════════════════════════════════════════════
-                // RECEIVED TAB - Requests from other users
-                // ═════════════════════════════════════════════════════════════
-                _buildReceivedRequestsList(requestProvider.incoming, context),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Requests',
+                      style: TextStyle(
+                        color: Color(0xFF0F172A),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Manage your skill exchange requests',
+                      style: TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    bottom: BorderSide(color: Color(0xFFE2E8F0)),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    _buildTab('Received', _tabController.index == 0),
+                    _buildTab('Sent', _tabController.index == 1),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Consumer<RequestProvider>(
+                  builder: (context, requestProvider, _) {
+                    if (requestProvider.isLoading &&
+                        requestProvider.incoming.isEmpty &&
+                        requestProvider.outgoing.isEmpty) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                // ═════════════════════════════════════════════════════════════
-                // SENT TAB - Requests you sent to other users
-                // ═════════════════════════════════════════════════════════════
-                _buildSentRequestsList(requestProvider.outgoing, context),
-              ],
-            );
-          },
+                    if (requestProvider.errorMessage != null &&
+                        requestProvider.incoming.isEmpty &&
+                        requestProvider.outgoing.isEmpty) {
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            requestProvider.errorMessage!,
+                            style: const TextStyle(
+                              color: Color(0xFFB91C1C),
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildReceivedRequestsList(requestProvider.incoming, context),
+                        _buildSentRequestsList(requestProvider.outgoing, context),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(String label, bool isActive) {
+    return GestureDetector(
+      onTap: () => setState(() => _tabController.animateTo(label == 'Received' ? 0 : 1)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: isActive ? const Color(0xFFB7DEC7) : Colors.transparent,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isActive ? const Color(0xFFB7DEC7) : const Color(0xFF64748B),
+            fontSize: 14,
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+          ),
         ),
       ),
     );
@@ -168,37 +258,59 @@ class _RequestsScreenState extends State<RequestsScreen>
     List<RequestModel> requests,
     BuildContext context,
   ) {
-    final visibleRequests =
-        requests.where((request) => !request.isDeclined).toList();
-
-    if (visibleRequests.isEmpty) {
+    if (requests.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.inbox_rounded,
-              size: 48,
-              color: AppColors.accentLight.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No requests received yet',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderLight),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: AppColors.accentVeryLight,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: const Icon(Icons.inbox_rounded, color: AppColors.primary, size: 34),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'No requests received yet',
+                style: AppTextStyles.h3,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Incoming requests will show here when someone wants to swap skills with you.',
+                style: AppTextStyles.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: visibleRequests.length,
+      itemCount: requests.length,
       itemBuilder: (context, index) {
         return _buildRequestCard(
-          visibleRequests[index],
+          requests[index],
           isReceived: true,
           context: context,
         );
@@ -212,22 +324,47 @@ class _RequestsScreenState extends State<RequestsScreen>
   ) {
     if (requests.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.send_rounded,
-              size: 48,
-              color: AppColors.accentLight.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No requests sent yet',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderLight),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: AppColors.accentVeryLight,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: const Icon(Icons.send_rounded, color: AppColors.primary, size: 34),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'No requests sent yet',
+                style: AppTextStyles.h3,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Requests you send to other users will appear here with their status.',
+                style: AppTextStyles.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -254,14 +391,24 @@ class _RequestsScreenState extends State<RequestsScreen>
     final statusIcon = _getStatusIcon(request.status);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: AppColors.glassCard(borderRadius: 20),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderLight),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with name and status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -271,9 +418,10 @@ class _RequestsScreenState extends State<RequestsScreen>
                     children: [
                       Text(
                         isReceived ? request.fromUserName : request.skillName,
-                        style: AppTextStyles.label.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600,
+                        style: const TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -283,9 +431,9 @@ class _RequestsScreenState extends State<RequestsScreen>
                         isReceived
                             ? 'wants to learn ${request.skillName}'
                             : 'from ${request.toUserId}',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 11,
+                        style: const TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 13,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -295,13 +443,11 @@ class _RequestsScreenState extends State<RequestsScreen>
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.12),
+                    color: statusColor.withOpacity(0.10),
                     borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: statusColor.withOpacity(0.30)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -310,10 +456,11 @@ class _RequestsScreenState extends State<RequestsScreen>
                       const SizedBox(width: 4),
                       Text(
                         request.status.toUpperCase(),
-                        style: AppTextStyles.caption.copyWith(
+                        style: TextStyle(
                           color: statusColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 10,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
@@ -321,60 +468,51 @@ class _RequestsScreenState extends State<RequestsScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-
-            // Proposed times
+            const SizedBox(height: 16),
             if (request.proposedTimes.isNotEmpty) ...[
-              Text(
+              const Text(
                 'Proposed Times:',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+                style: TextStyle(
+                  color: Color(0xFF0F172A),
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFF5F3FF), Color(0xFFEAF2FF)],
+              const SizedBox(height: 8),
+              ...request.proposedTimes.take(2).map((time) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDF9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFFB7DEC7).withOpacity(0.2),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        request.proposedTimes.take(2).map((time) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.access_time_rounded,
-                                  size: 12,
-                                  color: AppColors.accent,
-                                ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    time,
-                                    style: AppTextStyles.caption.copyWith(
-                                      color: AppColors.textPrimary,
-                                      fontSize: 10,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time_rounded,
+                        color: Color(0xFFB7DEC7),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          time,
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontSize: 13,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
+                );
+              }),
               if (request.proposedTimes.length > 2)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -388,8 +526,6 @@ class _RequestsScreenState extends State<RequestsScreen>
                 ),
             ],
             const SizedBox(height: 10),
-
-            // Message preview
             if (request.message.isNotEmpty) ...[
               Text(
                 request.message,
@@ -401,29 +537,26 @@ class _RequestsScreenState extends State<RequestsScreen>
               ),
               const SizedBox(height: 10),
             ],
-
-            // Actions based on whether it's received or sent
             if (isReceived) ...[
               if (request.isPending)
                 Row(
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: OutlinedButton(
-                          onPressed:
-                              () => _handleDeclineRequest(context, request),
+                          onPressed: () => _handleDeclineRequest(context, request),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppColors.error),
+                            side: const BorderSide(color: AppColors.borderLight),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Decline',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.error,
-                              fontWeight: FontWeight.w600,
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -432,21 +565,21 @@ class _RequestsScreenState extends State<RequestsScreen>
                     const SizedBox(width: 8),
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: ElevatedButton(
-                          onPressed:
-                              () => _handleAcceptRequest(context, request),
+                          onPressed: () => _handleAcceptRequest(context, request),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: const Color(0xFFB7DEC7),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Accept',
-                            style: AppTextStyles.caption.copyWith(
+                            style: TextStyle(
                               color: Colors.white,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -460,7 +593,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: ElevatedButton(
                           onPressed: () => _openChatForRequest(
                             context,
@@ -468,16 +601,17 @@ class _RequestsScreenState extends State<RequestsScreen>
                             otherUserId: request.fromUserId,
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: const Color(0xFFB7DEC7),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Open Chat',
-                            style: AppTextStyles.caption.copyWith(
+                            style: TextStyle(
                               color: Colors.white,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -487,20 +621,20 @@ class _RequestsScreenState extends State<RequestsScreen>
                     const SizedBox(width: 8),
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: OutlinedButton(
                           onPressed: () => _handleEndRequest(context, request),
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColors.accent),
+                            side: const BorderSide(color: Color(0xFFE2E8F0)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Mark ended',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w600,
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -511,25 +645,25 @@ class _RequestsScreenState extends State<RequestsScreen>
               else
                 SizedBox(
                   width: double.infinity,
-                  height: 36,
+                  height: 44,
                   child: ElevatedButton(
-                    onPressed:
-                        () => _openChatForRequest(
-                          context,
-                          request,
-                          otherUserId: request.fromUserId,
-                        ),
+                    onPressed: () => _openChatForRequest(
+                      context,
+                      request,
+                      otherUserId: request.fromUserId,
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: const Color(0xFFB7DEC7),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Open Chat',
-                      style: AppTextStyles.caption.copyWith(
+                      style: TextStyle(
                         color: Colors.white,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -541,20 +675,21 @@ class _RequestsScreenState extends State<RequestsScreen>
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: ElevatedButton(
                           onPressed: () => _showRequestDetails(context, request),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: const Color(0xFFB7DEC7),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'View Details',
-                            style: AppTextStyles.caption.copyWith(
+                            style: TextStyle(
                               color: Colors.white,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -564,20 +699,20 @@ class _RequestsScreenState extends State<RequestsScreen>
                     const SizedBox(width: 8),
                     Expanded(
                       child: SizedBox(
-                        height: 36,
+                        height: 44,
                         child: OutlinedButton(
                           onPressed: () => _handleEndRequest(context, request),
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColors.accent),
+                            side: const BorderSide(color: Color(0xFFE2E8F0)),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Mark ended',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w600,
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -588,20 +723,21 @@ class _RequestsScreenState extends State<RequestsScreen>
               else
                 SizedBox(
                   width: double.infinity,
-                  height: 36,
+                  height: 44,
                   child: ElevatedButton(
                     onPressed: () => _showRequestDetails(context, request),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: const Color(0xFFB7DEC7),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'View Details',
-                      style: AppTextStyles.caption.copyWith(
+                      style: TextStyle(
                         color: Colors.white,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
