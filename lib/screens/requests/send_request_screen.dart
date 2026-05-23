@@ -149,16 +149,19 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
     final padding = isMobile ? AppSpacing.md : AppSpacing.lg;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
+          padding: const EdgeInsets.all(8),
           child: CircleAvatar(
-            backgroundColor: AppColors.accentLight,
+            backgroundColor: const Color(0xFFF0FDF9),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.accent),
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+                color: Color(0xFFB7DEC7),
+              ),
               onPressed: () => Navigator.pop(context),
               splashRadius: 20,
             ),
@@ -166,76 +169,96 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
         ),
         title: Text(
           'Send Request',
-          style: AppTextStyles.h2.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
+          style: const TextStyle(
+            color: Color(0xFF0F172A),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: Color(0xFFE2E8F0)),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                _buildListingSummary(),
+                const SizedBox(height: 16),
+                _buildTimeSlotsSection(),
+                const SizedBox(height: 16),
+                if (_errorMessage.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFEF4444).withOpacity(0.25),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          color: Color(0xFFEF4444),
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _errorMessage,
+                            style: const TextStyle(
+                              color: Color(0xFFEF4444),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                _buildNoteField(),
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: AppSpacing.md),
-
-              // Listing Summary Section
-              _buildListingSummary(),
-              SizedBox(height: AppSpacing.xl),
-
-              // Time Slots Section
-              _buildTimeSlotsSection(),
-              SizedBox(height: AppSpacing.lg),
-
-              // Error message
-              if (_errorMessage.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.errorLight,
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                    border: Border.all(color: AppColors.error, width: 1),
-                  ),
-                  child: Text(
-                    _errorMessage,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.error,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              SizedBox(height: AppSpacing.lg),
-
-              // Note field
-              _buildNoteField(),
-              SizedBox(height: AppSpacing.xl),
-
-              // Send Request button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _submitRequest,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
-                  ),
-                  child: Text(
-                    'Send Request',
-                    style: AppTextStyles.button.copyWith(
-                      color: AppColors.surface,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: _submitRequest,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFB7DEC7),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              SizedBox(height: AppSpacing.xl),
-            ],
+            ),
+            child: const Text(
+              'Send Request',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
       ),
@@ -244,11 +267,19 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
 
   Widget _buildListingSummary() {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border, width: 1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +309,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                 ),
               ),
               CircleAvatar(
-                backgroundColor: AppColors.accentLight,
+                backgroundColor: const Color(0xFFB7DEC7),
                 child: Text(
                   widget.listing.ownerName
                       .split(' ')
@@ -287,8 +318,8 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                       .join()
                       .toUpperCase(),
                   style: AppTextStyles.h3.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -308,13 +339,14 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
                       vertical: AppSpacing.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.accentLight,
+                      color: const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(AppRadius.full),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
                     child: Text(
                       tag,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.primary,
+                        color: const Color(0xFF475569),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -331,43 +363,77 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Propose Time Slots',
-          style: AppTextStyles.h2.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Propose Time Slots',
+                style: TextStyle(
+                  color: Color(0xFF0F172A),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Add up to 3 possible times',
+                style: TextStyle(
+                  color: Color(0xFF64748B),
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: AppSpacing.md),
-
-        // Time slot items
+        const SizedBox(height: 16),
         Column(
           children: List.generate(
             _timeSlots.length,
             (index) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: TimeSlotPicker(
-                slot: _timeSlots[index],
-                onRemove: () => _removeTimeSlot(index),
-                showRemove: _timeSlots.length > 1,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TimeSlotPicker(
+                  slot: _timeSlots[index],
+                  onRemove: () => _removeTimeSlot(index),
+                  showRemove: _timeSlots.length > 1,
+                ),
               ),
             ),
           ),
         ),
 
-        // Add another time slot button
         if (_timeSlots.length < 3)
-          SizedBox(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _addTimeSlot,
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add_rounded, size: 18),
               label: const Text('Add another time slot'),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                backgroundColor: Colors.white,
+                side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                foregroundColor: const Color(0xFF64748B),
+                minimumSize: const Size.fromHeight(48),
               ),
             ),
           ),
@@ -381,8 +447,9 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
       children: [
         Text(
           'Message (optional)',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
+          style: const TextStyle(
+            color: Color(0xFF0F172A),
+            fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -392,16 +459,23 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'Add a note for the provider...',
-            hintStyle: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            hintStyle: const TextStyle(
+              color: Color(0xFF94A3B8),
+              fontSize: 13,
             ),
+            filled: true,
+            fillColor: Colors.white,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              borderSide: const BorderSide(color: AppColors.border, width: 1),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFB7DEC7), width: 1.5),
             ),
             contentPadding: const EdgeInsets.all(AppSpacing.md),
           ),
