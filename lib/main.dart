@@ -8,6 +8,7 @@ import 'providers/listing_provider.dart';
 import 'providers/request_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/review_provider.dart';
 import 'screens/auth/auth_wrapper.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
@@ -189,6 +190,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RequestProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
       ],
       child: MaterialApp(
         title: 'SkillSwap',
