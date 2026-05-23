@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../theme/app_theme.dart';
-import '../../providers/auth_provider.dart';
+
 import '../../models/user_model.dart';
-import '../../models/review_model.dart';
-import '../../widgets/notification_icon_button.dart';
-import '../../widgets/review_tile.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/review_provider.dart';
 import '../../services/user_service.dart';
-import '../../services/review_service.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/review_tile.dart';
 import './edit_profile_screen.dart';
 import './edit_skills_screen.dart';
 
@@ -22,18 +21,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late bool _showFullName;
   late bool _showCourse;
   late bool _showPhoto;
+  String? _loadedReviewsForUserId;
 
   @override
   void initState() {
     super.initState();
-    _initializePrivacySettings();
-  }
-
-  void _initializePrivacySettings() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     _showFullName = authProvider.currentUser?.showFullName ?? true;
     _showCourse = authProvider.currentUser?.showCourse ?? true;
     _showPhoto = authProvider.currentUser?.showPhoto ?? true;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final userId = context.read<AuthProvider>().currentUser?.uid;
+    if (userId != null && _loadedReviewsForUserId != userId) {
+      _loadedReviewsForUserId = userId;
+      context.read<ReviewProvider>().loadReviewsForUser(userId);
+    }
   }
 
   String _getDisplayName(String firstName, String lastName) {
@@ -44,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _formatMemberSince(DateTime date) {
-    final months = [
+    const months = [
       'January',
       'February',
       'March',
@@ -61,11 +67,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return 'Member since ${months[date.month - 1]} ${date.year}';
   }
 
-  int _getReviewCount(UserModel user) {
-    return user.totalReviews;
-  }
+  int _getReviewCount(UserModel user) => user.totalReviews;
 
-  void _handlePrivacyToggle(
+  Future<void> _handlePrivacyToggle(
     String setting,
     bool newValue,
     AuthProvider authProvider,
@@ -83,625 +87,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
         showPhoto: _showPhoto,
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update privacy settings: $e')),
       );
-      _initializePrivacySettings();
+      final currentUser = authProvider.currentUser;
+      if (currentUser != null) {
+        _showFullName = currentUser.showFullName;
+        _showCourse = currentUser.showCourse;
+        _showPhoto = currentUser.showPhoto;
+      }
       setState(() {});
     }
   }
 
-  void _navigateToEditProfile() async {
-    final result = await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const EditProfileScreen()));
+  Future<void> _navigateToEditProfile() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+    );
 
     if (result is bool && result) {
-      _initializePrivacySettings();
       setState(() {});
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        actions: const [NotificationIconButton()],
-      ),
-      body: Consumer<AuthProvider>(
-        builder: (context, authProvider, _) {
-          final user = authProvider.currentUser;
-          if (user == null) {
-            return const Center(child: Text('No user data'));
-          }
-
-          return ListView(
-            children: [
-              // ─────────────── HERO SECTION ──────────────────────────────────
-              Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFEDE9F6), Color(0xFFF5F3FF)],
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 32,
-                  horizontal: 16,
-                ),
-                child: Column(
-                  children: [
-                    // Avatar with initials
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          user.initials,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Full name
-                    Text(
-                      _getDisplayName(user.firstName, user.lastName),
-                      style: AppTextStyles.h2.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    // Course (respects privacy)
-                    if (_showCourse) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        user.course,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-
-                    const SizedBox(height: 12),
-
-                    // Star rating row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Stars
-                        Row(
-                          children: List.generate(5, (index) {
-                            final isFilled = index < user.rating;
-                            return Icon(
-                              isFilled ? Icons.star : Icons.star_border,
-                              color: Colors.amber,
-                              size: 18,
-                            );
-                          }),
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Rating number
-                        Text(
-                          user.rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-
-                        const SizedBox(width: 4),
-
-                        // Review count
-                        Text(
-                          '(${_getReviewCount(user)} reviews)',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Stats row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildStatColumn(
-                          'Sessions',
-                          user.sessionsCompleted.toString(),
-                          'Completed',
-                        ),
-                        _buildDivider(),
-                        _buildStatColumn(
-                          'Rating',
-                          user.rating.toStringAsFixed(1),
-                          'Average',
-                        ),
-                        _buildDivider(),
-                        _buildStatColumn('Skills', '2', 'Offered'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─────────────── ABOUT SECTION ────────────────────────────────
-              if (user.bio.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.info_outline,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'About',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        user.bio,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF6B6B6B),
-                          height: 1.6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
-              // ─────────────── CONTACT SECTION ───────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.mail_outline,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Contact',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Email
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F0FF),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.mail_outline,
-                            color: AppColors.primary,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              user.email,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: AppColors.textPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Member since
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F0FF),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.calendar_today_outlined,
-                            color: AppColors.primary,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            _formatMemberSince(user.memberSince),
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─────────────── SKILLS SECTION ────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.school_outlined,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Skills',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Can Teach Section
-                    _buildSkillsSubsection(
-                      title: 'Can Teach',
-                      skills: user.canTeach,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Wants to Learn Section
-                    _buildSkillsSubsection(
-                      title: 'Wants to Learn',
-                      skills: user.wantsToLearn,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Edit Skills Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _navigateToEditSkills,
-                        icon: const Icon(Icons.edit),
-                        label: const Text('Edit Skills'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                          side: const BorderSide(color: AppColors.primary),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─────────────── PRIVACY SETTINGS ──────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.lock_outline,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Privacy Settings',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Toggle 1: Show full name
-                    _buildPrivacyToggle(
-                      title: 'Show my full name',
-                      subtitle: 'Visible to other students',
-                      value: _showFullName,
-                      onChanged:
-                          (value) => _handlePrivacyToggle(
-                            'fullName',
-                            value,
-                            authProvider,
-                          ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Toggle 2: Show course
-                    _buildPrivacyToggle(
-                      title: 'Show my course',
-                      subtitle: 'Display your program info',
-                      value: _showCourse,
-                      onChanged:
-                          (value) => _handlePrivacyToggle(
-                            'course',
-                            value,
-                            authProvider,
-                          ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Toggle 3: Show profile picture
-                    _buildPrivacyToggle(
-                      title: 'Show my profile picture',
-                      subtitle: 'Avatar visible publicly',
-                      value: _showPhoto,
-                      onChanged:
-                          (value) => _handlePrivacyToggle(
-                            'photo',
-                            value,
-                            authProvider,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─────────────── REVIEWS SECTION ────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star_outline,
-                              color: AppColors.primary,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Reviews',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '${user.totalReviews}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    FutureBuilder<List<ReviewModel>>(
-                      future: ReviewService().getReviewsForUser(user.uid),
-                      builder: (context, reviewsSnapshot) {
-                        if (reviewsSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox(
-                            height: 100,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-
-                        if (reviewsSnapshot.hasError) {
-                          return Container(
-                            padding: const EdgeInsets.all(AppSpacing.md),
-                            decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.md),
-                            ),
-                            child: Text(
-                              'Could not load reviews',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.error,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final reviews = reviewsSnapshot.data ?? [];
-
-                        if (reviews.isEmpty) {
-                          return Container(
-                            padding: const EdgeInsets.all(AppSpacing.lg),
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceElevated,
-                              border: Border.all(color: AppColors.border),
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.md),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'No reviews yet',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: reviews.length,
-                          itemBuilder: (context, index) {
-                            return FutureBuilder<UserModel?>(
-                              future: UserService()
-                                  .getUser(reviews[index].reviewerId),
-                              builder: (context, userSnapshot) {
-                                final reviewer = userSnapshot.data;
-                                final reviewerName =
-                                    reviewer?.displayName ?? 'Unknown User';
-                                final reviewerInitial =
-                                    reviewerName.isNotEmpty
-                                        ? reviewerName[0].toUpperCase()
-                                        : '?';
-
-                                return ReviewTile(
-                                  review: reviews[index],
-                                  reviewerName: reviewerName,
-                                  reviewerInitial: reviewerInitial,
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─────────────── EDIT PROFILE BUTTON ────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: ElevatedButton.icon(
-                  onPressed: _navigateToEditProfile,
-                  icon: const Icon(Icons.edit),
-                  label: const Text('Edit Profile'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-
-              // ─────────────── SIGN OUT BUTTON ────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: ElevatedButton(
-                  onPressed: () => _handleSignOut(authProvider),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade50,
-                    foregroundColor: Colors.red.shade700,
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Sign Out'),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-            ],
-          );
-        },
-      ),
+  Future<void> _navigateToEditSkills() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const EditSkillsScreen()),
     );
+
+    if (result is bool && result) {
+      setState(() {});
+    }
   }
 
-  Widget _buildStatColumn(String label, String value, String sublabel) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+  Future<void> _handleSignOut(AuthProvider authProvider) async {
+    await authProvider.signOut();
+  }
+
+  Widget _buildCard({required Widget child, EdgeInsetsGeometry? margin}) {
+    return Container(
+      margin: margin ?? const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          sublabel,
-          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-        ),
-      ],
+        ],
+      ),
+      child: child,
     );
   }
 
-  Widget _buildDivider() {
-    return Container(width: 1, height: 40, color: AppColors.border);
+  Widget _buildPill(IconData icon, String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: const Color(0xFFB7DEC7)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF0F172A),
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStat(String label, String value, String sublabel) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Column(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Color(0xFF0F172A),
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sublabel,
+              style: const TextStyle(
+                color: Color(0xFF94A3B8),
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildPrivacyToggle({
@@ -710,74 +215,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required bool value,
     required Function(bool) onChanged,
   }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Color(0xFF0F172A),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textMuted,
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Color(0xFF64748B),
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeColor: AppColors.primary,
-          inactiveThumbColor: AppColors.textMuted,
-          inactiveTrackColor: AppColors.textMuted.withValues(alpha: 0.3),
-        ),
-      ],
-    );
-  }
-
-  void _handleSignOut(AuthProvider authProvider) async {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Sign Out'),
-            content: const Text('Are you sure you want to sign out?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await authProvider.signOut();
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Signed out successfully')),
-                    );
-                    // Navigate to login screen after signing out
-                    Navigator.of(
-                      context,
-                    ).pushNamedAndRemoveUntil('/login', (route) => false);
-                  }
-                },
-                child: const Text('Sign Out'),
-              ),
-            ],
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: const Color(0xFFB7DEC7),
           ),
+        ],
+      ),
     );
   }
 
@@ -791,60 +267,413 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(
           title,
           style: const TextStyle(
+            color: Color(0xFF0F172A),
             fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         if (skills.isEmpty)
-          Text(
-            'No skills selected yet',
-            style: const TextStyle(
+          const Text(
+            'No skills added yet.',
+            style: TextStyle(
+              color: Color(0xFF94A3B8),
               fontSize: 13,
-              color: AppColors.textMuted,
-              fontStyle: FontStyle.italic,
             ),
           )
         else
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children:
-                skills
-                    .map(
-                      (skill) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.accentVeryLight,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          skill,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+            children: skills
+                .map(
+                  (skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF9),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: const Color(0xFFDFFBF1)),
+                    ),
+                    child: Text(
+                      skill,
+                      style: const TextStyle(
+                        color: Color(0xFF0F172A),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
       ],
     );
   }
 
-  void _navigateToEditSkills() async {
-    final result = await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const EditSkillsScreen()));
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SafeArea(
+          child: Consumer2<AuthProvider, ReviewProvider>(
+            builder: (context, authProvider, reviewProvider, _) {
+              final user = authProvider.currentUser;
+              if (user == null) {
+                return const Center(child: Text('No user data'));
+              }
 
-    if (result is bool && result) {
-      setState(() {});
-    }
+              final reviews = reviewProvider.reviews;
+
+              return ListView(
+                padding: const EdgeInsets.only(bottom: 24),
+                children: [
+                  _buildCard(
+                    margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 88,
+                          height: 88,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFB7DEC7),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            user.initials,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _getDisplayName(user.firstName, user.lastName),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        if (user.course.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            user.course,
+                            style: const TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 18),
+                            const SizedBox(width: 6),
+                            Text(
+                              user.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '(${_getReviewCount(user)} reviews)',
+                              style: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.72),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Row(
+                            children: [
+                              _buildStat('Sessions', user.sessionsCompleted.toString(), 'Completed'),
+                              Container(width: 1, height: 56, color: const Color(0xFFE2E8F0)),
+                              _buildStat('Rating', user.rating.toStringAsFixed(1), 'Average'),
+                              Container(width: 1, height: 56, color: const Color(0xFFE2E8F0)),
+                              _buildStat('Skills', '${user.canTeach.length}', 'Offered'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (user.bio.isNotEmpty)
+                    _buildCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.info_outline, color: Color(0xFFB7DEC7), size: 18),
+                              SizedBox(width: 8),
+                              Text(
+                                'About',
+                                style: TextStyle(
+                                  color: Color(0xFF0F172A),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            user.bio,
+                            style: const TextStyle(
+                              color: Color(0xFF475569),
+                              fontSize: 14,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  _buildCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.mail_outline, color: Color(0xFFB7DEC7), size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Contact',
+                              style: TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPill(Icons.mail_outline, user.email),
+                        const SizedBox(height: 8),
+                        _buildPill(Icons.calendar_today_outlined, _formatMemberSince(user.memberSince)),
+                      ],
+                    ),
+                  ),
+                  _buildCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.school_outlined, color: Color(0xFFB7DEC7), size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Skills',
+                              style: TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _buildSkillsSubsection(title: 'Can Teach', skills: user.canTeach),
+                        const SizedBox(height: 16),
+                        _buildSkillsSubsection(title: 'Wants to Learn', skills: user.wantsToLearn),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: _navigateToEditSkills,
+                            icon: const Icon(Icons.edit_rounded, size: 18),
+                            label: const Text('Edit Skills'),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFFB7DEC7),
+                              side: const BorderSide(color: Color(0xFFE2E8F0)),
+                              minimumSize: const Size.fromHeight(48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.lock_outline, color: Color(0xFFB7DEC7), size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Privacy Settings',
+                              style: TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _buildPrivacyToggle(
+                          title: 'Show my full name',
+                          subtitle: 'Visible to other students',
+                          value: _showFullName,
+                          onChanged: (value) => _handlePrivacyToggle('fullName', value, authProvider),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPrivacyToggle(
+                          title: 'Show my course',
+                          subtitle: 'Display your program info',
+                          value: _showCourse,
+                          onChanged: (value) => _handlePrivacyToggle('course', value, authProvider),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPrivacyToggle(
+                          title: 'Show my profile picture',
+                          subtitle: 'Avatar visible publicly',
+                          value: _showPhoto,
+                          onChanged: (value) => _handlePrivacyToggle('photo', value, authProvider),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.star_outline, color: Color(0xFFB7DEC7), size: 18),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Reviews',
+                                  style: TextStyle(
+                                    color: Color(0xFF0F172A),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '${reviews.length}',
+                              style: const TextStyle(
+                                color: Color(0xFFB7DEC7),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (reviews.isEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: const Text(
+                              'No reviews yet.',
+                              style: TextStyle(color: Color(0xFF64748B)),
+                            ),
+                          )
+                        else
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: reviews.length,
+                            itemBuilder: (context, index) {
+                              final review = reviews[index];
+                              final reviewer = reviewProvider.reviewers[review.reviewerId];
+                              final reviewerName = reviewer?.displayName ?? 'Unknown User';
+                              final reviewerInitial = reviewerName.isNotEmpty ? reviewerName[0].toUpperCase() : '?';
+
+                              return FutureBuilder<UserModel?>(
+                                future: reviewer != null
+                                    ? Future.value(reviewer)
+                                    : UserService().getUser(review.reviewerId),
+                                builder: (context, snapshot) {
+                                  final loadedReviewer = snapshot.data;
+                                  final resolvedName = loadedReviewer?.displayName ?? reviewerName;
+                                  final resolvedInitial = resolvedName.isNotEmpty ? resolvedName[0].toUpperCase() : reviewerInitial;
+
+                                  return ReviewTile(
+                                    review: review,
+                                    reviewerName: resolvedName,
+                                    reviewerInitial: resolvedInitial,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: ElevatedButton.icon(
+                      onPressed: _navigateToEditProfile,
+                      icon: const Icon(Icons.edit_rounded),
+                      label: const Text('Edit Profile'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFB7DEC7),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 48),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: ElevatedButton(
+                      onPressed: () => _handleSignOut(authProvider),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFEF4444),
+                        minimumSize: const Size(double.infinity, 48),
+                        elevation: 0,
+                        side: const BorderSide(color: Color(0xFFEF4444)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Sign Out'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
