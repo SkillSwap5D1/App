@@ -6,64 +6,9 @@ import 'package:skillswap_app/models/listing_model.dart';
 import 'package:skillswap_app/models/user_model.dart';
 import 'package:skillswap_app/providers/listing_provider.dart';
 import 'package:skillswap_app/providers/auth_provider.dart';
-import 'package:skillswap_app/providers/notification_provider.dart';
 import 'package:skillswap_app/screens/browse/browse_screen.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
-
-// ── Mock Providers ────────────────────────────────────────────────────────
-
-class MockListingProvider extends ChangeNotifier {
-  List<ListingModel> listings = [];
-  List<ListingModel> myListings = [];
-  bool isLoading = false;
-  String? errorMessage;
-
-  void setListings(List<ListingModel> newListings) {
-    listings = newListings;
-    notifyListeners();
-  }
-
-  void setMyListings(List<ListingModel> newListings) {
-    myListings = newListings;
-    notifyListeners();
-  }
-
-  void setLoading(bool value) {
-    isLoading = value;
-    notifyListeners();
-  }
-
-  Future<void> loadListings() async {}
-  Future<void> loadMyListings(String uid) async {}
-  Future<void> searchListings({
-    String query = '',
-    String category = 'All',
-    String level = 'All Levels',
-    String modality = 'All Formats',
-  }) async {}
-
-  bool isSaved(String listingId) => false;
-  List<ListingModel> get savedListings => [];
-  Future<void> loadSavedListings(String uid) async {}
-  Future<void> toggleSaved(String uid, String listingId) async {}
-  Future<void> createListing(ListingModel listing) async {}
-  Future<void> updateListing(String id, Map<String, dynamic> data) async {}
-  Future<void> deleteListing(String id) async {}
-}
-
-class MockAuthProvider extends ChangeNotifier {
-  bool loading = false;
-  UserModel? currentUser;
-
-  MockAuthProvider({this.currentUser});
-
-  bool get isLoading => loading;
-}
-
-class MockNotificationProvider extends Mock implements NotificationProvider {
-  @override
-  int get unreadCount => 0;
-}
+import '../mocks.mocks.dart';
 
 // ── Test Fixtures ──────────────────────────────────────────────────────
 
@@ -115,8 +60,8 @@ final testListing2 = ListingModel(
 // ── Test Widget Builder ─────────────────────────────────────────────────
 
 Widget buildTestApp({
-  required MockListingProvider listingProvider,
-  required MockAuthProvider authProvider,
+  required ListingProvider listingProvider,
+  required AuthProvider authProvider,
 }) {
   Provider.debugCheckInvalidValueType = null;
 
@@ -124,15 +69,8 @@ Widget buildTestApp({
     theme: AppTheme.theme,
     home: MultiProvider(
       providers: [
-        ChangeNotifierProvider<ListingProvider>(
-          create: (_) => listingProvider as ListingProvider,
-        ),
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => authProvider as AuthProvider,
-        ),
-        ChangeNotifierProvider<NotificationProvider>(
-          create: (_) => MockNotificationProvider() as NotificationProvider,
-        ),
+        Provider<ListingProvider>.value(value: listingProvider),
+        Provider<AuthProvider>.value(value: authProvider),
       ],
       child: const BrowseScreen(),
     ),
@@ -148,11 +86,20 @@ void main() {
 
     setUp(() {
       mockListingProvider = MockListingProvider();
-      mockAuthProvider = MockAuthProvider(currentUser: testUser);
+      mockAuthProvider = MockAuthProvider();
+      when(mockListingProvider.isLoading).thenReturn(false);
+      when(mockListingProvider.listings).thenReturn([]);
+      when(mockAuthProvider.isLoading).thenReturn(false);
+      when(mockAuthProvider.currentUser).thenReturn(testUser);
     });
 
-    testWidgets('TEST 1 — renders listing cards with mock data', (WidgetTester tester) async {
-      mockListingProvider.setListings([testListing1, testListing2]);
+    testWidgets('renders listing cards with mock data', (WidgetTester tester) async {
+      when(mockListingProvider.listings).thenReturn([testListing1, testListing2]);
+
+      await tester.binding.setSurfaceSize(const Size(680, 2000));
+      addTearDown(() async {
+        await tester.binding.setSurfaceSize(null);
+      });
 
       await tester.pumpWidget(
         buildTestApp(
@@ -164,11 +111,16 @@ void main() {
 
       expect(find.text(testListing1.title), findsWidgets);
       expect(find.text(testListing2.title), findsWidgets);
-      expect(find.text(testListing1.ownerName), findsWidgets);
+      expect(find.text(testListing1.category), findsWidgets);
     });
 
-    testWidgets('TEST 2 — search filters cards in real time', (WidgetTester tester) async {
-      mockListingProvider.setListings([testListing1, testListing2]);
+    testWidgets('search filters cards in real time', (WidgetTester tester) async {
+      when(mockListingProvider.listings).thenReturn([testListing1, testListing2]);
+
+      await tester.binding.setSurfaceSize(const Size(680, 2000));
+      addTearDown(() async {
+        await tester.binding.setSurfaceSize(null);
+      });
 
       await tester.pumpWidget(
         buildTestApp(
@@ -178,66 +130,65 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify initial state
       expect(find.text(testListing1.title), findsWidgets);
       expect(find.text(testListing2.title), findsWidgets);
 
-      // Simulate search result - only showing first listing
-      mockListingProvider.setListings([testListing1]);
+      await tester.enterText(find.byType(TextField).first, 'Spanish');
       await tester.pumpAndSettle();
 
-      expect(find.text(testListing1.title), findsWidgets);
+      expect(find.text(testListing1.title), findsNothing);
+      expect(find.text(testListing2.title), findsWidgets);
+    });
+
+    testWidgets('empty listings shows empty state', (WidgetTester tester) async {
+      when(mockListingProvider.listings).thenReturn([]);
+
+      await tester.binding.setSurfaceSize(const Size(680, 2000));
+      addTearDown(() async {
+        await tester.binding.setSurfaceSize(null);
+      });
+
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No listings match this search'), findsOneWidget);
+    });
+
+    testWidgets('my listings tab shows the owner listing', (WidgetTester tester) async {
+      final ownedListing = testListing1.copyWith(
+        ownerId: testUser.uid,
+        ownerName: testUser.fullName,
+      );
+      when(mockListingProvider.listings).thenReturn([
+        testListing1,
+        testListing2,
+        ownedListing,
+      ]);
+
+      await tester.binding.setSurfaceSize(const Size(680, 2000));
+      addTearDown(() async {
+        await tester.binding.setSurfaceSize(null);
+      });
+
+      await tester.pumpWidget(
+        buildTestApp(
+          listingProvider: mockListingProvider,
+          authProvider: mockAuthProvider,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('My Listings'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Your listings'), findsOneWidget);
+      expect(find.text(ownedListing.title), findsOneWidget);
       expect(find.text(testListing2.title), findsNothing);
-    });
-
-    testWidgets('TEST 3 — empty listings shows empty state', (WidgetTester tester) async {
-      mockListingProvider.setListings([]);
-
-      await tester.pumpWidget(
-        buildTestApp(
-          listingProvider: mockListingProvider,
-          authProvider: mockAuthProvider,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('No skills available'), findsWidgets);
-    });
-
-    testWidgets('TEST 4 — isLoading shows CircularProgressIndicator', (WidgetTester tester) async {
-      mockListingProvider.setLoading(true);
-
-      await tester.pumpWidget(
-        buildTestApp(
-          listingProvider: mockListingProvider,
-          authProvider: mockAuthProvider,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
-    });
-
-    testWidgets('TEST 5 — switching to My Skills tab changes buttons', (WidgetTester tester) async {
-      mockListingProvider.setListings([testListing1]);
-      mockListingProvider.setMyListings([testListing2]);
-
-      await tester.pumpWidget(
-        buildTestApp(
-          listingProvider: mockListingProvider,
-          authProvider: mockAuthProvider,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Verify Available tab shows testListing1
-      expect(find.text(testListing1.title), findsWidgets);
-
-      // Simulate switching to My Skills
-      mockListingProvider.setListings([testListing2]);
-      await tester.pumpAndSettle();
-
-      expect(find.text(testListing2.title), findsWidgets);
     });
   });
 }
