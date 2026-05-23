@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// App colour palette - Light glassmorphism theme
+/// App colour palette - soft editorial theme
 class AppColors {
-  static const Color background = Color(0xFFF6F3FF);
+  static const Color background = Color(0xFFFAFAF8);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceElevated = Color(0xD8FFFFFF);
   static const Color surfaceGlass = Color(0xE6FFFFFF);
   static const Color surfaceSolid = Color(0xFFFFFFFF);
-  static const Color primary = Color(0xFF7C3AED);
+  static const Color primary = Color(0xFFB7DEC7);
 
-  static const Color accent = Color(0xFF7C3AED);
-  static const Color accentMedium = Color(0xFF8B5CF6);
-  static const Color accentLight = Color(0xFFA78BFA);
-  static const Color accentVeryLight = Color(0xFFEDE9FE);
-  static const Color accentUltraLight = Color(0xFFF5F3FF);
-  static const Color accentDeep = Color(0xFF8B5CF6);
-  static const Color accentGlow = Color(0x337C3AED);
+  static const Color accent = Color(0xFFB7DEC7);
+  static const Color accentMedium = Color(0xFFA6D3B6);
+  static const Color accentLight = Color(0xFFE3F4E9);
+  static const Color accentVeryLight = Color(0xFFF4FBF6);
+  static const Color accentUltraLight = Color(0xFFF8FFFC);
+  static const Color accentDeep = Color(0xFF6FA888);
+  static const Color accentGlow = Color(0x33B7DEC7);
 
-  static const Color textPrimary = Color(0xFF1E1B4B);
+  static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textMuted = Color(0xFF9CA3AF);
 
-  static const Color border = Color(0x1F7C3AED);
-  static const Color borderLight = Color(0x0F7C3AED);
-  static const Color borderActive = Color(0x997C3AED);
+  static const Color border = Color(0x1FB7DEC7);
+  static const Color borderLight = Color(0x0FB7DEC7);
+  static const Color borderActive = Color(0x99B7DEC7);
 
   static const Color success = Color(0xFF059669);
   // Pastel green for softer accents
-  static const Color pastelGreen = Color(0xFFD1FAE5);
-  static const Color pastelGreenDeep = Color(0xFF86E4B7);
+  static const Color pastelGreen = Color(0xFFDCEFE2);
+  static const Color pastelGreenDeep = Color(0xFF86B894);
   static const Color error = Color(0xFFDC2626);
   static const Color errorLight = Color(0x1ADC2626);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
-  static const Color surfaceWarm = Color(0xFFF5F3FF);
-  static const Color heroBgTop = Color(0xFFEDE9F6);
+  static const Color surfaceWarm = Color(0xFFF7FFFC);
+  static const Color heroBgTop = Color(0xFFF0FBF7);
 
   static const Gradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFEDE9F6),
-      Color(0xFFEAF2FF),
-      Color(0xFFFFF4E8),
-      Color(0xFFF5F3FF),
+      Color(0xFFEAF4ED),
+      Color(0xFFF5F0F8),
+      Color(0xFFFDF0EC),
+      Color(0xFFF8FAFC),
     ],
     stops: [0.0, 0.35, 0.65, 1.0],
   );
@@ -54,7 +54,7 @@ class AppColors {
   static const Gradient accentGradient = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [Color(0xFF7C3AED), Color(0xFF60A5FA)],
+    colors: [Color(0xFFB7DEC7), Color(0xFFBFE7FF)],
   );
 
   static BoxDecoration glassCard({double borderRadius = 24}) {
@@ -64,9 +64,9 @@ class AppColors {
         end: Alignment.bottomRight,
         colors: [
           Colors.white.withValues(alpha: 0.90),
-          Color(0xFFBFDBFE).withValues(alpha: 0.24),
+          Color(0xFFBFEFE8).withValues(alpha: 0.24),
           Color(0xFFD1FAE5).withValues(alpha: 0.18),
-          Color(0xFFFCD8B8).withValues(alpha: 0.18),
+          Color(0xFFF9DCCB).withValues(alpha: 0.18),
         ],
       ),
       borderRadius: BorderRadius.circular(borderRadius),
@@ -76,7 +76,7 @@ class AppColors {
       ),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF7C3AED).withValues(alpha: 0.06),
+          color: const Color(0xFFB7DEC7).withValues(alpha: 0.10),
           blurRadius: 24,
           spreadRadius: 0,
           offset: const Offset(0, 8),
@@ -216,16 +216,15 @@ class AppRadius {
 
 class AppShadows {
   static const List<BoxShadow> card = [
-    BoxShadow(color: Color(0x147C3AED), blurRadius: 24, offset: Offset(0, 8)),
-    BoxShadow(color: Color(0x66FFFFFF), blurRadius: 0, offset: Offset(0, 0)),
+    BoxShadow(color: Color(0x14B7DEC7), blurRadius: 24, offset: Offset(0, 8)),
   ];
 
   static const List<BoxShadow> modal = [
-    BoxShadow(color: Color(0x1A7C3AED), blurRadius: 32, offset: Offset(0, 12)),
+    BoxShadow(color: Color(0x1AB7DEC7), blurRadius: 32, offset: Offset(0, 12)),
   ];
 
   static const List<BoxShadow> hover = [
-    BoxShadow(color: Color(0x267C3AED), blurRadius: 20, offset: Offset(0, 8)),
+    BoxShadow(color: Color(0x26B7DEC7), blurRadius: 20, offset: Offset(0, 8)),
   ];
 }
 
@@ -301,7 +300,7 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          side: const BorderSide(color: Color(0x337C3AED), width: 1),
+          side: const BorderSide(color: Color(0x33B7DEC7), width: 1),
         ),
         textStyle: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
       ),
@@ -310,7 +309,7 @@ class AppTheme {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.textPrimary,
         backgroundColor: Colors.white,
-        side: const BorderSide(color: Color(0x337C3AED), width: 1),
+        side: const BorderSide(color: Color(0x33B7DEC7), width: 1),
         minimumSize: const Size.fromHeight(56),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
@@ -395,12 +394,12 @@ class AppTheme {
       side: BorderSide.none,
     ),
     dividerTheme: const DividerThemeData(
-      color: Color(0x147C3AED),
+      color: Color(0x14B7DEC7),
       thickness: 1,
       space: 1,
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: AppColors.textPrimary,
+      backgroundColor: Color(0x14B7DEC7),
       contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
       actionTextColor: AppColors.pastelGreen,
       shape: RoundedRectangleBorder(
