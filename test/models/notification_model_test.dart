@@ -138,10 +138,14 @@ void main() {
       );
       final message = request.copyWith(type: 'message');
       final accepted = request.copyWith(type: 'accepted');
+      final declined = request.copyWith(type: 'declined');
+      final reminder = request.copyWith(type: 'reminder');
 
       expect(request.isRequest, isTrue);
       expect(message.isMessage, isTrue);
       expect(accepted.isAccepted, isTrue);
+      expect(declined.isDeclined, isTrue);
+      expect(reminder.isReminder, isTrue);
     });
   });
 }
