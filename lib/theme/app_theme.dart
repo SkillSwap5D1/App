@@ -8,23 +8,23 @@ class AppColors {
   static const Color surfaceElevated = Color(0xD8FFFFFF);
   static const Color surfaceGlass = Color(0xE6FFFFFF);
   static const Color surfaceSolid = Color(0xFFFFFFFF);
-  static const Color primary = Color(0xFFB7DEC7);
+  static const Color primary = Color(0xFF064E3B);
 
-  static const Color accent = Color(0xFFB7DEC7);
-  static const Color accentMedium = Color(0xFFA6D3B6);
+  static const Color accent = Color(0xFF064E3B);
+  static const Color accentMedium = Color(0xFF0A6A50);
   static const Color accentLight = Color(0xFFE3F4E9);
   static const Color accentVeryLight = Color(0xFFF4FBF6);
   static const Color accentUltraLight = Color(0xFFF8FFFC);
   static const Color accentDeep = Color(0xFF6FA888);
-  static const Color accentGlow = Color(0x33B7DEC7);
+  static const Color accentGlow = Color(0x33064E3B);
 
   static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textMuted = Color(0xFF9CA3AF);
 
-  static const Color border = Color(0x1FB7DEC7);
-  static const Color borderLight = Color(0x0FB7DEC7);
-  static const Color borderActive = Color(0x99B7DEC7);
+  static const Color border = Color(0x14064E3B);
+  static const Color borderLight = Color(0x0F064E3B);
+  static const Color borderActive = Color(0x99064E3B);
 
   static const Color success = Color(0xFF059669);
   // Pastel green for softer accents
@@ -54,7 +54,7 @@ class AppColors {
   static const Gradient accentGradient = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [Color(0xFFB7DEC7), Color(0xFFBFE7FF)],
+    colors: [Color(0xFF064E3B), Color(0xFFBFE7FF)],
   );
 
   static BoxDecoration glassCard({double borderRadius = 24}) {
@@ -76,7 +76,7 @@ class AppColors {
       ),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFFB7DEC7).withValues(alpha: 0.10),
+          color: const Color(0xFF064E3B).withValues(alpha: 0.10),
           blurRadius: 24,
           spreadRadius: 0,
           offset: const Offset(0, 8),
@@ -216,15 +216,15 @@ class AppRadius {
 
 class AppShadows {
   static const List<BoxShadow> card = [
-    BoxShadow(color: Color(0x14B7DEC7), blurRadius: 24, offset: Offset(0, 8)),
+    BoxShadow(color: Color(0x14064E3B), blurRadius: 24, offset: Offset(0, 8)),
   ];
 
   static const List<BoxShadow> modal = [
-    BoxShadow(color: Color(0x1AB7DEC7), blurRadius: 32, offset: Offset(0, 12)),
+    BoxShadow(color: Color(0x1A064E3B), blurRadius: 32, offset: Offset(0, 12)),
   ];
 
   static const List<BoxShadow> hover = [
-    BoxShadow(color: Color(0x26B7DEC7), blurRadius: 20, offset: Offset(0, 8)),
+    BoxShadow(color: Color(0x26064E3B), blurRadius: 20, offset: Offset(0, 8)),
   ];
 }
 
@@ -300,7 +300,7 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          side: const BorderSide(color: Color(0x33B7DEC7), width: 1),
+          side: const BorderSide(color: Color(0x33064E3B), width: 1),
         ),
         textStyle: AppTextStyles.button.copyWith(color: AppColors.textPrimary),
       ),
@@ -309,7 +309,7 @@ class AppTheme {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.textPrimary,
         backgroundColor: Colors.white,
-        side: const BorderSide(color: Color(0x33B7DEC7), width: 1),
+        side: const BorderSide(color: Color(0x33064E3B), width: 1),
         minimumSize: const Size.fromHeight(56),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
@@ -394,12 +394,12 @@ class AppTheme {
       side: BorderSide.none,
     ),
     dividerTheme: const DividerThemeData(
-      color: Color(0x14B7DEC7),
+      color: Color(0x14064E3B),
       thickness: 1,
       space: 1,
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: Color(0x14B7DEC7),
+      backgroundColor: Color(0x14064E3B),
       contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
       actionTextColor: AppColors.pastelGreen,
       shape: RoundedRectangleBorder(
