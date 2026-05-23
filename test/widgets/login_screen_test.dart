@@ -6,13 +6,7 @@ import 'package:skillswap_app/providers/auth_provider.dart';
 import 'package:skillswap_app/screens/auth/login_screen.dart';
 import 'package:skillswap_app/screens/auth/register_screen.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
-
-class MockAuthProvider extends Mock implements AuthProvider {
-  bool loading = false;
-
-  @override
-  bool get isLoading => loading;
-}
+import '../mocks.mocks.dart';
 
 Widget _buildTestApp({required AuthProvider authProvider}) {
   return MaterialApp(
@@ -37,6 +31,8 @@ void main() {
   group('LoginScreen', () {
     testWidgets('renders email field, password field, and Sign In button', (tester) async {
       final authProvider = MockAuthProvider();
+      when(authProvider.isLoading).thenReturn(false);
+      when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -48,6 +44,8 @@ void main() {
 
     testWidgets('submitting with @gmail.com email shows red error text under email field', (tester) async {
       final authProvider = MockAuthProvider();
+      when(authProvider.isLoading).thenReturn(false);
+      when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -67,6 +65,8 @@ void main() {
 
     testWidgets('submitting with empty password shows required error', (tester) async {
       final authProvider = MockAuthProvider();
+      when(authProvider.isLoading).thenReturn(false);
+      when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -80,7 +80,8 @@ void main() {
 
     testWidgets('when AuthProvider.isLoading = true button shows CircularProgressIndicator', (tester) async {
       final authProvider = MockAuthProvider();
-      authProvider.loading = true;
+      when(authProvider.isLoading).thenReturn(true);
+      when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
@@ -90,6 +91,8 @@ void main() {
 
     testWidgets('tapping Create an account link navigates to RegisterScreen', (tester) async {
       final authProvider = MockAuthProvider();
+      when(authProvider.isLoading).thenReturn(false);
+      when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
