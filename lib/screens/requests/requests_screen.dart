@@ -445,7 +445,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                       Text(
                         isReceived
                             ? 'wants to learn ${request.skillName}'
-                            : 'from ${request.toUserId}',
+                            : 'from ${request.toUserName}',
                         style: const TextStyle(
                           color: Color(0xFF64748B),
                           fontSize: 13,
