@@ -89,7 +89,9 @@ class _BrowseScreenState extends State<BrowseScreen>
       final matchesSearch =
           _searchQuery.isEmpty ||
           listing.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          listing.description.toLowerCase().contains(_searchQuery.toLowerCase());
+          listing.description.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
 
       final matchesCategory =
           _selectedCategory == 'All' || listing.category == _selectedCategory;
@@ -108,7 +110,9 @@ class _BrowseScreenState extends State<BrowseScreen>
     AuthProvider authProvider,
   ) {
     final currentUid = authProvider.currentUser?.uid ?? '';
-    return provider.listings.where((listing) => listing.ownerId != currentUid).toList();
+    return provider.listings
+        .where((listing) => listing.ownerId != currentUid)
+        .toList();
   }
 
   List<ListingModel> _getMyListings(
@@ -116,7 +120,9 @@ class _BrowseScreenState extends State<BrowseScreen>
     AuthProvider authProvider,
   ) {
     final currentUid = authProvider.currentUser?.uid ?? '';
-    return provider.listings.where((listing) => listing.ownerId == currentUid).toList();
+    return provider.listings
+        .where((listing) => listing.ownerId == currentUid)
+        .toList();
   }
 
   bool get _isBrowseTabSelected => _tabController.index == 0;
@@ -217,7 +223,9 @@ class _BrowseScreenState extends State<BrowseScreen>
   Widget _buildBrowseTab(BuildContext context) {
     final listingProvider = context.watch<ListingProvider>();
     final authProvider = context.watch<AuthProvider>();
-    final filtered = _filterListings(_getOtherListings(listingProvider, authProvider));
+    final filtered = _filterListings(
+      _getOtherListings(listingProvider, authProvider),
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -244,20 +252,25 @@ class _BrowseScreenState extends State<BrowseScreen>
                       filtered.isEmpty
                           ? _buildEmptyState()
                           : GridView.builder(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: constraints.maxWidth >= 700 ? 2 : 1,
-                                crossAxisSpacing: 14,
-                                mainAxisSpacing: 14,
-                                mainAxisExtent: 164,
-                              ),
-                              itemCount: filtered.length,
-                              itemBuilder: (context, index) {
-                                return _buildListingCard(context, filtered[index]);
-                              },
-                            ),
+                            padding: const EdgeInsets.only(bottom: 8),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      constraints.maxWidth >= 700 ? 2 : 1,
+                                  crossAxisSpacing: 14,
+                                  mainAxisSpacing: 14,
+                                  mainAxisExtent: 164,
+                                ),
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              return _buildListingCard(
+                                context,
+                                filtered[index],
+                              );
+                            },
+                          ),
                     ],
                   ),
                 ),
@@ -304,7 +317,10 @@ class _BrowseScreenState extends State<BrowseScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _accent,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -315,15 +331,20 @@ class _BrowseScreenState extends State<BrowseScreen>
           ),
           const SizedBox(height: 14),
           Expanded(
-            child: myListings.isEmpty
-                ? _buildEmptyOwnedState()
-                : ListView.separated(
-                    itemCount: myListings.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      return _buildListingCard(context, myListings[index]);
-                    },
-                  ),
+            child:
+                myListings.isEmpty
+                    ? _buildEmptyOwnedState()
+                    : ListView.separated(
+                      itemCount: myListings.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        return _buildListingCard(
+                          context,
+                          myListings[index],
+                          isOwnListing: true,
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -438,7 +459,10 @@ class _BrowseScreenState extends State<BrowseScreen>
         final chips = [
           _QuickFilterChip(
             label: 'All',
-            active: _selectedCategory == 'All' && _selectedLevel == 'All Levels' && _selectedFormat == 'All Formats',
+            active:
+                _selectedCategory == 'All' &&
+                _selectedLevel == 'All Levels' &&
+                _selectedFormat == 'All Formats',
             onTap: () {
               setState(() {
                 _selectedCategory = 'All';
@@ -510,7 +534,11 @@ class _BrowseScreenState extends State<BrowseScreen>
                   color: _accentSoft,
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: const Icon(Icons.search_off_rounded, color: _accent, size: 34),
+                child: const Icon(
+                  Icons.search_off_rounded,
+                  color: _accent,
+                  size: 34,
+                ),
               ),
               const SizedBox(height: 14),
               const Text(
@@ -556,7 +584,11 @@ class _BrowseScreenState extends State<BrowseScreen>
                   color: _accentSoft,
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: const Icon(Icons.lightbulb_outline_rounded, color: _accent, size: 34),
+                child: const Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: _accent,
+                  size: 34,
+                ),
               ),
               const SizedBox(height: 14),
               const Text(
@@ -581,7 +613,11 @@ class _BrowseScreenState extends State<BrowseScreen>
     );
   }
 
-  Widget _buildListingCard(BuildContext context, ListingModel listing) {
+  Widget _buildListingCard(
+    BuildContext context,
+    ListingModel listing, {
+    bool isOwnListing = false,
+  }) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -616,7 +652,9 @@ class _BrowseScreenState extends State<BrowseScreen>
               ),
               child: Center(
                 child: Text(
-                  listing.ownerName.isNotEmpty ? listing.ownerName[0].toUpperCase() : '?',
+                  listing.ownerName.isNotEmpty
+                      ? listing.ownerName[0].toUpperCase()
+                      : '?',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -671,7 +709,10 @@ class _BrowseScreenState extends State<BrowseScreen>
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: _accentSoft,
                     borderRadius: BorderRadius.circular(999),
@@ -686,29 +727,33 @@ class _BrowseScreenState extends State<BrowseScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/send-request',
-                      arguments: listing,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _accent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    minimumSize: const Size(0, 44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                if (!isOwnListing)
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/send-request',
+                        arguments: listing,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _accent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      minimumSize: const Size(0, 44),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 0,
                     ),
-                    elevation: 0,
+                    child: const Text(
+                      'Request',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
                   ),
-                  child: const Text(
-                    'Request',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
               ],
             ),
           ],
@@ -854,29 +899,35 @@ class _FilterGroup extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: options.map((option) {
-            final active = option == value;
-            return InkWell(
-              onTap: () => onChanged(option),
-              borderRadius: BorderRadius.circular(999),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: active ? _accentSoft : _chipBg,
+          children:
+              options.map((option) {
+                final active = option == value;
+                return InkWell(
+                  onTap: () => onChanged(option),
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: active ? _accentSoft : _chipBorder),
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    color: active ? _accent : _textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: active ? _accentSoft : _chipBg,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: active ? _accentSoft : _chipBorder,
+                      ),
+                    ),
+                    child: Text(
+                      option,
+                      style: TextStyle(
+                        color: active ? _accent : _textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ],
     );
