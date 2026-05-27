@@ -7,6 +7,7 @@ import '../../providers/listing_provider.dart';
 import '../listings/create_listing_screen.dart';
 import '../listings/listing_detail_screen.dart';
 
+// Local color palette used in this screen to avoid depending on global theme
 const Color _pageBg = Color(0xFFF8FAFC);
 const Color _surface = Color(0xFFFFFFFF);
 const Color _surfaceAlt = Color(0xFFF1F5F9);
@@ -123,163 +124,59 @@ class _BrowseScreenState extends State<BrowseScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          _buildHero(),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [_buildSidebar(), Expanded(child: _buildListingGrid())],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── TOP NAVBAR ─────────────────────────────────────────────────────────────
-  Widget _buildNavBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Logo
-          Row(
-            children: [
-              const Icon(
-                Icons.handshake_outlined,
-                color: AppColors.primary,
-                size: 28,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'SkillSwap',
-                style: AppTextStyles.h3.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          // Nav items
-          Row(
-            spacing: 32,
-            children: [
-              _buildNavItem('Browse', Icons.search_rounded),
-              _buildNavItem('Requests', Icons.mail_outline_rounded),
-              _buildNavItem('Saved', Icons.bookmark_outline_rounded),
-              _buildNavItem('Chat', Icons.chat_bubble_outline_rounded),
-              _buildNavItem('Profile', Icons.person_outline_rounded),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.logout_rounded,
-                  color: AppColors.textMuted,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(String label, IconData icon) {
-    return Row(
-      spacing: 6,
-      children: [
-        Icon(icon, color: AppColors.textMuted, size: 18),
-        Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
-        ),
-      ],
-    );
-  }
-
-  // ── LISTING GRID ────────────────────────────────────────────────────────────
-  Widget _buildListingGrid() {
-    final listings = _filteredListings;
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${listings.length} skill${listings.length == 1 ? '' : 's'} found',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: const [
-            BoxShadow(color: Color(0x240F172A), blurRadius: 30, offset: Offset(0, 14)),
-          ],
-        ),
-        padding: const EdgeInsets.all(24),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isCompact = constraints.maxWidth < 700;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: const [
-                    _HeroBadge(text: 'Discover'),
-                    _HeroBadge(text: 'Exchange'),
-                    _HeroBadge(text: 'Learn'),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Find skills worth swapping.',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isCompact ? 30 : 40,
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,
-                    letterSpacing: -1.0,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: Text(
-                    'Browse lessons, trade expertise, and connect with people who can teach what you need next.',
+      backgroundColor: _pageBg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Hero / title area
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              child: Row(
+                children: [
+                  const Icon(Icons.search_rounded, color: _accent, size: 26),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Browse',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.86),
-                      fontSize: 15,
-                      height: 1.5,
+                      color: _textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.filter_list_rounded),
+                  ),
+                ],
+              ),
+            ),
+
+            // Segmented tabs and content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildSegmentedTabs(),
+            ),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+                child: TabBarView(
+                  controller: _tabController,
                   children: [
-                    _HeroStat(label: 'Active listings', value: '${context.watch<ListingProvider>().listings.length}'),
-                    _HeroStat(label: 'Filtered results', value: '${_filterListings(_getOtherListings(context.watch<ListingProvider>(), context.watch<AuthProvider>())).length}'),
+                    _buildBrowseTab(context),
+                    _buildMyListingsTab(context),
                   ],
                 ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  // (NavBar & duplicate listing hero removed — this file uses a compact hero + tabs)
 
   Widget _buildSegmentedTabs() {
     return Padding(
