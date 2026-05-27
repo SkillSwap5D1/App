@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Project-specific logs and test artifacts
+flutter_*.log
+flutter_test_output.txt
+test_output.txt
+test_results.txt
+test_run.log
