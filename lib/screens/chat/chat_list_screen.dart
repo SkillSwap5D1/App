@@ -13,13 +13,15 @@ class ChatListScreen extends StatefulWidget {
   State<ChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _ChatListScreenState extends State<ChatListScreen>
+    with WidgetsBindingObserver {
   final UserService _userService = UserService();
   late VoidCallback _authListener;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // On first frame try to load conversations if user is already signed in.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
@@ -34,12 +36,28 @@ class _ChatListScreenState extends State<ChatListScreen> {
       _authListener = () {
         final uid = authProvider.currentUser?.uid;
         if (uid != null) {
-          print('🔵 ChatListScreen detected sign-in for $uid, loading conversations');
+          print(
+            '🔵 ChatListScreen detected sign-in for $uid, loading conversations',
+          );
           context.read<ChatProvider>().loadConversations(uid);
         }
       };
       authProvider.addListener(_authListener);
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final authProvider = context.read<AuthProvider>();
+      final currentUid = authProvider.currentUser?.uid;
+      if (currentUid != null) {
+        print(
+          '🔵 ChatListScreen resumed, refreshing conversations for $currentUid',
+        );
+        context.read<ChatProvider>().loadConversations(currentUid);
+      }
+    }
   }
 
   String _formatTime(DateTime timestamp) {
@@ -65,7 +83,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-        appBar: AppBar(
+      appBar: AppBar(
         title: const Text('Messages'),
         backgroundColor: AppColors.surface,
         elevation: 0,
@@ -259,6 +277,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // Remove auth listener if it was added.
     try {
       final authProvider = context.read<AuthProvider>();
