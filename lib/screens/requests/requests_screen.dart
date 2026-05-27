@@ -32,22 +32,23 @@ class _RequestsScreenState extends State<RequestsScreen>
   ) async {
     final shouldEnd = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('End session'),
-        content: Text(
-          'Mark the session for ${request.skillName} as completed? This will allow both users to leave a review.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('End session'),
+            content: Text(
+              'Mark the session for ${request.skillName} as completed? This will allow both users to leave a review.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: Text('End', style: TextStyle(color: AppColors.error)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text('End', style: TextStyle(color: AppColors.error)),
-          ),
-        ],
-      ),
     );
 
     if (shouldEnd != true || !context.mounted) return;
@@ -55,7 +56,9 @@ class _RequestsScreenState extends State<RequestsScreen>
     final currentUser = context.read<AuthProvider>().currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must be signed in to end a session.')),
+        const SnackBar(
+          content: Text('You must be signed in to end a session.'),
+        ),
       );
       return;
     }
@@ -66,9 +69,9 @@ class _RequestsScreenState extends State<RequestsScreen>
     if (!context.mounted) return;
 
     if (requestProvider.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(requestProvider.errorMessage!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(requestProvider.errorMessage!)));
       return;
     }
 
@@ -80,19 +83,21 @@ class _RequestsScreenState extends State<RequestsScreen>
     final isFrom = currentUser.uid == request.fromUserId;
     final otherUserId = isFrom ? request.toUserId : request.fromUserId;
     final otherUserName = isFrom ? request.toUserName : request.fromUserName;
-    final sessionDate = request.proposedTimes.isNotEmpty
-        ? request.proposedTimes.first
-        : request.createdAt.toLocal().toString().split(' ').first;
+    final sessionDate =
+        request.proposedTimes.isNotEmpty
+            ? request.proposedTimes.first
+            : request.createdAt.toLocal().toString().split(' ').first;
 
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => RateReviewScreen(
-          requestId: request.id,
-          skillTitle: request.skillName,
-          otherUserId: otherUserId,
-          otherUserName: otherUserName,
-          sessionDate: sessionDate,
-        ),
+        builder:
+            (_) => RateReviewScreen(
+              requestId: request.id,
+              skillTitle: request.skillName,
+              otherUserId: otherUserId,
+              otherUserName: otherUserName,
+              sessionDate: sessionDate,
+            ),
       ),
     );
   }
@@ -148,10 +153,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                     const SizedBox(height: 4),
                     const Text(
                       'Manage your skill exchange requests',
-                      style: TextStyle(
-                        color: Color(0xFF64748B),
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
                     ),
                   ],
                 ),
@@ -159,9 +161,7 @@ class _RequestsScreenState extends State<RequestsScreen>
               Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(color: Color(0xFFE2E8F0)),
-                  ),
+                  border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
                 ),
                 child: Row(
                   children: [
@@ -176,9 +176,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                     if (requestProvider.isLoading &&
                         requestProvider.incoming.isEmpty &&
                         requestProvider.outgoing.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     if (requestProvider.errorMessage != null &&
@@ -215,8 +213,14 @@ class _RequestsScreenState extends State<RequestsScreen>
                     return TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildReceivedRequestsList(requestProvider.incoming, context),
-                        _buildSentRequestsList(requestProvider.outgoing, context),
+                        _buildReceivedRequestsList(
+                          requestProvider.incoming,
+                          context,
+                        ),
+                        _buildSentRequestsList(
+                          requestProvider.outgoing,
+                          context,
+                        ),
                       ],
                     );
                   },
@@ -231,7 +235,10 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   Widget _buildTab(String label, bool isActive) {
     return GestureDetector(
-      onTap: () => setState(() => _tabController.animateTo(label == 'Received' ? 0 : 1)),
+      onTap:
+          () => setState(
+            () => _tabController.animateTo(label == 'Received' ? 0 : 1),
+          ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
@@ -285,7 +292,11 @@ class _RequestsScreenState extends State<RequestsScreen>
                   color: AppColors.accentVeryLight,
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: const Icon(Icons.inbox_rounded, color: AppColors.primary, size: 34),
+                child: const Icon(
+                  Icons.inbox_rounded,
+                  color: AppColors.primary,
+                  size: 34,
+                ),
               ),
               const SizedBox(height: 14),
               Text(
@@ -349,7 +360,11 @@ class _RequestsScreenState extends State<RequestsScreen>
                   color: AppColors.accentVeryLight,
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: const Icon(Icons.send_rounded, color: AppColors.primary, size: 34),
+                child: const Icon(
+                  Icons.send_rounded,
+                  color: AppColors.primary,
+                  size: 34,
+                ),
               ),
               const SizedBox(height: 14),
               Text(
@@ -443,7 +458,10 @@ class _RequestsScreenState extends State<RequestsScreen>
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.10),
                     borderRadius: BorderRadius.circular(999),
@@ -482,7 +500,10 @@ class _RequestsScreenState extends State<RequestsScreen>
               ...request.proposedTimes.take(2).map((time) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 6),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF0FDF9),
                     borderRadius: BorderRadius.circular(8),
@@ -545,9 +566,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                       child: SizedBox(
                         height: 44,
                         child: OutlinedButton(
-                          onPressed: () => _handleDeclineRequest(context, request),
+                          onPressed:
+                              () => _handleDeclineRequest(context, request),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppColors.borderLight),
+                            side: const BorderSide(
+                              color: AppColors.borderLight,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -567,7 +591,8 @@ class _RequestsScreenState extends State<RequestsScreen>
                       child: SizedBox(
                         height: 44,
                         child: ElevatedButton(
-                          onPressed: () => _handleAcceptRequest(context, request),
+                          onPressed:
+                              () => _handleAcceptRequest(context, request),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
@@ -595,11 +620,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                       child: SizedBox(
                         height: 44,
                         child: ElevatedButton(
-                          onPressed: () => _openChatForRequest(
-                            context,
-                            request,
-                            otherUserId: request.fromUserId,
-                          ),
+                          onPressed:
+                              () => _openChatForRequest(
+                                context,
+                                request,
+                                otherUserId: request.fromUserId,
+                              ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
@@ -647,11 +673,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                   width: double.infinity,
                   height: 44,
                   child: ElevatedButton(
-                    onPressed: () => _openChatForRequest(
-                      context,
-                      request,
-                      otherUserId: request.fromUserId,
-                    ),
+                    onPressed:
+                        () => _openChatForRequest(
+                          context,
+                          request,
+                          otherUserId: request.fromUserId,
+                        ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF064E3B),
                       elevation: 0,
@@ -677,7 +704,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                       child: SizedBox(
                         height: 44,
                         child: ElevatedButton(
-                          onPressed: () => _showRequestDetails(context, request),
+                          onPressed:
+                              () => _openChatForRequest(
+                                context,
+                                request,
+                                otherUserId: request.toUserId,
+                              ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF064E3B),
                             elevation: 0,
@@ -686,7 +718,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                             ),
                           ),
                           child: const Text(
-                            'View Details',
+                            'Open Chat',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -725,7 +757,12 @@ class _RequestsScreenState extends State<RequestsScreen>
                   width: double.infinity,
                   height: 44,
                   child: ElevatedButton(
-                    onPressed: () => _showRequestDetails(context, request),
+                    onPressed:
+                        () => _openChatForRequest(
+                          context,
+                          request,
+                          otherUserId: request.toUserId,
+                        ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF064E3B),
                       elevation: 0,
@@ -734,7 +771,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                       ),
                     ),
                     child: const Text(
-                      'View Details',
+                      'Open Chat',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
