@@ -122,6 +122,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         senderId: currentUid,
         senderName: senderName,
         text: text,
+        recipientId: widget.otherUserId,
       );
 
       if (!mounted) return;

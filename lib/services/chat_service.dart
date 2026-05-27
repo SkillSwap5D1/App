@@ -47,6 +47,7 @@ class ChatService {
     required String senderId,
     required String senderName,
     required String text,
+    String? recipientId,
   }) async {
     try {
       print('🔵 ChatService.sendMessage(): Starting message send');
@@ -71,18 +72,35 @@ class ChatService {
       await msgRef.set(message.toMap());
       print('✅ Message saved: ${msgRef.id}');
 
-      // Get conversation to find other participant
+      // Get conversation to find the other participant.
       final conversationDoc =
           await _db.collection('conversations').doc(conversationId).get();
 
       if (!conversationDoc.exists) {
-        throw Exception(
-          'Conversation $conversationId does not exist! Message was saved but conversation is missing.',
+        if (recipientId == null || recipientId.isEmpty) {
+          throw Exception(
+            'Conversation $conversationId does not exist and no recipient was provided to create it.',
+          );
+        }
+
+        final createdConversation = ConversationModel(
+          id: conversationId,
+          participants: [senderId, recipientId],
+          lastMessage: '',
+          lastMessageTime: DateTime.now(),
+          unreadCounts: {senderId: 0, recipientId: 0},
         );
+
+        await _db
+            .collection('conversations')
+            .doc(conversationId)
+            .set(createdConversation.toMap());
       }
 
+      final refreshedConversation =
+          await _db.collection('conversations').doc(conversationId).get();
       final participants = List<String>.from(
-        conversationDoc.data()?['participants'] ?? [],
+        refreshedConversation.data()?['participants'] ?? [],
       );
       print('🔵 Found conversation with participants: $participants');
 

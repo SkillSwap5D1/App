@@ -76,6 +76,7 @@ class ChatProvider extends ChangeNotifier {
     required String senderId,
     required String senderName,
     required String text,
+    String? recipientId,
   }) async {
     try {
       print(
@@ -89,6 +90,7 @@ class ChatProvider extends ChangeNotifier {
         senderId: senderId,
         senderName: senderName,
         text: text,
+        recipientId: recipientId,
       );
 
       if (activeConversationId == conversationId) {

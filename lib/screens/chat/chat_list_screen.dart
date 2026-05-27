@@ -17,33 +17,39 @@ class _ChatListScreenState extends State<ChatListScreen>
     with WidgetsBindingObserver {
   final UserService _userService = UserService();
   late VoidCallback _authListener;
+  String? _loadedForUid;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // On first frame try to load conversations if user is already signed in.
+    _authListener = _handleAuthChanged;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final authProvider = context.read<AuthProvider>();
-      final currentUid = authProvider.currentUser?.uid;
-      if (currentUid != null) {
-        print('🔵 ChatListScreen loading conversations for $currentUid');
-        context.read<ChatProvider>().loadConversations(currentUid);
-      }
-
-      // Also listen for future auth state changes so conversations are loaded
-      // automatically when the user signs in after this screen is mounted.
-      _authListener = () {
-        final uid = authProvider.currentUser?.uid;
-        if (uid != null) {
-          print(
-            '🔵 ChatListScreen detected sign-in for $uid, loading conversations',
-          );
-          context.read<ChatProvider>().loadConversations(uid);
-        }
-      };
       authProvider.addListener(_authListener);
+      _handleAuthChanged();
     });
+  }
+
+  void _handleAuthChanged() {
+    if (!mounted) return;
+
+    final authProvider = context.read<AuthProvider>();
+    final currentUid = authProvider.currentUser?.uid;
+
+    if (currentUid == null || currentUid.isEmpty) {
+      _loadedForUid = null;
+      return;
+    }
+
+    if (_loadedForUid == currentUid) {
+      return;
+    }
+
+    _loadedForUid = currentUid;
+    print('🔵 ChatListScreen loading conversations for $currentUid');
+    context.read<ChatProvider>().loadConversations(currentUid);
   }
 
   @override
@@ -79,7 +85,8 @@ class _ChatListScreenState extends State<ChatListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final currentUid = context.read<AuthProvider>().currentUser?.uid ?? '';
+    final authProvider = context.watch<AuthProvider>();
+    final currentUid = authProvider.currentUser?.uid ?? '';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -95,6 +102,10 @@ class _ChatListScreenState extends State<ChatListScreen>
           print(
             '🔵 ChatListScreen rebuilding with ${conversations.length} conversations',
           );
+
+          if (authProvider.currentUser == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
           if (conversations.isEmpty) {
             return Center(
@@ -278,7 +289,6 @@ class _ChatListScreenState extends State<ChatListScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // Remove auth listener if it was added.
     try {
       final authProvider = context.read<AuthProvider>();
       authProvider.removeListener(_authListener);
