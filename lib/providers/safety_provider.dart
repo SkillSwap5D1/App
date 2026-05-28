@@ -167,8 +167,5 @@ class SafetyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  // Unnecessary dispose override removed.
 }

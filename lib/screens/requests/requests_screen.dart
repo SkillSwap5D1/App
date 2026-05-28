@@ -925,34 +925,7 @@ class _RequestsScreenState extends State<RequestsScreen>
     ).showSnackBar(const SnackBar(content: Text('Request accepted')));
   }
 
-  void _showRequestDetails(BuildContext context, RequestModel request) {
-    showDialog<void>(
-      context: context,
-      builder:
-          (dialogContext) => AlertDialog(
-            title: Text(request.skillName),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('From: ${request.fromUserName}'),
-                const SizedBox(height: 8),
-                Text('Status: ${request.status}'),
-                if (request.message.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text('Message: ${request.message}'),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-    );
-  }
+  // _showRequestDetails removed (unused) to reduce dead code.
 
   Future<void> _openChatForRequest(
     BuildContext context,

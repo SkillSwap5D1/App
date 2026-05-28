@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../models/conversation_model.dart';
 import '../models/message_model.dart';
@@ -33,7 +34,9 @@ class ChatProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      print('Error loading conversations: $e');
+      if (kDebugMode) {
+        print('Error loading conversations: $e');
+      }
       isLoading = false;
       notifyListeners();
     }
@@ -48,25 +51,33 @@ class ChatProvider extends ChangeNotifier {
 
     try {
       // Debug log for re-subscribing to messagesStream
-      print('🔵 ChatProvider: Re-subscribing to messagesStream for conversation $conversationId');
+      if (kDebugMode) {
+        print('🔵 ChatProvider: Re-subscribing to messagesStream for conversation $conversationId');
+      }
 
       _messagesSubscription = _chatService.messagesStream(conversationId).listen((
         messages,
       ) {
         currentMessages = messages;
-        print(
-          '🔵 ChatProvider: Received ${messages.length} messages for conversation $conversationId',
-        );
+        if (kDebugMode) {
+          print(
+            '🔵 ChatProvider: Received ${messages.length} messages for conversation $conversationId',
+          );
+        }
         notifyListeners();
       });
 
       // Mark conversation as read for current user
-      print(
-        '🔵 ChatProvider: Marking conversation $conversationId as read for $userId',
-      );
+      if (kDebugMode) {
+        print(
+          '🔵 ChatProvider: Marking conversation $conversationId as read for $userId',
+        );
+      }
       await markAsRead(conversationId, userId);
     } catch (e) {
-      print('❌ Error loading messages: $e');
+      if (kDebugMode) {
+        print('❌ Error loading messages: $e');
+      }
     }
   }
 
@@ -79,11 +90,13 @@ class ChatProvider extends ChangeNotifier {
     String? recipientId,
   }) async {
     try {
-      print(
-        '🔵 ChatProvider.sendMessage(): Sending message to $conversationId',
-      );
-      print('   Sender: $senderId ($senderName)');
-      print('   Text length: ${text.length}');
+      if (kDebugMode) {
+        print(
+          '🔵 ChatProvider.sendMessage(): Sending message to $conversationId',
+        );
+        print('   Sender: $senderId ($senderName)');
+        print('   Text length: ${text.length}');
+      }
       
       final sentMessage = await _chatService.sendMessage(
         conversationId: conversationId,
@@ -97,11 +110,15 @@ class ChatProvider extends ChangeNotifier {
         currentMessages = [...currentMessages, sentMessage];
         notifyListeners();
       }
-      print('✅ Message sent successfully: ${sentMessage.id}');
+      if (kDebugMode) {
+        print('✅ Message sent successfully: ${sentMessage.id}');
+      }
       return sentMessage;
     } catch (e) {
-      print('❌ Error sending message: $e');
-      print('   Stack trace: $e');
+      if (kDebugMode) {
+        print('❌ Error sending message: $e');
+        print('   Stack trace: $e');
+      }
       rethrow;
     }
   }
@@ -111,7 +128,9 @@ class ChatProvider extends ChangeNotifier {
     try {
       await _chatService.markAsRead(conversationId, userId);
     } catch (e) {
-      print('Error marking as read: $e');
+      if (kDebugMode) {
+        print('Error marking as read: $e');
+      }
     }
   }
 
@@ -133,17 +152,23 @@ class ChatProvider extends ChangeNotifier {
     String otherUserId,
   ) async {
     try {
-      print(
-        '🔵 ChatProvider.startConversation(): Starting chat with $otherUserId',
-      );
+      if (kDebugMode) {
+        print(
+          '🔵 ChatProvider.startConversation(): Starting chat with $otherUserId',
+        );
+      }
       final conversationId = await _chatService.getOrCreateConversation(
         currentUserId,
         otherUserId,
       );
-      print('✅ Conversation created/fetched: $conversationId');
+      if (kDebugMode) {
+        print('✅ Conversation created/fetched: $conversationId');
+      }
       return conversationId;
     } catch (e) {
-      print('❌ Error starting conversation: $e');
+      if (kDebugMode) {
+        print('❌ Error starting conversation: $e');
+      }
       rethrow;
     }
   }
