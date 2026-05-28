@@ -43,9 +43,9 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
 
   Future<void> _submitReview() async {
     if (_selectedRating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a rating')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a rating')));
       return;
     }
 
@@ -96,28 +96,29 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-        ),
-        title: const Text('Review Submitted'),
-        content: Text(
-          'Thank you! Your review has been submitted.',
-          style: AppTextStyles.bodyMedium,
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.of(context).pushNamed('/requests');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
-            child: const Text('Done'),
+            title: const Text('Review Submitted'),
+            content: Text(
+              'Thank you! Your review has been submitted.',
+              style: AppTextStyles.bodyMedium,
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  Navigator.of(context).pushNamed('/requests');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                ),
+                child: const Text('Done'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -357,9 +358,10 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: (_selectedRating > 0 && !_isSubmitting)
-                      ? _submitReview
-                      : null,
+                  onPressed:
+                      (_selectedRating > 0 && !_isSubmitting)
+                          ? _submitReview
+                          : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     disabledBackgroundColor: AppColors.surface,
@@ -368,25 +370,27 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.textMuted,
+                  child:
+                      _isSubmitting
+                          ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.textMuted,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            'Submit Review',
+                            style: AppTextStyles.button.copyWith(
+                              color:
+                                  _selectedRating > 0
+                                      ? AppColors.surface
+                                      : AppColors.textMuted,
                             ),
                           ),
-                        )
-                      : Text(
-                          'Submit Review',
-                          style: AppTextStyles.button.copyWith(
-                            color: _selectedRating > 0
-                                ? AppColors.surface
-                                : AppColors.textMuted,
-                          ),
-                        ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),

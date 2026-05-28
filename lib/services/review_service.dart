@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/review_model.dart';
 import 'notification_service.dart';
 import 'user_service.dart';
@@ -55,12 +56,18 @@ class ReviewService {
           requestId,
         );
       } catch (e) {
-        print('⚠️ [ReviewService] Could not send review_published notification: $e');
+        if (kDebugMode) {
+          print(
+            '⚠️ [ReviewService] Could not send review_published notification: $e',
+          );
+        }
       }
 
       // Recalculate rating for the reviewee immediately
       await recalculateRating(revieweeId);
-      print('✅ [ReviewService] Review published immediately for $revieweeId');
+      if (kDebugMode) {
+        print('✅ [ReviewService] Review published immediately for $revieweeId');
+      }
     } catch (e) {
       throw Exception('Failed to submit review: $e');
     }

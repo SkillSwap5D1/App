@@ -38,7 +38,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.currentUser;
-    
+
     // Initialize controllers with empty strings first as fallback
     _firstNameController = TextEditingController(text: user?.firstName ?? '');
     _lastNameController = TextEditingController(text: user?.lastName ?? '');
@@ -48,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController.addListener(_checkForChanges);
     _lastNameController.addListener(_checkForChanges);
     _bioController.addListener(_checkForChanges);
-    
+
     if (user == null) {
       print('❌ EditProfileScreen: currentUser is null!');
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _checkForChanges() {
     final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
     if (user == null) return;
-    
+
     bool changed =
         _firstNameController.text != user.firstName ||
         _lastNameController.text != user.lastName ||
@@ -81,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _handleSave() async {
     final authProvider = context.read<AuthProvider>();
     final currentUser = authProvider.currentUser;
-    
+
     if (currentUser == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -292,7 +292,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Course field
               DropdownButtonFormField<String>(
-                value: _selectedCourse,
+                initialValue: _selectedCourse,
                 onChanged: (value) {
                   if (value != null) {
                     setState(() {

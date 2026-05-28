@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/request_model.dart';
 import '../services/request_service.dart';
 import 'dart:async';
@@ -18,7 +18,9 @@ class RequestProvider extends ChangeNotifier {
 
   // ── Load requests — starts real time streams ──────────────────────────────
   void loadRequests(String uid) {
-    print('📋 [RequestProvider] loadRequests() called for user: $uid');
+    if (kDebugMode) {
+      print('📋 [RequestProvider] loadRequests() called for user: $uid');
+    }
 
     _incomingSubscription?.cancel();
     _outgoingSubscription?.cancel();
@@ -28,45 +30,59 @@ class RequestProvider extends ChangeNotifier {
     notifyListeners();
 
     // Listen to incoming requests
-    print('📋 [RequestProvider] Subscribing to incoming requests stream...');
+    if (kDebugMode) {
+      print('📋 [RequestProvider] Subscribing to incoming requests stream...');
+    }
     _incomingSubscription = _requestService
         .getIncomingRequests(uid)
         .listen(
           (data) {
-            print(
-              '📋 [RequestProvider] Incoming requests updated: ${data.length} requests',
-            );
+            if (kDebugMode) {
+              print(
+                '📋 [RequestProvider] Incoming requests updated: ${data.length} requests',
+              );
+            }
             incoming = data;
             notifyListeners();
           },
           onError: (error) {
             errorMessage = 'Error loading incoming requests: $error';
-            print('❌ [RequestProvider] Incoming requests error: $error');
+            if (kDebugMode) {
+              print('❌ [RequestProvider] Incoming requests error: $error');
+            }
             notifyListeners();
           },
         );
 
     // Listen to outgoing requests
-    print('📋 [RequestProvider] Subscribing to outgoing requests stream...');
+    if (kDebugMode) {
+      print('📋 [RequestProvider] Subscribing to outgoing requests stream...');
+    }
     _outgoingSubscription = _requestService
         .getOutgoingRequests(uid)
         .listen(
           (data) {
-            print(
-              '📋 [RequestProvider] Outgoing requests updated: ${data.length} requests',
-            );
+            if (kDebugMode) {
+              print(
+                '📋 [RequestProvider] Outgoing requests updated: ${data.length} requests',
+              );
+            }
             outgoing = data;
             notifyListeners();
           },
           onError: (error) {
             errorMessage = 'Error loading outgoing requests: $error';
-            print('❌ [RequestProvider] Outgoing requests error: $error');
+            if (kDebugMode) {
+              print('❌ [RequestProvider] Outgoing requests error: $error');
+            }
             notifyListeners();
           },
         );
 
     _requestService.checkSessionsDue(uid).catchError((error) {
-      print('❌ [RequestProvider] Session due check error: $error');
+      if (kDebugMode) {
+        print('❌ [RequestProvider] Session due check error: $error');
+      }
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class ModerationService {
   static final ModerationService _instance = ModerationService._internal();
@@ -21,7 +22,9 @@ class ModerationService {
         'blockedUserIds': FieldValue.arrayUnion([targetUserId]),
       });
     } catch (e) {
-      print('Error blocking user: $e');
+      if (kDebugMode) {
+        print('Error blocking user: $e');
+      }
       rethrow;
     }
   }
@@ -35,7 +38,9 @@ class ModerationService {
         'blockedUserIds': FieldValue.arrayRemove([targetUserId]),
       });
     } catch (e) {
-      print('Error unblocking user: $e');
+      if (kDebugMode) {
+        print('Error unblocking user: $e');
+      }
       rethrow;
     }
   }
@@ -45,14 +50,19 @@ class ModerationService {
   // Return true if targetUserId is in blockedUserIds array
   Future<bool> isBlocked(String currentUserId, String targetUserId) async {
     try {
-      final userDoc = await _firestore.collection('users').doc(currentUserId).get();
+      final userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
       if (userDoc.exists) {
-        final blockedUserIds = List<String>.from(userDoc['blockedUserIds'] ?? []);
+        final blockedUserIds = List<String>.from(
+          userDoc['blockedUserIds'] ?? [],
+        );
         return blockedUserIds.contains(targetUserId);
       }
       return false;
     } catch (e) {
-      print('Error checking blocked status: $e');
+      if (kDebugMode) {
+        print('Error checking blocked status: $e');
+      }
       return false;
     }
   }
@@ -60,8 +70,12 @@ class ModerationService {
   // Submit a report against another user
   // Write document to reports collection
   // Set status = 'pending'
-  Future<void> reportUser(String reporterId, String reportedUserId,
-      String category, String description) async {
+  Future<void> reportUser(
+    String reporterId,
+    String reportedUserId,
+    String category,
+    String description,
+  ) async {
     try {
       // Write document to reports collection
       // Set status = 'pending'
@@ -74,7 +88,9 @@ class ModerationService {
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error submitting report: $e');
+      if (kDebugMode) {
+        print('Error submitting report: $e');
+      }
       rethrow;
     }
   }
@@ -83,10 +99,15 @@ class ModerationService {
   Future<List<Map<String, dynamic>>> getPendingReports() async {
     try {
       final snapshot =
-          await _firestore.collection('reports').where('status', isEqualTo: 'pending').get();
+          await _firestore
+              .collection('reports')
+              .where('status', isEqualTo: 'pending')
+              .get();
       return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
     } catch (e) {
-      print('Error fetching pending reports: $e');
+      if (kDebugMode) {
+        print('Error fetching pending reports: $e');
+      }
       return [];
     }
   }

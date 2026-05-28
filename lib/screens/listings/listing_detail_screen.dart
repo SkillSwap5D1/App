@@ -86,13 +86,13 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             PopupMenuButton(
               itemBuilder:
                   (context) => [
-                    PopupMenuItem(child: Text('Edit'), onTap: _editListing),
+                    PopupMenuItem(onTap: _editListing, child: Text('Edit')),
                     PopupMenuItem(
+                      onTap: _deleteListing,
                       child: Text(
                         'Delete',
                         style: TextStyle(color: AppColors.error),
                       ),
-                      onTap: _deleteListing,
                     ),
                   ],
             )

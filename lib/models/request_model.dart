@@ -32,36 +32,36 @@ class RequestModel {
   // ── Convert Firestore data → Dart object ──────────────────────────────────
   factory RequestModel.fromMap(Map<String, dynamic> map) {
     return RequestModel(
-      id:            map['id']            ?? '',
-      fromUserId:    map['fromUserId']    ?? '',
-      fromUserName:  map['fromUserName']  ?? '',
-      toUserId:      map['toUserId']      ?? '',
-      toUserName:    map['toUserName']    ?? '',
-      listingId:     map['listingId']     ?? '',
-      skillName:     map['skillName']     ?? '',
-      message:       map['message']       ?? '',
-      status:        map['status']        ?? 'pending',
+      id: map['id'] ?? '',
+      fromUserId: map['fromUserId'] ?? '',
+      fromUserName: map['fromUserName'] ?? '',
+      toUserId: map['toUserId'] ?? '',
+      toUserName: map['toUserName'] ?? '',
+      listingId: map['listingId'] ?? '',
+      skillName: map['skillName'] ?? '',
+      message: map['message'] ?? '',
+      status: map['status'] ?? 'pending',
       proposedTimes: List<String>.from(map['proposedTimes'] ?? []),
-      createdAt:     (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      updatedAt:     (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
   // ── Convert Dart object → Firestore data ──────────────────────────────────
   Map<String, dynamic> toMap() {
     return {
-      'id':            id,
-      'fromUserId':    fromUserId,
-      'fromUserName':  fromUserName,
-      'toUserId':      toUserId,
-      'toUserName':    toUserName,
-      'listingId':     listingId,
-      'skillName':     skillName,
-      'message':       message,
-      'status':        status,
+      'id': id,
+      'fromUserId': fromUserId,
+      'fromUserName': fromUserName,
+      'toUserId': toUserId,
+      'toUserName': toUserName,
+      'listingId': listingId,
+      'skillName': skillName,
+      'message': message,
+      'status': status,
       'proposedTimes': proposedTimes,
-      'createdAt':     Timestamp.fromDate(createdAt),
-      'updatedAt':     Timestamp.fromDate(updatedAt),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
 
@@ -81,24 +81,24 @@ class RequestModel {
     DateTime? updatedAt,
   }) {
     return RequestModel(
-      id:            id            ?? this.id,
-      fromUserId:    fromUserId    ?? this.fromUserId,
-      fromUserName:  fromUserName  ?? this.fromUserName,
-      toUserId:      toUserId      ?? this.toUserId,
-      toUserName:    toUserName    ?? this.toUserName,
-      listingId:     listingId     ?? this.listingId,
-      skillName:     skillName     ?? this.skillName,
-      message:       message       ?? this.message,
-      status:        status        ?? this.status,
+      id: id ?? this.id,
+      fromUserId: fromUserId ?? this.fromUserId,
+      fromUserName: fromUserName ?? this.fromUserName,
+      toUserId: toUserId ?? this.toUserId,
+      toUserName: toUserName ?? this.toUserName,
+      listingId: listingId ?? this.listingId,
+      skillName: skillName ?? this.skillName,
+      message: message ?? this.message,
+      status: status ?? this.status,
       proposedTimes: proposedTimes ?? this.proposedTimes,
-      createdAt:     createdAt     ?? this.createdAt,
-      updatedAt:     updatedAt     ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   // ── Helper getters ─────────────────────────────────────────────────────────
-  bool get isPending   => status == 'pending';
-  bool get isAccepted  => status == 'accepted';
-  bool get isDeclined  => status == 'declined';
+  bool get isPending => status == 'pending';
+  bool get isAccepted => status == 'accepted';
+  bool get isDeclined => status == 'declined';
   bool get isCountered => status == 'countered';
 }

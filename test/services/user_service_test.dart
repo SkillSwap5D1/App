@@ -1,4 +1,3 @@
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skillswap_app/models/user_model.dart';
@@ -43,7 +42,10 @@ void main() {
     }
 
     test('getUser() returns correct UserModel', () async {
-      await firestore.collection('users').doc('user_1').set(
+      await firestore
+          .collection('users')
+          .doc('user_1')
+          .set(
             user(
               uid: 'user_1',
               firstName: 'Jamie',
@@ -74,7 +76,10 @@ void main() {
     });
 
     test('updateUser() only changes provided fields', () async {
-      await firestore.collection('users').doc('user_1').set(
+      await firestore
+          .collection('users')
+          .doc('user_1')
+          .set(
             user(
               uid: 'user_1',
               firstName: 'Jamie',
@@ -98,7 +103,10 @@ void main() {
     });
 
     test('updatePrivacySettings() updates all 3 booleans', () async {
-      await firestore.collection('users').doc('user_1').set(
+      await firestore
+          .collection('users')
+          .doc('user_1')
+          .set(
             user(
               uid: 'user_1',
               firstName: 'Jamie',
@@ -126,7 +134,10 @@ void main() {
     });
 
     test('userStream() emits UserModel on change', () async {
-      await firestore.collection('users').doc('user_1').set(
+      await firestore
+          .collection('users')
+          .doc('user_1')
+          .set(
             user(
               uid: 'user_1',
               firstName: 'Jamie',
@@ -142,12 +153,19 @@ void main() {
       final expectation = expectLater(
         service.userStream('user_1'),
         emitsInOrder([
-          predicate((UserModel? user) => user != null && user.firstName == 'Jamie'),
-          predicate((UserModel? user) => user != null && user.bio == 'Updated from stream'),
+          predicate(
+            (UserModel? user) => user != null && user.firstName == 'Jamie',
+          ),
+          predicate(
+            (UserModel? user) =>
+                user != null && user.bio == 'Updated from stream',
+          ),
         ]),
       );
 
-      await firestore.collection('users').doc('user_1').update({'bio': 'Updated from stream'});
+      await firestore.collection('users').doc('user_1').update({
+        'bio': 'Updated from stream',
+      });
       await expectation;
     });
   });

@@ -1,14 +1,17 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/notification_model.dart';
 
 class NotificationService {
   final FirebaseMessaging? _firebaseMessaging;
   final FirebaseFirestore _firestore;
 
-  NotificationService({FirebaseMessaging? firebaseMessaging, FirebaseFirestore? firestore})
-      : _firebaseMessaging = firebaseMessaging,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  NotificationService({
+    FirebaseMessaging? firebaseMessaging,
+    FirebaseFirestore? firestore,
+  }) : _firebaseMessaging = firebaseMessaging,
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> initialize() async {
     // Request user permission for notifications
@@ -27,9 +30,11 @@ class NotificationService {
   }
 
   void _handleForegroundNotification(RemoteMessage message) {
-    print('🔔 [NotificationService] Foreground notification received');
-    print('   Title: ${message.notification?.title}');
-    print('   Body: ${message.notification?.body}');
+    if (kDebugMode) {
+      print('🔔 [NotificationService] Foreground notification received');
+      print('   Title: ${message.notification?.title}');
+      print('   Body: ${message.notification?.body}');
+    }
 
     // Extract notification data
     // ignore: unused_local_variable
@@ -40,16 +45,20 @@ class NotificationService {
 
     // Show foreground notification using local notification
     // This would typically use flutter_local_notifications package
-    print('   Data: $data');
+    if (kDebugMode) {
+      print('   Data: $data');
+    }
     // TODO: Implement local notification display
     // For now, notifications are only shown when app is backgrounded or closed
   }
 
   void _handleBackgroundNotificationTap(RemoteMessage message) {
-    print('🔔 [NotificationService] Background notification tapped');
-    print('   Title: ${message.notification?.title}');
-    print('   Body: ${message.notification?.body}');
-    print('   Data: ${message.data}');
+    if (kDebugMode) {
+      print('🔔 [NotificationService] Background notification tapped');
+      print('   Title: ${message.notification?.title}');
+      print('   Body: ${message.notification?.body}');
+      print('   Data: ${message.data}');
+    }
 
     // Extract notification type and navigate accordingly
     // ignore: unused_local_variable
@@ -97,7 +106,9 @@ class NotificationService {
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error sending notification: $e');
+      if (kDebugMode) {
+        print('Error sending notification: $e');
+      }
     }
   }
 
@@ -141,7 +152,9 @@ class NotificationService {
         'isRead': true,
       });
     } catch (e) {
-      print('Error marking notification as read: $e');
+      if (kDebugMode) {
+        print('Error marking notification as read: $e');
+      }
     }
   }
 
@@ -165,7 +178,9 @@ class NotificationService {
 
       await batch.commit();
     } catch (e) {
-      print('Error marking all notifications as read: $e');
+      if (kDebugMode) {
+        print('Error marking all notifications as read: $e');
+      }
     }
   }
 
@@ -182,7 +197,9 @@ class NotificationService {
       }
       return null;
     } catch (e) {
-      print('Error getting notification: $e');
+      if (kDebugMode) {
+        print('Error getting notification: $e');
+      }
       return null;
     }
   }
@@ -192,7 +209,9 @@ class NotificationService {
     try {
       await _firestore.collection('notifications').doc(notificationId).delete();
     } catch (e) {
-      print('Error deleting notification: $e');
+      if (kDebugMode) {
+        print('Error deleting notification: $e');
+      }
     }
   }
 }

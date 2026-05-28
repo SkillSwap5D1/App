@@ -116,7 +116,8 @@ Future<void> navigateToProfile(WidgetTester tester) async {
 Future<void> pressSignOut(WidgetTester tester) async {
   final signOutButton = find.byWidgetPredicate(
     (widget) =>
-        widget is TextButton && widget.child is Text && 
+        widget is TextButton &&
+        widget.child is Text &&
         (widget.child as Text).data == 'Sign Out',
   );
 
@@ -156,11 +157,14 @@ Future<void> navigateToSavedTab(WidgetTester tester) async {
 
 /// Tap "Send Request" on first listing
 Future<void> tapSendRequestOnFirstListing(WidgetTester tester) async {
-  final sendRequestButton = find.byWidgetPredicate(
-    (widget) =>
-        widget is ElevatedButton ||
-        (widget is Text && widget.data == 'Send Request'),
-  ).first;
+  final sendRequestButton =
+      find
+          .byWidgetPredicate(
+            (widget) =>
+                widget is ElevatedButton ||
+                (widget is Text && widget.data == 'Send Request'),
+          )
+          .first;
 
   if (sendRequestButton.evaluate().isNotEmpty) {
     await tester.ensureVisible(sendRequestButton);

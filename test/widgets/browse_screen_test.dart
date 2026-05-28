@@ -93,8 +93,12 @@ void main() {
       when(mockAuthProvider.currentUser).thenReturn(testUser);
     });
 
-    testWidgets('renders listing cards with mock data', (WidgetTester tester) async {
-      when(mockListingProvider.listings).thenReturn([testListing1, testListing2]);
+    testWidgets('renders listing cards with mock data', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockListingProvider.listings,
+      ).thenReturn([testListing1, testListing2]);
 
       await tester.binding.setSurfaceSize(const Size(680, 2000));
       addTearDown(() async {
@@ -114,8 +118,12 @@ void main() {
       expect(find.text(testListing1.category), findsWidgets);
     });
 
-    testWidgets('search filters cards in real time', (WidgetTester tester) async {
-      when(mockListingProvider.listings).thenReturn([testListing1, testListing2]);
+    testWidgets('search filters cards in real time', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockListingProvider.listings,
+      ).thenReturn([testListing1, testListing2]);
 
       await tester.binding.setSurfaceSize(const Size(680, 2000));
       addTearDown(() async {
@@ -140,7 +148,9 @@ void main() {
       expect(find.text(testListing2.title), findsWidgets);
     });
 
-    testWidgets('empty listings shows empty state', (WidgetTester tester) async {
+    testWidgets('empty listings shows empty state', (
+      WidgetTester tester,
+    ) async {
       when(mockListingProvider.listings).thenReturn([]);
 
       await tester.binding.setSurfaceSize(const Size(680, 2000));
@@ -159,16 +169,16 @@ void main() {
       expect(find.text('No listings match this search'), findsOneWidget);
     });
 
-    testWidgets('my listings tab shows the owner listing', (WidgetTester tester) async {
+    testWidgets('my listings tab shows the owner listing', (
+      WidgetTester tester,
+    ) async {
       final ownedListing = testListing1.copyWith(
         ownerId: testUser.uid,
         ownerName: testUser.fullName,
       );
-      when(mockListingProvider.listings).thenReturn([
-        testListing1,
-        testListing2,
-        ownedListing,
-      ]);
+      when(
+        mockListingProvider.listings,
+      ).thenReturn([testListing1, testListing2, ownedListing]);
 
       await tester.binding.setSurfaceSize(const Size(680, 2000));
       addTearDown(() async {
@@ -192,4 +202,3 @@ void main() {
     });
   });
 }
-

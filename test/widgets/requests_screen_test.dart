@@ -111,7 +111,9 @@ void main() {
     });
 
     testWidgets('renders incoming request cards', (WidgetTester tester) async {
-      when(mockRequestProvider.incoming).thenReturn([testIncomingRequest1, testIncomingRequest2]);
+      when(
+        mockRequestProvider.incoming,
+      ).thenReturn([testIncomingRequest1, testIncomingRequest2]);
       when(mockRequestProvider.outgoing).thenReturn([]);
 
       await tester.pumpWidget(
@@ -126,7 +128,9 @@ void main() {
       expect(find.text(testIncomingRequest2.fromUserName), findsWidgets);
     });
 
-    testWidgets('decline button shows confirmation dialog', (WidgetTester tester) async {
+    testWidgets('decline button shows confirmation dialog', (
+      WidgetTester tester,
+    ) async {
       when(mockRequestProvider.incoming).thenReturn([testIncomingRequest1]);
       when(mockRequestProvider.outgoing).thenReturn([]);
 
@@ -176,7 +180,9 @@ void main() {
       expect(find.text(testOutgoingRequest.skillName), findsWidgets);
     });
 
-    testWidgets('empty incoming shows empty state', (WidgetTester tester) async {
+    testWidgets('empty incoming shows empty state', (
+      WidgetTester tester,
+    ) async {
       when(mockRequestProvider.incoming).thenReturn([]);
       when(mockRequestProvider.outgoing).thenReturn([]);
 

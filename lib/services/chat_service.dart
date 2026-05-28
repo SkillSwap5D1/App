@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/conversation_model.dart';
 import '../models/message_model.dart';
 import 'notification_service.dart';
@@ -10,7 +11,9 @@ class ChatService {
 
   ChatService({FirebaseFirestore? db, NotificationService? notificationService})
     : _db = db ?? FirebaseFirestore.instance,
-      _notificationService = notificationService ?? NotificationService(firestore: db ?? FirebaseFirestore.instance);
+      _notificationService =
+          notificationService ??
+          NotificationService(firestore: db ?? FirebaseFirestore.instance);
 
   // ── Get or create a conversation between 2 users ─────────────────────────
   Future<String> getOrCreateConversation(String uid1, String uid2) async {
@@ -18,7 +21,7 @@ class ChatService {
       // Preserve the order provided by callers so conversation IDs are
       // deterministic based on the caller's context (fromUserId, toUserId).
       final participantIds = [uid1, uid2];
-      final conversationId = '${uid1}_${uid2}';
+      final conversationId = '${uid1}_$uid2';
       final docRef = _db.collection('conversations').doc(conversationId);
 
       final existing = await docRef.get();
@@ -50,9 +53,11 @@ class ChatService {
     String? recipientId,
   }) async {
     try {
-      print('🔵 ChatService.sendMessage(): Starting message send');
-      print('   conversationId: $conversationId');
-      print('   senderId: $senderId');
+      if (kDebugMode) {
+        print('🔵 ChatService.sendMessage(): Starting message send');
+        print('   conversationId: $conversationId');
+        print('   senderId: $senderId');
+      }
 
       // Create new message document
       final msgRef = _db.collection('messages').doc();
@@ -66,11 +71,17 @@ class ChatService {
       );
 
       // Debug log for Firestore message save
-      print('🔵 ChatService: Saving message to Firestore: ${message.toMap()}');
+      if (kDebugMode) {
+        print(
+          '🔵 ChatService: Saving message to Firestore: ${message.toMap()}',
+        );
+      }
 
       // Save message
       await msgRef.set(message.toMap());
-      print('✅ Message saved: ${msgRef.id}');
+      if (kDebugMode) {
+        print('✅ Message saved: ${msgRef.id}');
+      }
 
       // Get conversation to find the other participant.
       final conversationDoc =
@@ -102,7 +113,9 @@ class ChatService {
       final participants = List<String>.from(
         refreshedConversation.data()?['participants'] ?? [],
       );
-      print('🔵 Found conversation with participants: $participants');
+      if (kDebugMode) {
+        print('🔵 Found conversation with participants: $participants');
+      }
 
       final otherUserId = participants.firstWhere(
         (uid) => uid != senderId,
@@ -113,7 +126,9 @@ class ChatService {
         throw Exception('Could not find other participant in conversation');
       }
 
-      print('🔵 Other user ID: $otherUserId');
+      if (kDebugMode) {
+        print('🔵 Other user ID: $otherUserId');
+      }
 
       // Update conversation last message and OTHER user's unread count
       await _db.collection('conversations').doc(conversationId).update({
@@ -122,7 +137,9 @@ class ChatService {
         'unreadCounts.$otherUserId': FieldValue.increment(1),
       });
 
-      print('✅ Conversation updated with new message');
+      if (kDebugMode) {
+        print('✅ Conversation updated with new message');
+      }
 
       // Send notification to other participant
       if (otherUserId.isNotEmpty) {
@@ -133,21 +150,27 @@ class ChatService {
           text.length > 50 ? '${text.substring(0, 50)}...' : text,
           conversationId,
         );
-        print('✅ Notification sent to $otherUserId');
+        if (kDebugMode) {
+          print('✅ Notification sent to $otherUserId');
+        }
       }
 
       return message;
     } catch (e) {
-      print('❌ Error sending message: $e');
+      if (kDebugMode) {
+        print('❌ Error sending message: $e');
+      }
       throw Exception('Failed to send message: $e');
     }
   }
 
   // ── Real time stream of messages in a conversation ────────────────────────
   Stream<List<MessageModel>> messagesStream(String conversationId) {
-    print(
-      '🔵 ChatService.messagesStream(): Setting up stream for $conversationId',
-    );
+    if (kDebugMode) {
+      print(
+        '🔵 ChatService.messagesStream(): Setting up stream for $conversationId',
+      );
+    }
     return _db
         .collection('messages')
         .where('conversationId', isEqualTo: conversationId)
@@ -159,21 +182,29 @@ class ChatService {
                   .map((doc) => MessageModel.fromMap(doc.data()))
                   .toList();
           // Debug log for Firestore message fetch
-          print('🔵 ChatService: Fetched messages from Firestore: ${messages.map((m) => m.toMap()).toList()}');
-          print(
-            '🔵 ChatService.messagesStream(): Got ${messages.length} messages',
-          );
+          if (kDebugMode) {
+            print(
+              '🔵 ChatService: Fetched messages from Firestore: ${messages.map((m) => m.toMap()).toList()}',
+            );
+            print(
+              '🔵 ChatService.messagesStream(): Got ${messages.length} messages',
+            );
+          }
           return messages;
         })
         .handleError((error) {
-          print('❌ Error in messagesStream: $error');
+          if (kDebugMode) {
+            print('❌ Error in messagesStream: $error');
+          }
           throw error;
         });
   }
 
   // ── Real time stream of all conversations for a user ─────────────────────
   Stream<List<ConversationModel>> conversationsStream(String uid) {
-    print('🔵 ChatService.conversationsStream(): Setting up stream for $uid');
+    if (kDebugMode) {
+      print('🔵 ChatService.conversationsStream(): Setting up stream for $uid');
+    }
     return _db
         .collection('conversations')
         .where('participants', arrayContains: uid)
@@ -182,22 +213,28 @@ class ChatService {
         .map((snapshot) {
           final conversations =
               snapshot.docs.map((doc) {
-                print('🔵   Found conversation: ${doc.id}');
-                print('       Participants: ${doc.data()['participants']}');
-                print('       Last message: ${doc.data()['lastMessage']}');
+                if (kDebugMode) {
+                  print('🔵   Found conversation: ${doc.id}');
+                  print('       Participants: ${doc.data()['participants']}');
+                  print('       Last message: ${doc.data()['lastMessage']}');
+                }
                 return ConversationModel.fromMap(doc.data());
               }).toList();
-          print(
-            '🔵 ChatService.conversationsStream(): Got ${conversations.length} conversations for $uid',
-          );
-          if (conversations.isEmpty) {
-            print('⚠️ WARNING: No conversations found for user $uid');
+          if (kDebugMode) {
+            print(
+              '🔵 ChatService.conversationsStream(): Got ${conversations.length} conversations for $uid',
+            );
+            if (conversations.isEmpty) {
+              print('⚠️ WARNING: No conversations found for user $uid');
+            }
           }
           return conversations;
         })
         .handleError((error) {
-          print('❌ Error in conversationsStream: $error');
-          print('   Stack trace: $error');
+          if (kDebugMode) {
+            print('❌ Error in conversationsStream: $error');
+            print('   Stack trace: $error');
+          }
           throw error;
         });
   }

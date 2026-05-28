@@ -193,23 +193,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) {
         // Give a moment for state to fully propagate
         await Future.delayed(const Duration(milliseconds: 300));
-        
+
         if (mounted) {
           final authProvider = context.read<AuthProvider>();
-          if (authProvider.errorMessage != null && authProvider.errorMessage!.isNotEmpty) {
+          if (authProvider.errorMessage != null &&
+              authProvider.errorMessage!.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(authProvider.errorMessage!),
                 backgroundColor: AppColors.error,
               ),
             );
-          } else if (authProvider.currentUser != null && authProvider.currentUser!.uid.isNotEmpty) {
+          } else if (authProvider.currentUser != null &&
+              authProvider.currentUser!.uid.isNotEmpty) {
             // Registration successful - navigate to onboarding
             if (mounted) {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding',
-                (route) => false,
-              );
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil('/onboarding', (route) => false);
             }
           }
         }
@@ -497,7 +498,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
 
   Widget _buildPasswordField() {
     return TextField(

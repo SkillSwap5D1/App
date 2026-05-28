@@ -123,7 +123,7 @@ class AuthProvider extends ChangeNotifier {
           return;
         }
         print(
-          '⚠️ _fetchUser() attempt ${attempt + 1}/${maxAttempts}: user not found yet',
+          '⚠️ _fetchUser() attempt ${attempt + 1}/$maxAttempts: user not found yet',
         );
 
         await Future.delayed(delay);
@@ -449,7 +449,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error updating privacy settings: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -476,7 +476,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error updating skills: $e');
-      throw e;
+      rethrow;
     }
   }
 

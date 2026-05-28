@@ -55,25 +55,28 @@ class NotificationRow extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            color: notification.isRead
-                ? AppColors.surface
-                : AppColors.surfaceElevated,
+            color:
+                notification.isRead
+                    ? AppColors.surface
+                    : AppColors.surfaceElevated,
             borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(
-              color: notification.isRead
-                  ? AppColors.border
-                  : AppColors.borderActive,
+              color:
+                  notification.isRead
+                      ? AppColors.border
+                      : AppColors.borderActive,
               width: 1,
             ),
-            boxShadow: notification.isRead
-                ? AppShadows.card
-                : [
-                    BoxShadow(
-                      color: AppColors.accentGlow,
-                      blurRadius: 18,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+            boxShadow:
+                notification.isRead
+                    ? AppShadows.card
+                    : [
+                      BoxShadow(
+                        color: AppColors.accentGlow,
+                        blurRadius: 18,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
           ),
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
@@ -86,7 +89,9 @@ class NotificationRow extends StatelessWidget {
                   color: _getColorForType(notification.type).withOpacity(0.12),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: _getColorForType(notification.type).withOpacity(0.24),
+                    color: _getColorForType(
+                      notification.type,
+                    ).withOpacity(0.24),
                     width: 1,
                   ),
                 ),
@@ -131,10 +136,7 @@ class NotificationRow extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    notification.timeAgo,
-                    style: AppTextStyles.caption,
-                  ),
+                  Text(notification.timeAgo, style: AppTextStyles.caption),
                   if (!notification.isRead)
                     Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.xs),

@@ -389,7 +389,7 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
         border: Border.all(color: AppColors.borderLight),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedCategory,
+        initialValue: _selectedCategory,
         items:
             categories
                 .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
@@ -420,7 +420,7 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
         border: Border.all(color: AppColors.borderLight),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedLevel,
+        initialValue: _selectedLevel,
         items:
             levels
                 .map(
@@ -453,7 +453,7 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
         border: Border.all(color: AppColors.borderLight),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedModality,
+        initialValue: _selectedModality,
         items:
             modalities
                 .map((mod) => DropdownMenuItem(value: mod, child: Text(mod)))

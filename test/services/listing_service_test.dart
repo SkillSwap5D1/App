@@ -1,4 +1,3 @@
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skillswap_app/models/listing_model.dart';
@@ -98,7 +97,10 @@ void main() {
 
       expect(results, hasLength(3));
       expect(results.every((listing) => listing.isActive), isTrue);
-      expect(results.map((listing) => listing.id), isNot(contains('listing_4')));
+      expect(
+        results.map((listing) => listing.id),
+        isNot(contains('listing_4')),
+      );
     });
 
     test('getAllListings() empty collection returns []', () async {
@@ -141,7 +143,10 @@ void main() {
     });
 
     test('deleteListing() sets isActive=false not delete', () async {
-      await firestore.collection('listings').doc('listing_1').set(
+      await firestore
+          .collection('listings')
+          .doc('listing_1')
+          .set(
             listing(
               id: 'listing_1',
               ownerId: 'owner_1',
@@ -174,7 +179,10 @@ void main() {
       final results = await service.searchListings(category: 'Programming');
 
       expect(results, hasLength(2));
-      expect(results.every((listing) => listing.category == 'Programming'), isTrue);
+      expect(
+        results.every((listing) => listing.category == 'Programming'),
+        isTrue,
+      );
     });
 
     test('searchListings() text query filter works', () async {
@@ -200,7 +208,10 @@ void main() {
     });
 
     test('updateListing() only updates provided fields', () async {
-      await firestore.collection('listings').doc('listing_1').set(
+      await firestore
+          .collection('listings')
+          .doc('listing_1')
+          .set(
             listing(
               id: 'listing_1',
               ownerId: 'owner_1',
@@ -213,7 +224,9 @@ void main() {
             ).toMap(),
           );
 
-      await service.updateListing('listing_1', {'title': 'Updated Flutter Basics'});
+      await service.updateListing('listing_1', {
+        'title': 'Updated Flutter Basics',
+      });
 
       final doc = await firestore.collection('listings').doc('listing_1').get();
       final data = doc.data()!;
@@ -228,11 +241,13 @@ void main() {
 
       final expectation = expectLater(
         service.listingsStream(),
-        emits(predicate((List<ListingModel> listings) {
-          return listings.length == 3 &&
-              listings.every((listing) => listing.isActive) &&
-              listings.any((listing) => listing.id == 'listing_1');
-        })),
+        emits(
+          predicate((List<ListingModel> listings) {
+            return listings.length == 3 &&
+                listings.every((listing) => listing.isActive) &&
+                listings.any((listing) => listing.id == 'listing_1');
+          }),
+        ),
       );
 
       await expectation;

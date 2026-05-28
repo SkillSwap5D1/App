@@ -186,7 +186,9 @@ class RequestService {
       // 1b. Ensure a conversation exists between the two users so it appears
       // in the Messages tab immediately after acceptance (fixes missing convo)
       try {
-        print('💬 [AcceptRequest] Ensuring conversation exists between $fromUserId and $toUserId');
+        print(
+          '💬 [AcceptRequest] Ensuring conversation exists between $fromUserId and $toUserId',
+        );
         await _chatService.getOrCreateConversation(fromUserId, toUserId);
         print('✅ [AcceptRequest] Conversation ensured');
       } catch (chatErr) {
@@ -285,7 +287,9 @@ class RequestService {
           );
         }
       } catch (e) {
-        print('⚠️ [RequestService] Could not send review_due notifications: $e');
+        print(
+          '⚠️ [RequestService] Could not send review_due notifications: $e',
+        );
       }
     } catch (e) {
       throw Exception('Failed to end request: $e');

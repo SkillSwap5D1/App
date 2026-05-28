@@ -10,24 +10,25 @@ class DialogHelper {
   }) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        contentTextStyle: AppTextStyles.bodyMedium,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            contentTextStyle: AppTextStyles.bodyMedium,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  deleteLabel,
+                  style: TextStyle(color: AppColors.error),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              deleteLabel,
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
     );
     return result ?? false;
   }
@@ -38,32 +39,30 @@ class DialogHelper {
   }) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Block $userName?'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'They can no longer message you or see your profile.',
-              style: AppTextStyles.bodyMedium,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Block $userName?'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'They can no longer message you or see your profile.',
+                  style: AppTextStyles.bodyMedium,
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Block', style: TextStyle(color: AppColors.error)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              'Block',
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
     );
     return result ?? false;
   }
@@ -76,11 +75,9 @@ class DialogHelper {
   }) async {
     return showDialog<T>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: title,
-        content: content,
-        actions: actions,
-      ),
+      builder:
+          (context) =>
+              AlertDialog(title: title, content: content, actions: actions),
     );
   }
 }

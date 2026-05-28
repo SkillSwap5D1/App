@@ -11,10 +11,7 @@ import '../../widgets/time_slot_picker.dart';
 class SendRequestScreen extends StatefulWidget {
   final ListingModel listing;
 
-  const SendRequestScreen({
-    super.key,
-    required this.listing,
-  });
+  const SendRequestScreen({super.key, required this.listing});
 
   @override
   State<SendRequestScreen> createState() => _SendRequestScreenState();
@@ -110,7 +107,8 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
 
     if (requestId == null) {
       setState(() {
-        _errorMessage = requestProvider.errorMessage ?? 'Failed to send request';
+        _errorMessage =
+            requestProvider.errorMessage ?? 'Failed to send request';
       });
       return;
     }
@@ -331,28 +329,29 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
-            children: widget.listing.tags
-                .map(
-                  (tag) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.xs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(AppRadius.full),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                    ),
-                    child: Text(
-                      tag,
-                      style: AppTextStyles.caption.copyWith(
-                        color: const Color(0xFF475569),
-                        fontWeight: FontWeight.w500,
+            children:
+                widget.listing.tags
+                    .map(
+                      (tag) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Text(
+                          tag,
+                          style: AppTextStyles.caption.copyWith(
+                            color: const Color(0xFF475569),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
+                    )
+                    .toList(),
           ),
         ],
       ),
@@ -380,10 +379,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
               SizedBox(height: 4),
               Text(
                 'Add up to 3 possible times',
-                style: TextStyle(
-                  color: Color(0xFF64748B),
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: Color(0xFF64748B), fontSize: 13),
               ),
             ],
           ),
@@ -459,10 +455,7 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'Add a note for the provider...',
-            hintStyle: const TextStyle(
-              color: Color(0xFF94A3B8),
-              fontSize: 13,
-            ),
+            hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
@@ -475,7 +468,10 @@ class _SendRequestScreenState extends State<SendRequestScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF064E3B), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xFF064E3B),
+                width: 1.5,
+              ),
             ),
             contentPadding: const EdgeInsets.all(AppSpacing.md),
           ),

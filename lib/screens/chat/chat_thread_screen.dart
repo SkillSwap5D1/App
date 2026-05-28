@@ -128,9 +128,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
       if (!mounted) return;
 
       setState(() {
-        _optimisticMessages.removeWhere(
-          (message) => message.id == pendingId,
-        );
+        _optimisticMessages.removeWhere((message) => message.id == pendingId);
       });
 
       // Scroll to bottom after sending
@@ -143,9 +141,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
         final failedMessage = pendingMessage.copyWith(
           status: MessageStatus.failed,
         );
-        _optimisticMessages.removeWhere(
-          (message) => message.id == pendingId,
-        );
+        _optimisticMessages.removeWhere((message) => message.id == pendingId);
         _optimisticMessages.add(failedMessage);
       });
 
@@ -491,14 +487,12 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                                         SizedBox(
                                           width: 12,
                                           height: 12,
-                                          child:
-                                              CircularProgressIndicator(
+                                          child: CircularProgressIndicator(
                                             strokeWidth: 1.5,
-                                            valueColor:
-                                                AlwaysStoppedAnimation(
-                                                  AppColors.textSecondary
-                                                      .withOpacity(0.5),
-                                                ),
+                                            valueColor: AlwaysStoppedAnimation(
+                                              AppColors.textSecondary
+                                                  .withOpacity(0.5),
+                                            ),
                                           ),
                                         )
                                       else if (message.status ==
@@ -518,14 +512,12 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
                                     ],
                                     Text(
                                       _formatTime(message.timestamp),
-                                      style:
-                                          AppTextStyles.caption.copyWith(
-                                            color:
-                                                isCurrentUser
-                                                    ? AppColors
-                                                        .textSecondary
-                                                    : AppColors.textMuted,
-                                          ),
+                                      style: AppTextStyles.caption.copyWith(
+                                        color:
+                                            isCurrentUser
+                                                ? AppColors.textSecondary
+                                                : AppColors.textMuted,
+                                      ),
                                     ),
                                   ],
                                 ),

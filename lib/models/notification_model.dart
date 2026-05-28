@@ -21,24 +21,24 @@ class NotificationModel {
 
   factory NotificationModel.fromMap(Map<String, dynamic> map) {
     return NotificationModel(
-      id:        map['id']       ?? '',
-      userId:    map['userId']   ?? '',
-      type:      map['type']     ?? '',
-      title:     map['title']    ?? '',
-      subtitle:  map['subtitle'] ?? '',
-      isRead:    map['isRead']   ?? false,
+      id: map['id'] ?? '',
+      userId: map['userId'] ?? '',
+      type: map['type'] ?? '',
+      title: map['title'] ?? '',
+      subtitle: map['subtitle'] ?? '',
+      isRead: map['isRead'] ?? false,
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id':        id,
-      'userId':    userId,
-      'type':      type,
-      'title':     title,
-      'subtitle':  subtitle,
-      'isRead':    isRead,
+      'id': id,
+      'userId': userId,
+      'type': type,
+      'title': title,
+      'subtitle': subtitle,
+      'isRead': isRead,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
@@ -53,20 +53,20 @@ class NotificationModel {
     DateTime? createdAt,
   }) {
     return NotificationModel(
-      id:        id        ?? this.id,
-      userId:    userId    ?? this.userId,
-      type:      type      ?? this.type,
-      title:     title     ?? this.title,
-      subtitle:  subtitle  ?? this.subtitle,
-      isRead:    isRead    ?? this.isRead,
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      isRead: isRead ?? this.isRead,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   // ── Helper getters ─────────────────────────────────────────────────────────
-  bool get isRequest   => type == 'request';
-  bool get isMessage   => type == 'message';
-  bool get isAccepted  => type == 'accepted';
-  bool get isDeclined  => type == 'declined';
-  bool get isReminder  => type == 'reminder';
+  bool get isRequest => type == 'request';
+  bool get isMessage => type == 'message';
+  bool get isAccepted => type == 'accepted';
+  bool get isDeclined => type == 'declined';
+  bool get isReminder => type == 'reminder';
 }

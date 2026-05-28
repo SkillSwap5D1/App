@@ -13,9 +13,7 @@ class SnackBarHelper {
     final snackBar = SnackBar(
       content: Text(
         message,
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.surface,
-        ),
+        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface),
       ),
       backgroundColor: isError ? AppColors.error : AppColors.pastelGreenDeep,
       duration: duration,
@@ -24,13 +22,14 @@ class SnackBarHelper {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
-      action: actionLabel != null && onAction != null
-          ? SnackBarAction(
-              label: actionLabel,
-              textColor: AppColors.pastelGreen,
-              onPressed: onAction,
-            )
-          : null,
+      action:
+          actionLabel != null && onAction != null
+              ? SnackBarAction(
+                label: actionLabel,
+                textColor: AppColors.pastelGreen,
+                onPressed: onAction,
+              )
+              : null,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

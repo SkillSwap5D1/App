@@ -30,8 +30,9 @@ class ReviewProvider extends ChangeNotifier {
       _reviewers = {};
       for (final review in _reviews) {
         if (!_reviewers.containsKey(review.reviewerId)) {
-          _reviewers[review.reviewerId] =
-              await _userService.getUser(review.reviewerId);
+          _reviewers[review.reviewerId] = await _userService.getUser(
+            review.reviewerId,
+          );
         }
       }
 

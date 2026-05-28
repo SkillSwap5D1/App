@@ -41,9 +41,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
 
   Future<void> _handleReport() async {
     if (_selectedReason == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a reason')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a reason')));
       return;
     }
 
@@ -70,7 +70,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Report submitted. Thank you for helping keep SkillSwap safe.'),
+          content: Text(
+            'Report submitted. Thank you for helping keep SkillSwap safe.',
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -115,7 +117,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('User blocked. You won\'t see their listings or messages.'),
+          content: Text(
+            'User blocked. You won\'t see their listings or messages.',
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -165,10 +169,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               const SizedBox(height: AppSpacing.xl),
 
               // Report Section
-              Text(
-                'Report User',
-                style: AppTextStyles.h3,
-              ),
+              Text('Report User', style: AppTextStyles.h3),
               const SizedBox(height: AppSpacing.md),
 
               // Reason Dropdown
@@ -181,7 +182,9 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                   isExpanded: true,
                   underline: const SizedBox(),
                   hint: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
                     child: Text(
                       'Select report reason',
                       style: AppTextStyles.bodyMedium.copyWith(
@@ -190,22 +193,26 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                     ),
                   ),
                   value: _selectedReason,
-                  items: ReportModel.reasons
-                      .map((reason) => DropdownMenuItem(
-                            value: reason,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.md,
+                  items:
+                      ReportModel.reasons
+                          .map(
+                            (reason) => DropdownMenuItem(
+                              value: reason,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                ),
+                                child: Text(reason),
                               ),
-                              child: Text(reason),
                             ),
-                          ))
-                      .toList(),
-                  onChanged: _isSubmitting
-                      ? null
-                      : (value) {
-                          setState(() => _selectedReason = value);
-                        },
+                          )
+                          .toList(),
+                  onChanged:
+                      _isSubmitting
+                          ? null
+                          : (value) {
+                            setState(() => _selectedReason = value);
+                          },
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -252,11 +259,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: AppColors.info,
-                      size: 20,
-                    ),
+                    Icon(Icons.info_outline, color: AppColors.info, size: 20),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
@@ -284,18 +287,19 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.textMuted,
+                  child:
+                      _isSubmitting
+                          ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.textMuted,
+                              ),
                             ),
-                          ),
-                        )
-                      : const Text('Submit Report'),
+                          )
+                          : const Text('Submit Report'),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -305,10 +309,7 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
               const SizedBox(height: AppSpacing.xl),
 
               // Block Section
-              Text(
-                'Block User',
-                style: AppTextStyles.h3,
-              ),
+              Text('Block User', style: AppTextStyles.h3),
               const SizedBox(height: AppSpacing.md),
 
               Text(
@@ -325,29 +326,27 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                 'Stop their messages from reaching you',
                 'Prevent them from seeing your profile',
                 'Remove any active requests between you',
-              ]
-                  .map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.check_circle_outline,
-                            size: 16,
-                            color: AppColors.success,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Text(
-                            item,
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
+              ].map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        size: 16,
+                        color: AppColors.success,
                       ),
-                    ),
-                  )
-                  .toList(),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        item,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: AppSpacing.lg),
 
@@ -364,18 +363,19 @@ class _ReportBlockedScreenState extends State<ReportBlockedScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.textMuted,
+                  child:
+                      _isSubmitting
+                          ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.textMuted,
+                              ),
                             ),
-                          ),
-                        )
-                      : const Text('Block User'),
+                          )
+                          : const Text('Block User'),
                 ),
               ),
             ],

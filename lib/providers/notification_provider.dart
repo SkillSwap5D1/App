@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../models/notification_model.dart';
 import '../services/notification_service.dart';
@@ -30,7 +30,9 @@ class NotificationProvider extends ChangeNotifier {
               notifyListeners();
             },
             onError: (error) {
-              print('❌ Error loading notifications: $error');
+              if (kDebugMode) {
+                print('❌ Error loading notifications: $error');
+              }
               isLoading = false;
               notifyListeners();
             },
@@ -39,7 +41,9 @@ class NotificationProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      print('Error loading notifications: $e');
+      if (kDebugMode) {
+        print('Error loading notifications: $e');
+      }
       isLoading = false;
       notifyListeners();
     }
@@ -53,7 +57,9 @@ class NotificationProvider extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 300));
       notifyListeners();
     } catch (e) {
-      print('Error marking all as read: $e');
+      if (kDebugMode) {
+        print('Error marking all as read: $e');
+      }
     }
   }
 
@@ -62,7 +68,9 @@ class NotificationProvider extends ChangeNotifier {
     try {
       await _notificationService.markRead(notificationId);
     } catch (e) {
-      print('Error marking as read: $e');
+      if (kDebugMode) {
+        print('Error marking as read: $e');
+      }
     }
   }
 

@@ -125,7 +125,11 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
           child: Row(
             children: [
               if (!compact) ...[
-                const Icon(Icons.school_rounded, color: AppColors.primary, size: 26),
+                const Icon(
+                  Icons.school_rounded,
+                  color: AppColors.primary,
+                  size: 26,
+                ),
                 const SizedBox(width: 10),
                 Text('SkillSwap', style: AppTextStyles.h3),
                 const SizedBox(width: 16),
@@ -167,7 +171,8 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const NotificationsScreen(),
+                                builder:
+                                    (context) => const NotificationsScreen(),
                               ),
                             );
                           },
@@ -217,10 +222,16 @@ class _TopNavButton extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: active ? AppColors.primary.withValues(alpha: 0.10) : Colors.transparent,
+            color:
+                active
+                    ? AppColors.primary.withValues(alpha: 0.10)
+                    : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: active ? AppColors.primary.withValues(alpha: 0.20) : Colors.transparent,
+              color:
+                  active
+                      ? AppColors.primary.withValues(alpha: 0.20)
+                      : Colors.transparent,
             ),
           ),
           child: Row(

@@ -12,7 +12,8 @@ Widget _buildTestApp({required AuthProvider authProvider}) {
   return MaterialApp(
     theme: AppTheme.theme,
     routes: {
-      '/register': (_) => Provider<AuthProvider>.value(
+      '/register':
+          (_) => Provider<AuthProvider>.value(
             value: authProvider,
             child: const RegisterScreen(),
           ),
@@ -29,7 +30,9 @@ void main() {
   Provider.debugCheckInvalidValueType = null;
 
   group('LoginScreen', () {
-    testWidgets('renders email field, password field, and Sign In button', (tester) async {
+    testWidgets('renders email field, password field, and Sign In button', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
       when(authProvider.isLoading).thenReturn(false);
       when(authProvider.currentUser).thenReturn(null);
@@ -42,54 +45,72 @@ void main() {
       expect(find.byType(TextField), findsNWidgets(2));
     });
 
-    testWidgets('submitting with @gmail.com email shows red error text under email field', (tester) async {
+    testWidgets(
+      'submitting with @gmail.com email shows red error text under email field',
+      (tester) async {
+        final authProvider = MockAuthProvider();
+        when(authProvider.isLoading).thenReturn(false);
+        when(authProvider.currentUser).thenReturn(null);
+
+        await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
+
+        await tester.enterText(
+          find.byType(TextField).at(0),
+          'student@gmail.com',
+        );
+        await tester.enterText(find.byType(TextField).at(1), 'password123');
+        await tester.pump();
+        await tester.ensureVisible(find.text('Sign In'));
+        await tester.tap(find.text('Sign In'));
+        await tester.pump();
+
+        final errorFinder = find.text(
+          'Please use your @myport.ac.uk email (University of Portsmouth)',
+        );
+        expect(errorFinder, findsOneWidget);
+
+        final errorText = tester.widget<Text>(errorFinder);
+        expect(errorText.style?.color, AppColors.error);
+      },
+    );
+
+    testWidgets('submitting with empty password shows required error', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
       when(authProvider.isLoading).thenReturn(false);
       when(authProvider.currentUser).thenReturn(null);
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
-      await tester.enterText(find.byType(TextField).at(0), 'student@gmail.com');
-      await tester.enterText(find.byType(TextField).at(1), 'password123');
-      await tester.pump();
       await tester.ensureVisible(find.text('Sign In'));
-      await tester.tap(find.text('Sign In'));
-      await tester.pump();
-
-      final errorFinder = find.text('Please use your @myport.ac.uk email (University of Portsmouth)');
-      expect(errorFinder, findsOneWidget);
-
-      final errorText = tester.widget<Text>(errorFinder);
-      expect(errorText.style?.color, AppColors.error);
-    });
-
-    testWidgets('submitting with empty password shows required error', (tester) async {
-      final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(false);
-      when(authProvider.currentUser).thenReturn(null);
-
-      await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
-
-      await tester.ensureVisible(find.text('Sign In'));
-      await tester.enterText(find.byType(TextField).at(0), 'student@myport.ac.uk');
+      await tester.enterText(
+        find.byType(TextField).at(0),
+        'student@myport.ac.uk',
+      );
       await tester.tap(find.text('Sign In'));
       await tester.pump();
 
       expect(find.text('Password is required'), findsOneWidget);
     });
 
-    testWidgets('when AuthProvider.isLoading = true button shows CircularProgressIndicator', (tester) async {
-      final authProvider = MockAuthProvider();
-      when(authProvider.isLoading).thenReturn(true);
-      when(authProvider.currentUser).thenReturn(null);
+    testWidgets(
+      'when AuthProvider.isLoading = true button shows CircularProgressIndicator',
+      (tester) async {
+        final authProvider = MockAuthProvider();
+        when(authProvider.isLoading).thenReturn(true);
+        when(authProvider.currentUser).thenReturn(null);
 
-      await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
+        await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Sign In'), findsNothing);
-    });
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.text('Sign In'), findsNothing);
+      },
+    );
 
-    testWidgets('tapping Create an account link navigates to RegisterScreen', (tester) async {
+    testWidgets('tapping Create an account link navigates to RegisterScreen', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
       when(authProvider.isLoading).thenReturn(false);
       when(authProvider.currentUser).thenReturn(null);
@@ -97,7 +118,9 @@ void main() {
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
       final linkFinder = find.byWidgetPredicate(
-        (widget) => widget is RichText && widget.text.toPlainText().contains('Create an account'),
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains('Create an account'),
       );
 
       expect(linkFinder, findsOneWidget);

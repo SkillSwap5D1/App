@@ -134,25 +134,25 @@ class AppTextStyles {
 
   // Override headings with a more elegant serif for a professional feel
   static TextStyle get heading1 => GoogleFonts.playfairDisplay(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.5,
-      );
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.5,
+  );
 
   static TextStyle get heading2 => GoogleFonts.playfairDisplay(
-        fontSize: 22,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.4,
-      );
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.4,
+  );
 
   static TextStyle get heading3 => GoogleFonts.playfairDisplay(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.3,
-      );
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary,
+    letterSpacing: -0.3,
+  );
 
   static final TextStyle bodyLarge = _base(
     fontSize: 16,
@@ -245,35 +245,36 @@ class AppTheme {
     ),
     // Use Source Sans 3 for body text, but map heading/textual display styles
     // to Playfair Display to ensure headings across the app pick up the serif.
-    textTheme: (() {
-      final base = GoogleFonts.sourceSans3TextTheme();
-      final withHeadings = base.copyWith(
-        headlineLarge: GoogleFonts.playfairDisplay(
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-        headlineMedium: GoogleFonts.playfairDisplay(
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-        headlineSmall: GoogleFonts.playfairDisplay(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        titleLarge: GoogleFonts.playfairDisplay(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-      );
-      return withHeadings.apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
-      );
-    })(),
+    textTheme:
+        (() {
+          final base = GoogleFonts.sourceSans3TextTheme();
+          final withHeadings = base.copyWith(
+            headlineLarge: GoogleFonts.playfairDisplay(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+            headlineMedium: GoogleFonts.playfairDisplay(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+            headlineSmall: GoogleFonts.playfairDisplay(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            titleLarge: GoogleFonts.playfairDisplay(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          );
+          return withHeadings.apply(
+            bodyColor: AppColors.textPrimary,
+            displayColor: AppColors.textPrimary,
+          );
+        })(),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,

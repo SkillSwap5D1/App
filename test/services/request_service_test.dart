@@ -1,4 +1,3 @@
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skillswap_app/models/request_model.dart';
@@ -52,9 +51,10 @@ void main() {
     }
 
     Future<void> seedPendingRequest() async {
-      await firestore.collection('requests').doc('existing_request').set(
-            buildRequest().copyWith(id: 'existing_request').toMap(),
-          );
+      await firestore
+          .collection('requests')
+          .doc('existing_request')
+          .set(buildRequest().copyWith(id: 'existing_request').toMap());
     }
 
     test('sendRequest() writes document status=pending', () async {
@@ -81,21 +81,31 @@ void main() {
 
       final conversations = await firestore.collection('conversations').get();
       expect(conversations.docs, hasLength(1));
-      expect(conversations.docs.first.data()['participants'], ['requester_1', 'provider_1']);
+      expect(conversations.docs.first.data()['participants'], [
+        'requester_1',
+        'provider_1',
+      ]);
     });
 
     test('sendRequest() creates notification for provider', () async {
       await service.sendRequest(buildRequest());
 
-      final notifications = await firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: 'provider_1')
-          .where('type', isEqualTo: 'request')
-          .get();
+      final notifications =
+          await firestore
+              .collection('notifications')
+              .where('userId', isEqualTo: 'provider_1')
+              .where('type', isEqualTo: 'request')
+              .get();
 
       expect(notifications.docs, hasLength(1));
-      expect(notifications.docs.first.data()['title'], 'New lesson request from Jamie Smith');
-      expect(notifications.docs.first.data()['subtitle'], 'wants to learn Flutter');
+      expect(
+        notifications.docs.first.data()['title'],
+        'New lesson request from Jamie Smith',
+      );
+      expect(
+        notifications.docs.first.data()['subtitle'],
+        'wants to learn Flutter',
+      );
     });
 
     test('acceptRequest() sets status=accepted', () async {
@@ -109,9 +119,13 @@ void main() {
         'requester_1',
       );
 
-      final doc = await firestore.collection('requests').doc('existing_request').get();
+      final doc =
+          await firestore.collection('requests').doc('existing_request').get();
       expect(doc.data()?['status'], 'accepted');
-      expect(doc.data()?['confirmedSlot'], {'startTime': '10:00', 'endTime': '11:00'});
+      expect(doc.data()?['confirmedSlot'], {
+        'startTime': '10:00',
+        'endTime': '11:00',
+      });
     });
 
     test('acceptRequest() creates notification for requester', () async {
@@ -125,38 +139,55 @@ void main() {
         'requester_1',
       );
 
-      final notifications = await firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: 'requester_1')
-          .where('type', isEqualTo: 'accepted')
-          .get();
+      final notifications =
+          await firestore
+              .collection('notifications')
+              .where('userId', isEqualTo: 'requester_1')
+              .where('type', isEqualTo: 'accepted')
+              .get();
 
       expect(notifications.docs, hasLength(1));
-      expect(notifications.docs.first.data()['title'], 'Your request was accepted!');
+      expect(
+        notifications.docs.first.data()['title'],
+        'Your request was accepted!',
+      );
     });
 
     test('declineRequest() sets status=declined', () async {
       await seedPendingRequest();
 
-      await service.declineRequest('existing_request', 'requester_1', 'Flutter');
+      await service.declineRequest(
+        'existing_request',
+        'requester_1',
+        'Flutter',
+      );
 
-      final doc = await firestore.collection('requests').doc('existing_request').get();
+      final doc =
+          await firestore.collection('requests').doc('existing_request').get();
       expect(doc.data()?['status'], 'declined');
     });
 
     test('declineRequest() creates notification', () async {
       await seedPendingRequest();
 
-      await service.declineRequest('existing_request', 'requester_1', 'Flutter');
+      await service.declineRequest(
+        'existing_request',
+        'requester_1',
+        'Flutter',
+      );
 
-      final notifications = await firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: 'requester_1')
-          .where('type', isEqualTo: 'declined')
-          .get();
+      final notifications =
+          await firestore
+              .collection('notifications')
+              .where('userId', isEqualTo: 'requester_1')
+              .where('type', isEqualTo: 'declined')
+              .get();
 
       expect(notifications.docs, hasLength(1));
-      expect(notifications.docs.first.data()['title'], 'Your request was declined');
+      expect(
+        notifications.docs.first.data()['title'],
+        'Your request was declined',
+      );
     });
 
     test('counterRequest() sets status=countered', () async {
@@ -172,7 +203,8 @@ void main() {
         'Flutter',
       );
 
-      final doc = await firestore.collection('requests').doc('existing_request').get();
+      final doc =
+          await firestore.collection('requests').doc('existing_request').get();
       expect(doc.data()?['status'], 'countered');
     });
 
@@ -189,7 +221,8 @@ void main() {
         'Flutter',
       );
 
-      final doc = await firestore.collection('requests').doc('existing_request').get();
+      final doc =
+          await firestore.collection('requests').doc('existing_request').get();
       expect(doc.data()?['proposedTimes'], [
         {'startTime': '12:00', 'endTime': '13:00'},
       ]);
@@ -197,10 +230,14 @@ void main() {
     });
 
     test('getIncomingRequests() stream correct', () async {
-      await firestore.collection('requests').doc('request_1').set(
-            buildRequest(id: 'request_1', toUserId: 'provider_1').toMap(),
-          );
-      await firestore.collection('requests').doc('request_2').set(
+      await firestore
+          .collection('requests')
+          .doc('request_1')
+          .set(buildRequest(id: 'request_1', toUserId: 'provider_1').toMap());
+      await firestore
+          .collection('requests')
+          .doc('request_2')
+          .set(
             buildRequest(
               id: 'request_2',
               fromUserId: 'requester_2',
@@ -208,7 +245,10 @@ void main() {
               toUserId: 'provider_1',
             ).toMap(),
           );
-      await firestore.collection('requests').doc('request_3').set(
+      await firestore
+          .collection('requests')
+          .doc('request_3')
+          .set(
             buildRequest(
               id: 'request_3',
               fromUserId: 'requester_3',
@@ -219,10 +259,12 @@ void main() {
 
       await expectLater(
         service.getIncomingRequests('provider_1'),
-        emits(predicate((List<RequestModel> requests) {
-          return requests.length == 2 &&
-              requests.every((request) => request.toUserId == 'provider_1');
-        })),
+        emits(
+          predicate((List<RequestModel> requests) {
+            return requests.length == 2 &&
+                requests.every((request) => request.toUserId == 'provider_1');
+          }),
+        ),
       );
     });
   });

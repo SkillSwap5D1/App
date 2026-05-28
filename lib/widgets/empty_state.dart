@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:skillswap_app/theme/app_theme.dart';
 
 class EmptyState {
-  static Widget listing({
-    VoidCallback? onBrowse,
-  }) {
+  static Widget listing({VoidCallback? onBrowse}) {
     return _buildEmptyState(
       icon: Icons.search_rounded,
       title: 'No skills found',
       subtitle: 'Try adjusting your filters or search terms',
-      action: onBrowse != null
-          ? ElevatedButton(
-              onPressed: onBrowse,
-              child: Text('Browse Skills'),
-            )
-          : null,
+      action:
+          onBrowse != null
+              ? ElevatedButton(
+                onPressed: onBrowse,
+                child: Text('Browse Skills'),
+              )
+              : null,
     );
   }
 
@@ -62,17 +61,9 @@ class EmptyState {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 64,
-              color: AppColors.border,
-            ),
+            Icon(icon, size: 64, color: AppColors.border),
             SizedBox(height: AppSpacing.lg),
-            Text(
-              title,
-              style: AppTextStyles.h3,
-              textAlign: TextAlign.center,
-            ),
+            Text(title, style: AppTextStyles.h3, textAlign: TextAlign.center),
             SizedBox(height: AppSpacing.sm),
             Text(
               subtitle,
@@ -81,10 +72,7 @@ class EmptyState {
               ),
               textAlign: TextAlign.center,
             ),
-            if (action != null) ...[
-              SizedBox(height: AppSpacing.lg),
-              action,
-            ],
+            if (action != null) ...[SizedBox(height: AppSpacing.lg), action],
           ],
         ),
       ),

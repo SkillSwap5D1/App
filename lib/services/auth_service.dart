@@ -60,7 +60,7 @@ class AuthService {
           return UserModel.fromMap(doc.data()!);
         } else {
           print(
-            '⚠️ User document not found for $uid on attempt ${attempt + 1}/${maxAttempts}',
+            '⚠️ User document not found for $uid on attempt ${attempt + 1}/$maxAttempts',
           );
         }
       } catch (e) {
@@ -108,7 +108,7 @@ class AuthService {
         '   Normalized password: "$normalizedPassword" (${normalizedPassword.length} chars)',
       );
       print(
-        '   Password chars: ${normalizedPassword.split('').map((c) => '${c}(${c.codeUnitAt(0)})').join(', ')}',
+        '   Password chars: ${normalizedPassword.split('').map((c) => '$c(${c.codeUnitAt(0)})').join(', ')}',
       );
 
       // Validate UoP email

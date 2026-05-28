@@ -1,4 +1,3 @@
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
@@ -44,7 +43,10 @@ class _ThrowingMockFirebaseAuth extends MockFirebaseAuth {
     if (registerError != null) {
       throw registerError!;
     }
-    return super.createUserWithEmailAndPassword(email: email, password: password);
+    return super.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 }
 
@@ -56,7 +58,7 @@ void main() {
       firestore = FakeFirebaseFirestore();
     });
 
-    AuthService _buildService(MockFirebaseAuth auth) {
+    AuthService buildService(MockFirebaseAuth auth) {
       return AuthService(
         auth: auth,
         db: firestore,
@@ -71,9 +73,12 @@ void main() {
         displayName: 'Jamie Smith',
       );
       final auth = MockFirebaseAuth(mockUser: mockUser);
-      final service = _buildService(auth);
+      final service = buildService(auth);
 
-      await firestore.collection('users').doc('user_123').set(
+      await firestore
+          .collection('users')
+          .doc('user_123')
+          .set(
             UserModel(
               uid: 'user_123',
               firstName: 'Jamie',
@@ -98,18 +103,24 @@ void main() {
       expect(auth.currentUser?.uid, 'user_123');
     });
 
-    test('signIn() with @gmail.com email throws before Firebase call', () async {
-      final auth = MockFirebaseAuth();
-      final service = _buildService(auth);
+    test(
+      'signIn() with @gmail.com email throws before Firebase call',
+      () async {
+        final auth = MockFirebaseAuth();
+        final service = buildService(auth);
 
-      await expectLater(
-        service.signIn('jamie@gmail.com', 'password123'),
-        throwsA(
-          predicate((error) =>
-              error is Exception && error.toString().contains('University of Portsmouth')),
-        ),
-      );
-    });
+        await expectLater(
+          service.signIn('jamie@gmail.com', 'password123'),
+          throwsA(
+            predicate(
+              (error) =>
+                  error is Exception &&
+                  error.toString().contains('University of Portsmouth'),
+            ),
+          ),
+        );
+      },
+    );
 
     test('signIn() with wrong password throws FirebaseAuthException', () async {
       final auth = _ThrowingMockFirebaseAuth(
@@ -119,125 +130,163 @@ void main() {
           message: 'Wrong password',
         ),
       );
-      final service = _buildService(auth);
+      final service = buildService(auth);
 
       await expectLater(
         service.signIn('jamie@myport.ac.uk', 'wrongpass'),
         throwsA(
-          predicate((error) =>
-              error is Exception && error.toString().contains('wrong-password')),
+          predicate(
+            (error) =>
+                error is Exception &&
+                error.toString().contains('wrong-password'),
+          ),
         ),
       );
     });
 
-    test('signIn() with unregistered email throws FirebaseAuthException', () async {
-      final auth = _ThrowingMockFirebaseAuth(
-        signInError: FirebaseAuthException(
-          code: 'user-not-found',
-          message: 'No user found',
-        ),
-      );
-      final service = _buildService(auth);
+    test(
+      'signIn() with unregistered email throws FirebaseAuthException',
+      () async {
+        final auth = _ThrowingMockFirebaseAuth(
+          signInError: FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'No user found',
+          ),
+        );
+        final service = buildService(auth);
 
-      await expectLater(
-        service.signIn('jamie@myport.ac.uk', 'password123'),
-        throwsA(
-          predicate((error) =>
-              error is Exception && error.toString().contains('user-not-found')),
-        ),
-      );
-    });
+        await expectLater(
+          service.signIn('jamie@myport.ac.uk', 'password123'),
+          throwsA(
+            predicate(
+              (error) =>
+                  error is Exception &&
+                  error.toString().contains('user-not-found'),
+            ),
+          ),
+        );
+      },
+    );
 
-    test('register() with valid all fields creates user in Firestore', () async {
-      final auth = MockFirebaseAuth();
-      final service = _buildService(auth);
+    test(
+      'register() with valid all fields creates user in Firestore',
+      () async {
+        final auth = MockFirebaseAuth();
+        final service = buildService(auth);
 
-      final result = await service.register(
-        email: 'jamie@myport.ac.uk',
-        password: 'password123',
-        firstName: 'Jamie',
-        lastName: 'Smith',
-        course: 'Computer Science',
-      );
-
-      expect(result, isNotNull);
-      expect(result!.email, 'jamie@myport.ac.uk');
-      expect(auth.currentUser, isNotNull);
-
-      final doc = await firestore.collection('users').doc(auth.currentUser!.uid).get();
-      expect(doc.exists, isTrue);
-      expect(doc.data()?['firstName'], 'Jamie');
-      expect(doc.data()?['lastName'], 'Smith');
-      expect(doc.data()?['email'], 'jamie@myport.ac.uk');
-      expect(doc.data()?['course'], 'Computer Science');
-      expect(doc.data()?['showFullName'], isTrue);
-      expect(doc.data()?['showCourse'], isTrue);
-      expect(doc.data()?['showPhoto'], isTrue);
-    });
-
-    test('register() with @hotmail.com email throws before Firebase call', () async {
-      final auth = MockFirebaseAuth();
-      final service = _buildService(auth);
-
-      await expectLater(
-        service.register(
-          email: 'jamie@hotmail.com',
-          password: 'password123',
-          firstName: 'Jamie',
-          lastName: 'Smith',
-          course: 'Computer Science',
-        ),
-        throwsA(
-          predicate((error) =>
-              error is Exception && error.toString().contains('University of Portsmouth')),
-        ),
-      );
-    });
-
-    test('register() with duplicate email throws FirebaseAuthException', () async {
-      final auth = _ThrowingMockFirebaseAuth(
-        registerError: FirebaseAuthException(
-          code: 'email-already-in-use',
-          message: 'Email already in use',
-        ),
-      );
-      final service = _buildService(auth);
-
-      await expectLater(
-        service.register(
+        final result = await service.register(
           email: 'jamie@myport.ac.uk',
           password: 'password123',
           firstName: 'Jamie',
           lastName: 'Smith',
           course: 'Computer Science',
-        ),
-        throwsA(
-          predicate((error) => error is Exception && error.toString().contains('email-already-in-use')),
-        ),
-      );
-    });
+        );
 
-    test('register() password less than 6 chars throws before Firebase call', () async {
-      final auth = MockFirebaseAuth();
-      final service = _buildService(auth);
+        expect(result, isNotNull);
+        expect(result!.email, 'jamie@myport.ac.uk');
+        expect(auth.currentUser, isNotNull);
 
-      await expectLater(
-        service.register(
-          email: 'jamie@myport.ac.uk',
-          password: '12345',
-          firstName: 'Jamie',
-          lastName: 'Smith',
-          course: 'Computer Science',
-        ),
-        throwsA(
-          predicate((error) => error is Exception && error.toString().contains('Password must be at least 6 characters')),
-        ),
-      );
-    });
+        final doc =
+            await firestore
+                .collection('users')
+                .doc(auth.currentUser!.uid)
+                .get();
+        expect(doc.exists, isTrue);
+        expect(doc.data()?['firstName'], 'Jamie');
+        expect(doc.data()?['lastName'], 'Smith');
+        expect(doc.data()?['email'], 'jamie@myport.ac.uk');
+        expect(doc.data()?['course'], 'Computer Science');
+        expect(doc.data()?['showFullName'], isTrue);
+        expect(doc.data()?['showCourse'], isTrue);
+        expect(doc.data()?['showPhoto'], isTrue);
+      },
+    );
+
+    test(
+      'register() with @hotmail.com email throws before Firebase call',
+      () async {
+        final auth = MockFirebaseAuth();
+        final service = buildService(auth);
+
+        await expectLater(
+          service.register(
+            email: 'jamie@hotmail.com',
+            password: 'password123',
+            firstName: 'Jamie',
+            lastName: 'Smith',
+            course: 'Computer Science',
+          ),
+          throwsA(
+            predicate(
+              (error) =>
+                  error is Exception &&
+                  error.toString().contains('University of Portsmouth'),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'register() with duplicate email throws FirebaseAuthException',
+      () async {
+        final auth = _ThrowingMockFirebaseAuth(
+          registerError: FirebaseAuthException(
+            code: 'email-already-in-use',
+            message: 'Email already in use',
+          ),
+        );
+        final service = buildService(auth);
+
+        await expectLater(
+          service.register(
+            email: 'jamie@myport.ac.uk',
+            password: 'password123',
+            firstName: 'Jamie',
+            lastName: 'Smith',
+            course: 'Computer Science',
+          ),
+          throwsA(
+            predicate(
+              (error) =>
+                  error is Exception &&
+                  error.toString().contains('email-already-in-use'),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'register() password less than 6 chars throws before Firebase call',
+      () async {
+        final auth = MockFirebaseAuth();
+        final service = buildService(auth);
+
+        await expectLater(
+          service.register(
+            email: 'jamie@myport.ac.uk',
+            password: '12345',
+            firstName: 'Jamie',
+            lastName: 'Smith',
+            course: 'Computer Science',
+          ),
+          throwsA(
+            predicate(
+              (error) =>
+                  error is Exception &&
+                  error.toString().contains(
+                    'Password must be at least 6 characters',
+                  ),
+            ),
+          ),
+        );
+      },
+    );
 
     test('register() password exactly 6 chars succeeds', () async {
       final auth = MockFirebaseAuth();
-      final service = _buildService(auth);
+      final service = buildService(auth);
 
       final result = await service.register(
         email: 'jamie@myport.ac.uk',
@@ -249,7 +298,8 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.email, 'jamie@myport.ac.uk');
-      final doc = await firestore.collection('users').doc(auth.currentUser!.uid).get();
+      final doc =
+          await firestore.collection('users').doc(auth.currentUser!.uid).get();
       expect(doc.exists, isTrue);
     });
 
@@ -258,7 +308,7 @@ void main() {
         signedIn: true,
         mockUser: MockUser(uid: 'user_123', email: 'jamie@myport.ac.uk'),
       );
-      final service = _buildService(auth);
+      final service = buildService(auth);
 
       expect(auth.currentUser, isNotNull);
       await service.signOut();
@@ -266,13 +316,16 @@ void main() {
     });
 
     test('_handleAuthError("user-not-found") returns correct message', () {
-      final service = _buildService(MockFirebaseAuth());
+      final service = buildService(MockFirebaseAuth());
 
-      expect(service.handleAuthError('user-not-found'), 'No user found for that email');
+      expect(
+        service.handleAuthError('user-not-found'),
+        'No user found for that email',
+      );
     });
 
     test('_handleAuthError("wrong-password") returns correct message', () {
-      final service = _buildService(MockFirebaseAuth());
+      final service = buildService(MockFirebaseAuth());
 
       expect(
         service.handleAuthError('wrong-password'),
@@ -281,7 +334,7 @@ void main() {
     });
 
     test('_handleAuthError("invalid-email") returns correct message', () {
-      final service = _buildService(MockFirebaseAuth());
+      final service = buildService(MockFirebaseAuth());
 
       expect(
         service.handleAuthError('invalid-email'),
@@ -289,17 +342,20 @@ void main() {
       );
     });
 
-    test('_handleAuthError("email-already-in-use") returns correct message', () {
-      final service = _buildService(MockFirebaseAuth());
+    test(
+      '_handleAuthError("email-already-in-use") returns correct message',
+      () {
+        final service = buildService(MockFirebaseAuth());
 
-      expect(
-        service.handleAuthError('email-already-in-use'),
-        'This email is already registered',
-      );
-    });
+        expect(
+          service.handleAuthError('email-already-in-use'),
+          'This email is already registered',
+        );
+      },
+    );
 
     test('_handleAuthError("weak-password") returns correct message', () {
-      final service = _buildService(MockFirebaseAuth());
+      final service = buildService(MockFirebaseAuth());
 
       expect(
         service.handleAuthError('weak-password'),
@@ -307,10 +363,16 @@ void main() {
       );
     });
 
-    test('_handleAuthError("unknown-code") returns generic fallback message', () {
-      final service = _buildService(MockFirebaseAuth());
+    test(
+      '_handleAuthError("unknown-code") returns generic fallback message',
+      () {
+        final service = buildService(MockFirebaseAuth());
 
-      expect(service.handleAuthError('unknown-code'), 'Something went wrong. Please try again.');
-    });
+        expect(
+          service.handleAuthError('unknown-code'),
+          'Something went wrong. Please try again.',
+        );
+      },
+    );
   });
 }

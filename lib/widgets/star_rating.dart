@@ -19,11 +19,7 @@ class StarRating extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          Icons.star_rounded,
-          color: AppColors.warning,
-          size: size,
-        ),
+        Icon(Icons.star_rounded, color: AppColors.warning, size: size),
         const SizedBox(width: 4),
         Text(
           '$rating',
@@ -36,10 +32,7 @@ class StarRating extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '($reviewCount)',
-          style: TextStyle(
-            fontSize: size - 4,
-            color: AppColors.textSecondary,
-          ),
+          style: TextStyle(fontSize: size - 4, color: AppColors.textSecondary),
         ),
       ],
     );

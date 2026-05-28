@@ -192,25 +192,28 @@ void main() {
       expect(copied.savedListingIds, original.savedListingIds);
     });
 
-    test('fullName, displayName, and initials getters return expected values', () {
-      final model = UserModel(
-        uid: 'test_uid',
-        firstName: 'Jamie',
-        lastName: 'Smith',
-        email: 'jamie@example.com',
-        course: 'Computer Science',
-        bio: 'Enjoys teaching',
-        rating: 4.8,
-        sessionsCompleted: 12,
-        memberSince: DateTime(2024, 1, 15, 10, 30),
-        showFullName: true,
-        showCourse: true,
-        showPhoto: true,
-      );
+    test(
+      'fullName, displayName, and initials getters return expected values',
+      () {
+        final model = UserModel(
+          uid: 'test_uid',
+          firstName: 'Jamie',
+          lastName: 'Smith',
+          email: 'jamie@example.com',
+          course: 'Computer Science',
+          bio: 'Enjoys teaching',
+          rating: 4.8,
+          sessionsCompleted: 12,
+          memberSince: DateTime(2024, 1, 15, 10, 30),
+          showFullName: true,
+          showCourse: true,
+          showPhoto: true,
+        );
 
-      expect(model.fullName, 'Jamie Smith');
-      expect(model.displayName, 'Jamie S.');
-      expect(model.initials, 'J');
-    });
+        expect(model.fullName, 'Jamie Smith');
+        expect(model.displayName, 'Jamie S.');
+        expect(model.initials, 'J');
+      },
+    );
   });
 }

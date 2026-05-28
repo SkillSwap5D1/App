@@ -70,11 +70,12 @@ class SafetyService {
       print('🚫 [SafetyService] Starting block for user: $blockedUserId');
 
       // Check if already blocked
-      final existing = await _db
-          .collection('blocks')
-          .where('blockerId', isEqualTo: blockerId)
-          .where('blockedUserId', isEqualTo: blockedUserId)
-          .get();
+      final existing =
+          await _db
+              .collection('blocks')
+              .where('blockerId', isEqualTo: blockerId)
+              .where('blockedUserId', isEqualTo: blockedUserId)
+              .get();
 
       if (existing.docs.isNotEmpty) {
         print('⚠️ [SafetyService] User already blocked');
@@ -107,15 +108,14 @@ class SafetyService {
     required String blockedUserId,
   }) async {
     try {
-      print(
-        '🔓 [SafetyService] Unblocking user: $blockedUserId by $blockerId',
-      );
+      print('🔓 [SafetyService] Unblocking user: $blockedUserId by $blockerId');
 
-      final existing = await _db
-          .collection('blocks')
-          .where('blockerId', isEqualTo: blockerId)
-          .where('blockedUserId', isEqualTo: blockedUserId)
-          .get();
+      final existing =
+          await _db
+              .collection('blocks')
+              .where('blockerId', isEqualTo: blockerId)
+              .where('blockedUserId', isEqualTo: blockedUserId)
+              .get();
 
       if (existing.docs.isNotEmpty) {
         await _db.collection('blocks').doc(existing.docs.first.id).delete();
@@ -134,11 +134,12 @@ class SafetyService {
     required String blockedUserId,
   }) async {
     try {
-      final result = await _db
-          .collection('blocks')
-          .where('blockerId', isEqualTo: blockerId)
-          .where('blockedUserId', isEqualTo: blockedUserId)
-          .get();
+      final result =
+          await _db
+              .collection('blocks')
+              .where('blockerId', isEqualTo: blockerId)
+              .where('blockedUserId', isEqualTo: blockedUserId)
+              .get();
 
       return result.docs.isNotEmpty;
     } catch (e) {
@@ -151,14 +152,13 @@ class SafetyService {
   // Returns list of user IDs that the user has blocked
   Future<List<String>> getBlockedUsers(String userId) async {
     try {
-      final blocks = await _db
-          .collection('blocks')
-          .where('blockerId', isEqualTo: userId)
-          .get();
+      final blocks =
+          await _db
+              .collection('blocks')
+              .where('blockerId', isEqualTo: userId)
+              .get();
 
-      return blocks.docs
-          .map((doc) => doc['blockedUserId'] as String)
-          .toList();
+      return blocks.docs.map((doc) => doc['blockedUserId'] as String).toList();
     } catch (e) {
       print('⚠️ [SafetyService] Error getting blocked users: $e');
       return [];
@@ -169,14 +169,13 @@ class SafetyService {
   // Returns list of user IDs who have blocked this user
   Future<List<String>> getUserBlockers(String userId) async {
     try {
-      final blocks = await _db
-          .collection('blocks')
-          .where('blockedUserId', isEqualTo: userId)
-          .get();
+      final blocks =
+          await _db
+              .collection('blocks')
+              .where('blockedUserId', isEqualTo: userId)
+              .get();
 
-      return blocks.docs
-          .map((doc) => doc['blockerId'] as String)
-          .toList();
+      return blocks.docs.map((doc) => doc['blockerId'] as String).toList();
     } catch (e) {
       print('⚠️ [SafetyService] Error getting user blockers: $e');
       return [];
@@ -187,11 +186,12 @@ class SafetyService {
   // Query reports where status is 'pending' (for admin dashboard)
   Future<List<ReportModel>> getPendingReports() async {
     try {
-      final reports = await _db
-          .collection('reports')
-          .where('status', isEqualTo: 'pending')
-          .orderBy('createdAt', descending: true)
-          .get();
+      final reports =
+          await _db
+              .collection('reports')
+              .where('status', isEqualTo: 'pending')
+              .orderBy('createdAt', descending: true)
+              .get();
 
       return reports.docs
           .map((doc) => ReportModel.fromMap(doc.data()))
@@ -205,12 +205,13 @@ class SafetyService {
   // ── Get reports about a specific user ──────────────────────────────────────
   Future<List<ReportModel>> getReportsAbout(String reporteeId) async {
     try {
-      final reports = await _db
-          .collection('reports')
-          .where('reporteeId', isEqualTo: reporteeId)
-          .where('status', isEqualTo: 'pending')
-          .orderBy('createdAt', descending: true)
-          .get();
+      final reports =
+          await _db
+              .collection('reports')
+              .where('reporteeId', isEqualTo: reporteeId)
+              .where('status', isEqualTo: 'pending')
+              .orderBy('createdAt', descending: true)
+              .get();
 
       return reports.docs
           .map((doc) => ReportModel.fromMap(doc.data()))
@@ -224,11 +225,12 @@ class SafetyService {
   // ── Get reports by a specific user ─────────────────────────────────────────
   Future<List<ReportModel>> getReportsByUser(String reporterId) async {
     try {
-      final reports = await _db
-          .collection('reports')
-          .where('reporterId', isEqualTo: reporterId)
-          .orderBy('createdAt', descending: true)
-          .get();
+      final reports =
+          await _db
+              .collection('reports')
+              .where('reporterId', isEqualTo: reporterId)
+              .orderBy('createdAt', descending: true)
+              .get();
 
       return reports.docs
           .map((doc) => ReportModel.fromMap(doc.data()))
@@ -240,10 +242,7 @@ class SafetyService {
   }
 
   // ── Update report status (for admin) ───────────────────────────────────────
-  Future<void> updateReportStatus(
-    String reportId,
-    String newStatus,
-  ) async {
+  Future<void> updateReportStatus(String reportId, String newStatus) async {
     try {
       await _db.collection('reports').doc(reportId).update({
         'status': newStatus,

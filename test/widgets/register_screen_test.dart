@@ -47,23 +47,28 @@ void main() {
   Provider.debugCheckInvalidValueType = null;
 
   group('RegisterScreen', () {
-    testWidgets('renders all fields including first name, last name, email, course, password, confirm password', (tester) async {
-      final authProvider = MockAuthProvider();
+    testWidgets(
+      'renders all fields including first name, last name, email, course, password, confirm password',
+      (tester) async {
+        final authProvider = MockAuthProvider();
 
-      await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
+        await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
 
-      expect(find.text('First name'), findsOneWidget);
-      expect(find.text('Last name'), findsOneWidget);
-      expect(find.text('University email'), findsOneWidget);
-      expect(find.text('Course'), findsOneWidget);
-      expect(find.text('Password'), findsOneWidget);
-      expect(find.text('Confirm password'), findsOneWidget);
-      expect(find.text('Select your course'), findsOneWidget);
-      expect(find.byType(TextField), findsNWidgets(5));
-      expect(find.byType(DropdownButton<String>), findsOneWidget);
-    });
+        expect(find.text('First name'), findsOneWidget);
+        expect(find.text('Last name'), findsOneWidget);
+        expect(find.text('University email'), findsOneWidget);
+        expect(find.text('Course'), findsOneWidget);
+        expect(find.text('Password'), findsOneWidget);
+        expect(find.text('Confirm password'), findsOneWidget);
+        expect(find.text('Select your course'), findsOneWidget);
+        expect(find.byType(TextField), findsNWidgets(5));
+        expect(find.byType(DropdownButton<String>), findsOneWidget);
+      },
+    );
 
-    testWidgets('submit with mismatched passwords shows error message', (tester) async {
+    testWidgets('submit with mismatched passwords shows error message', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
@@ -80,7 +85,9 @@ void main() {
       expect(find.text('Passwords do not match'), findsOneWidget);
     });
 
-    testWidgets('submit without course selection shows required error', (tester) async {
+    testWidgets('submit without course selection shows required error', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));
@@ -100,7 +107,9 @@ void main() {
       expect(find.text('Please select your course'), findsOneWidget);
     });
 
-    testWidgets('all fields filled correctly calls AuthProvider.register()', (tester) async {
+    testWidgets('all fields filled correctly calls AuthProvider.register()', (
+      tester,
+    ) async {
       final authProvider = MockAuthProvider();
 
       await tester.pumpWidget(_buildTestApp(authProvider: authProvider));

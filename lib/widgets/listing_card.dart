@@ -105,11 +105,7 @@ class _ListingCardState extends State<ListingCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const StarRating(
-              rating: 4.8,
-              reviewCount: 24,
-              size: 14,
-            ),
+            const StarRating(rating: 4.8, reviewCount: 24, size: 14),
             const SizedBox(height: 4),
             GestureDetector(
               onTap: _toggleBookmark,
@@ -138,10 +134,11 @@ class _ListingCardState extends State<ListingCard> {
     return Wrap(
       spacing: 6,
       runSpacing: 6,
-      children: widget.listing.tags
-          .take(3)
-          .map((tag) => TagChip(label: tag))
-          .toList(),
+      children:
+          widget.listing.tags
+              .take(3)
+              .map((tag) => TagChip(label: tag))
+              .toList(),
     );
   }
 

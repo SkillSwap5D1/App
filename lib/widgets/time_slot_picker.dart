@@ -48,17 +48,17 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               backgroundColor: Colors.white,
               headerBackgroundColor: Color(0xFFF0FDF9),
               headerForegroundColor: Color(0xFF0F172A),
-              dayForegroundColor: MaterialStatePropertyAll(Color(0xFF0F172A)),
-              todayForegroundColor: MaterialStatePropertyAll(Color(0xFF064E3B)),
-              todayBackgroundColor: MaterialStatePropertyAll(Color(0x14064E3B)),
-              dayBackgroundColor: MaterialStatePropertyAll(Colors.transparent),
+              dayForegroundColor: WidgetStatePropertyAll(Color(0xFF0F172A)),
+              todayForegroundColor: WidgetStatePropertyAll(Color(0xFF064E3B)),
+              todayBackgroundColor: WidgetStatePropertyAll(Color(0x14064E3B)),
+              dayBackgroundColor: WidgetStatePropertyAll(Colors.transparent),
             ),
           ),
           child: child ?? const SizedBox.shrink(),
         );
       },
     );
-    
+
     if (selected != null) {
       setState(() {
         _slot.date = selected;
@@ -93,7 +93,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         );
       },
     );
-    
+
     if (selected != null) {
       setState(() {
         _slot.startTime = selected;
@@ -128,7 +128,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         );
       },
     );
-    
+
     if (selected != null) {
       setState(() {
         _slot.endTime = selected;
@@ -140,10 +140,14 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final today = DateTime(now.year, now.month, now.day);
-    
-    if (date.year == today.year && date.month == today.month && date.day == today.day) {
+
+    if (date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day) {
       return 'Today';
-    } else if (date.year == tomorrow.year && date.month == tomorrow.month && date.day == tomorrow.day) {
+    } else if (date.year == tomorrow.year &&
+        date.month == tomorrow.month &&
+        date.day == tomorrow.day) {
       return 'Tomorrow';
     } else {
       final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -154,9 +158,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
 
   Widget _buildDateField() {
     final isSet = _slot.date != null;
-    final dateText = isSet
-        ? _formatDateForDisplay(_slot.date!)
-        : 'Select date';
+    final dateText = isSet ? _formatDateForDisplay(_slot.date!) : 'Select date';
 
     return GestureDetector(
       onTap: _selectDate,
@@ -190,7 +192,8 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               child: Text(
                 dateText,
                 style: TextStyle(
-                  color: isSet ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+                  color:
+                      isSet ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
                   fontSize: 14,
                   fontWeight: isSet ? FontWeight.w600 : FontWeight.w400,
                 ),
@@ -235,7 +238,8 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSet ? const Color(0xFF064E3B) : const Color(0xFFE2E8F0),
+                  color:
+                      isSet ? const Color(0xFF064E3B) : const Color(0xFFE2E8F0),
                   width: isSet ? 1.5 : 1,
                 ),
                 boxShadow: [
@@ -252,14 +256,20 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   Icon(
                     Icons.access_time_rounded,
                     size: 16,
-                    color: isSet ? const Color(0xFF064E3B) : const Color(0xFF94A3B8),
+                    color:
+                        isSet
+                            ? const Color(0xFF064E3B)
+                            : const Color(0xFF94A3B8),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       isSet ? time.format(context) : 'Select',
                       style: TextStyle(
-                        color: isSet ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+                        color:
+                            isSet
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFF94A3B8),
                         fontSize: 14,
                         fontWeight: isSet ? FontWeight.w600 : FontWeight.w400,
                       ),
@@ -277,7 +287,8 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
   @override
   Widget build(BuildContext context) {
     final hasError = !_slot.isEmpty && !_slot.isValid;
-    final isComplete = _slot.date != null && _slot.startTime != null && _slot.endTime != null;
+    final isComplete =
+        _slot.date != null && _slot.startTime != null && _slot.endTime != null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -285,11 +296,12 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasError
-              ? const Color(0xFFEF4444)
-              : (isComplete
-                  ? const Color(0xFF064E3B).withOpacity(0.3)
-                  : const Color(0xFFE2E8F0)),
+          color:
+              hasError
+                  ? const Color(0xFFEF4444)
+                  : (isComplete
+                      ? const Color(0xFF064E3B).withOpacity(0.3)
+                      : const Color(0xFFE2E8F0)),
           width: hasError ? 1.5 : 1,
         ),
         boxShadow: [

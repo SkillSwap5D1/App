@@ -7,10 +7,7 @@ import '../../widgets/time_slot_picker.dart';
 class CounterOfferScreen extends StatefulWidget {
   final MockRequest originalRequest;
 
-  const CounterOfferScreen({
-    super.key,
-    required this.originalRequest,
-  });
+  const CounterOfferScreen({super.key, required this.originalRequest});
 
   @override
   State<CounterOfferScreen> createState() => _CounterOfferScreenState();
@@ -112,20 +109,14 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
             ),
           ),
           SizedBox(height: AppSpacing.md),
-                        Text(
-                          widget.originalRequest.skillName,
-                          style: AppTextStyles.h2.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
+          Text(
+            widget.originalRequest.skillName,
+            style: AppTextStyles.h2.copyWith(color: AppColors.primary),
+          ),
           SizedBox(height: AppSpacing.md),
           Row(
             children: [
-              Icon(
-                Icons.person_outline,
-                size: 16,
-                color: AppColors.textMuted,
-              ),
+              Icon(Icons.person_outline, size: 16, color: AppColors.textMuted),
               SizedBox(width: AppSpacing.sm),
               Text(
                 'Requested by: ${widget.originalRequest.fromUserName}',
@@ -136,11 +127,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
           SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                size: 16,
-                color: AppColors.textMuted,
-              ),
+              Icon(Icons.info_outline, size: 16, color: AppColors.textMuted),
               SizedBox(width: AppSpacing.sm),
               Text(
                 'Status: ${widget.originalRequest.status}',
@@ -156,10 +143,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
   }
 
   Widget _buildProposeHeading() {
-    return Text(
-      'Propose New Times',
-      style: AppTextStyles.h3,
-    );
+    return Text('Propose New Times', style: AppTextStyles.h3);
   }
 
   void _removeTimeSlot(int index) {
@@ -219,10 +203,7 @@ class _CounterOfferScreenState extends State<CounterOfferScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Message (Optional)',
-          style: AppTextStyles.label,
-        ),
+        Text('Message (Optional)', style: AppTextStyles.label),
         SizedBox(height: AppSpacing.sm),
         Container(
           color: Colors.white,

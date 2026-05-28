@@ -102,9 +102,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _navigateToEditProfile() async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-    );
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const EditProfileScreen()));
 
     if (result is bool && result) {
       setState(() {});
@@ -112,9 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _navigateToEditSkills() async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const EditSkillsScreen()),
-    );
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const EditSkillsScreen()));
 
     if (result is bool && result) {
       setState(() {});
@@ -162,10 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(
               text,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF0F172A),
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13),
             ),
           ),
         ],
@@ -181,10 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: Color(0xFF64748B),
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
             ),
             const SizedBox(height: 4),
             Text(
@@ -198,10 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 2),
             Text(
               sublabel,
-              style: const TextStyle(
-                color: Color(0xFF94A3B8),
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
             ),
           ],
         ),
@@ -250,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF064E3B),
+            activeThumbColor: const Color(0xFF064E3B),
           ),
         ],
       ),
@@ -276,35 +267,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (skills.isEmpty)
           const Text(
             'No skills added yet.',
-            style: TextStyle(
-              color: Color(0xFF94A3B8),
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
           )
         else
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: skills
-                .map(
-                  (skill) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF9),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: const Color(0xFFDFFBF1)),
-                    ),
-                    child: Text(
-                      skill,
-                      style: const TextStyle(
-                        color: Color(0xFF0F172A),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+            children:
+                skills
+                    .map(
+                      (skill) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0FDF9),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: const Color(0xFFDFFBF1)),
+                        ),
+                        child: Text(
+                          skill,
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
+                    )
+                    .toList(),
           ),
       ],
     );
@@ -375,7 +367,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 18),
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFF59E0B),
+                              size: 18,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               user.rating.toStringAsFixed(1),
@@ -404,11 +400,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Row(
                             children: [
-                              _buildStat('Sessions', user.sessionsCompleted.toString(), 'Completed'),
-                              Container(width: 1, height: 56, color: const Color(0xFFE2E8F0)),
-                              _buildStat('Rating', user.rating.toStringAsFixed(1), 'Average'),
-                              Container(width: 1, height: 56, color: const Color(0xFFE2E8F0)),
-                              _buildStat('Skills', '${user.canTeach.length}', 'Offered'),
+                              _buildStat(
+                                'Sessions',
+                                user.sessionsCompleted.toString(),
+                                'Completed',
+                              ),
+                              Container(
+                                width: 1,
+                                height: 56,
+                                color: const Color(0xFFE2E8F0),
+                              ),
+                              _buildStat(
+                                'Rating',
+                                user.rating.toStringAsFixed(1),
+                                'Average',
+                              ),
+                              Container(
+                                width: 1,
+                                height: 56,
+                                color: const Color(0xFFE2E8F0),
+                              ),
+                              _buildStat(
+                                'Skills',
+                                '${user.canTeach.length}',
+                                'Offered',
+                              ),
                             ],
                           ),
                         ),
@@ -422,7 +438,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.info_outline, color: Color(0xFF064E3B), size: 18),
+                              Icon(
+                                Icons.info_outline,
+                                color: Color(0xFF064E3B),
+                                size: 18,
+                              ),
                               SizedBox(width: 8),
                               Text(
                                 'About',
@@ -452,7 +472,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.mail_outline, color: Color(0xFF064E3B), size: 18),
+                            Icon(
+                              Icons.mail_outline,
+                              color: Color(0xFF064E3B),
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Contact',
@@ -467,7 +491,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 12),
                         _buildPill(Icons.mail_outline, user.email),
                         const SizedBox(height: 8),
-                        _buildPill(Icons.calendar_today_outlined, _formatMemberSince(user.memberSince)),
+                        _buildPill(
+                          Icons.calendar_today_outlined,
+                          _formatMemberSince(user.memberSince),
+                        ),
                       ],
                     ),
                   ),
@@ -477,7 +504,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.school_outlined, color: Color(0xFF064E3B), size: 18),
+                            Icon(
+                              Icons.school_outlined,
+                              color: Color(0xFF064E3B),
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Skills',
@@ -490,9 +521,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        _buildSkillsSubsection(title: 'Can Teach', skills: user.canTeach),
+                        _buildSkillsSubsection(
+                          title: 'Can Teach',
+                          skills: user.canTeach,
+                        ),
                         const SizedBox(height: 16),
-                        _buildSkillsSubsection(title: 'Wants to Learn', skills: user.wantsToLearn),
+                        _buildSkillsSubsection(
+                          title: 'Wants to Learn',
+                          skills: user.wantsToLearn,
+                        ),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
@@ -520,7 +557,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.lock_outline, color: Color(0xFF064E3B), size: 18),
+                            Icon(
+                              Icons.lock_outline,
+                              color: Color(0xFF064E3B),
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Privacy Settings',
@@ -537,21 +578,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           title: 'Show my full name',
                           subtitle: 'Visible to other students',
                           value: _showFullName,
-                          onChanged: (value) => _handlePrivacyToggle('fullName', value, authProvider),
+                          onChanged:
+                              (value) => _handlePrivacyToggle(
+                                'fullName',
+                                value,
+                                authProvider,
+                              ),
                         ),
                         const SizedBox(height: 12),
                         _buildPrivacyToggle(
                           title: 'Show my course',
                           subtitle: 'Display your program info',
                           value: _showCourse,
-                          onChanged: (value) => _handlePrivacyToggle('course', value, authProvider),
+                          onChanged:
+                              (value) => _handlePrivacyToggle(
+                                'course',
+                                value,
+                                authProvider,
+                              ),
                         ),
                         const SizedBox(height: 12),
                         _buildPrivacyToggle(
                           title: 'Show my profile picture',
                           subtitle: 'Avatar visible publicly',
                           value: _showPhoto,
-                          onChanged: (value) => _handlePrivacyToggle('photo', value, authProvider),
+                          onChanged:
+                              (value) => _handlePrivacyToggle(
+                                'photo',
+                                value,
+                                authProvider,
+                              ),
                         ),
                       ],
                     ),
@@ -565,7 +621,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             const Row(
                               children: [
-                                Icon(Icons.star_outline, color: Color(0xFF064E3B), size: 18),
+                                Icon(
+                                  Icons.star_outline,
+                                  color: Color(0xFF064E3B),
+                                  size: 18,
+                                ),
                                 SizedBox(width: 8),
                                 Text(
                                   'Reviews',
@@ -595,7 +655,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
                             ),
                             child: const Text(
                               'No reviews yet.',
@@ -609,18 +671,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             itemCount: reviews.length,
                             itemBuilder: (context, index) {
                               final review = reviews[index];
-                              final reviewer = reviewProvider.reviewers[review.reviewerId];
-                              final reviewerName = reviewer?.displayName ?? 'Unknown User';
-                              final reviewerInitial = reviewerName.isNotEmpty ? reviewerName[0].toUpperCase() : '?';
+                              final reviewer =
+                                  reviewProvider.reviewers[review.reviewerId];
+                              final reviewerName =
+                                  reviewer?.displayName ?? 'Unknown User';
+                              final reviewerInitial =
+                                  reviewerName.isNotEmpty
+                                      ? reviewerName[0].toUpperCase()
+                                      : '?';
 
                               return FutureBuilder<UserModel?>(
-                                future: reviewer != null
-                                    ? Future.value(reviewer)
-                                    : UserService().getUser(review.reviewerId),
+                                future:
+                                    reviewer != null
+                                        ? Future.value(reviewer)
+                                        : UserService().getUser(
+                                          review.reviewerId,
+                                        ),
                                 builder: (context, snapshot) {
                                   final loadedReviewer = snapshot.data;
-                                  final resolvedName = loadedReviewer?.displayName ?? reviewerName;
-                                  final resolvedInitial = resolvedName.isNotEmpty ? resolvedName[0].toUpperCase() : reviewerInitial;
+                                  final resolvedName =
+                                      loadedReviewer?.displayName ??
+                                      reviewerName;
+                                  final resolvedInitial =
+                                      resolvedName.isNotEmpty
+                                          ? resolvedName[0].toUpperCase()
+                                          : reviewerInitial;
 
                                   return ReviewTile(
                                     review: review,

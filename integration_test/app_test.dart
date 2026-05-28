@@ -80,7 +80,9 @@ void main() {
       expect(find.text('Sign In'), findsWidgets);
     });
 
-    testWidgets('TEST 3 — Browse and bookmark flow', (WidgetTester tester) async {
+    testWidgets('TEST 3 — Browse and bookmark flow', (
+      WidgetTester tester,
+    ) async {
       // Launch app and login
       app.main();
       await tester.pumpAndSettle();
@@ -144,10 +146,7 @@ void main() {
       expect(find.byType(AlertDialog), findsWidgets);
 
       // Fill and submit request
-      await fillAndSendRequest(
-        tester,
-        timeSlot: '2026-05-15 2:00 PM',
-      );
+      await fillAndSendRequest(tester, timeSlot: '2026-05-15 2:00 PM');
 
       // Wait for request to be sent
       await tester.pumpAndSettle(const Duration(seconds: 1));

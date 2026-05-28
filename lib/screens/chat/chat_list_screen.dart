@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/chat_provider.dart';
@@ -48,7 +49,9 @@ class _ChatListScreenState extends State<ChatListScreen>
     }
 
     _loadedForUid = currentUid;
-    print('🔵 ChatListScreen loading conversations for $currentUid');
+    if (kDebugMode) {
+      print('🔵 ChatListScreen loading conversations for $currentUid');
+    }
     context.read<ChatProvider>().loadConversations(currentUid);
   }
 
@@ -58,9 +61,11 @@ class _ChatListScreenState extends State<ChatListScreen>
       final authProvider = context.read<AuthProvider>();
       final currentUid = authProvider.currentUser?.uid;
       if (currentUid != null) {
-        print(
-          '🔵 ChatListScreen resumed, refreshing conversations for $currentUid',
-        );
+        if (kDebugMode) {
+          print(
+            '🔵 ChatListScreen resumed, refreshing conversations for $currentUid',
+          );
+        }
         context.read<ChatProvider>().loadConversations(currentUid);
       }
     }
@@ -99,9 +104,11 @@ class _ChatListScreenState extends State<ChatListScreen>
         builder: (context, chatProvider, _) {
           final conversations = chatProvider.conversations;
 
-          print(
-            '🔵 ChatListScreen rebuilding with ${conversations.length} conversations',
-          );
+          if (kDebugMode) {
+            print(
+              '🔵 ChatListScreen rebuilding with ${conversations.length} conversations',
+            );
+          }
 
           if (authProvider.currentUser == null) {
             return const Center(child: CircularProgressIndicator());
@@ -161,7 +168,9 @@ class _ChatListScreenState extends State<ChatListScreen>
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          print('🔵 Tapping conversation: ${conv.id}');
+                          if (kDebugMode) {
+                            print('🔵 Tapping conversation: ${conv.id}');
+                          }
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:

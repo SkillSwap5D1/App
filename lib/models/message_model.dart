@@ -23,13 +23,13 @@ class MessageModel {
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
-      id:             map['id']             ?? '',
+      id: map['id'] ?? '',
       conversationId: map['conversationId'] ?? '',
-      senderId:       map['senderId']       ?? '',
-      text:           map['text']           ?? '',
-      timestamp:      (map['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      isRead:         map['isRead']         ?? false,
-      status:         MessageStatus.values.firstWhere(
+      senderId: map['senderId'] ?? '',
+      text: map['text'] ?? '',
+      timestamp: (map['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isRead: map['isRead'] ?? false,
+      status: MessageStatus.values.firstWhere(
         (e) => e.toString() == 'MessageStatus.${map['status'] ?? 'sent'}',
         orElse: () => MessageStatus.sent,
       ),
@@ -38,13 +38,13 @@ class MessageModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id':             id,
+      'id': id,
       'conversationId': conversationId,
-      'senderId':       senderId,
-      'text':           text,
-      'timestamp':      Timestamp.fromDate(timestamp),
-      'isRead':         isRead,
-      'status':         status.toString().split('.').last,
+      'senderId': senderId,
+      'text': text,
+      'timestamp': Timestamp.fromDate(timestamp),
+      'isRead': isRead,
+      'status': status.toString().split('.').last,
     };
   }
 
@@ -58,13 +58,13 @@ class MessageModel {
     MessageStatus? status,
   }) {
     return MessageModel(
-      id:             id             ?? this.id,
+      id: id ?? this.id,
       conversationId: conversationId ?? this.conversationId,
-      senderId:       senderId       ?? this.senderId,
-      text:           text           ?? this.text,
-      timestamp:      timestamp      ?? this.timestamp,
-      isRead:         isRead         ?? this.isRead,
-      status:         status         ?? this.status,
+      senderId: senderId ?? this.senderId,
+      text: text ?? this.text,
+      timestamp: timestamp ?? this.timestamp,
+      isRead: isRead ?? this.isRead,
+      status: status ?? this.status,
     );
   }
 }

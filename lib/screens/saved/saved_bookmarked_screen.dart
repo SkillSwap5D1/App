@@ -27,9 +27,10 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
       builder: (context, listingProvider, authProvider, _) {
         final uid = authProvider.currentUser?.uid;
         final savedIds = listingProvider.savedListingIds;
-        final savedListings = listingProvider.listings
-            .where((listing) => savedIds.contains(listing.id))
-            .toList();
+        final savedListings =
+            listingProvider.listings
+                .where((listing) => savedIds.contains(listing.id))
+                .toList();
 
         if (uid != null && savedIds.isEmpty && !listingProvider.isLoading) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,12 +91,13 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
                         horizontal: AppSpacing.md,
                         vertical: AppSpacing.md,
                       ),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.85,
-                        crossAxisSpacing: AppSpacing.md,
-                        mainAxisSpacing: AppSpacing.md,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.85,
+                            crossAxisSpacing: AppSpacing.md,
+                            mainAxisSpacing: AppSpacing.md,
+                          ),
                       itemCount: savedListings.length,
                       itemBuilder: (context, index) {
                         final listing = savedListings[index];
@@ -130,21 +132,13 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          '/listing-detail',
-          arguments: listing,
-        );
+        Navigator.pushNamed(context, '/listing-detail', arguments: listing);
       },
       child: ListingCard(
         listing: mockListing,
         isBookmarked: true,
         onTap: () {
-          Navigator.pushNamed(
-            context,
-            '/listing-detail',
-            arguments: listing,
-          );
+          Navigator.pushNamed(context, '/listing-detail', arguments: listing);
         },
         onBookmark: () {
           final uid = context.read<AuthProvider>().currentUser?.uid;
@@ -153,11 +147,7 @@ class _SavedBookmarkedScreenState extends State<SavedBookmarkedScreen> {
           }
         },
         onSendRequest: () {
-          Navigator.pushNamed(
-            context,
-            '/send-request',
-            arguments: listing,
-          );
+          Navigator.pushNamed(context, '/send-request', arguments: listing);
         },
       ),
     );

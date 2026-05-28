@@ -13,7 +13,8 @@ class RequestCard extends StatelessWidget {
   final VoidCallback? onDecline;
   final VoidCallback? onCounter;
 
-  const RequestCard({super.key, 
+  const RequestCard({
+    super.key,
     required this.senderName,
     required this.skillToLearn,
     required this.avatarInitial,
@@ -46,10 +47,7 @@ class RequestCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          if (message != null) ...[
-            SizedBox(height: 12.0),
-            _buildMessage(),
-          ],
+          if (message != null) ...[SizedBox(height: 12.0), _buildMessage()],
           SizedBox(height: 12.0),
           _buildTimeSlots(),
           if (onAccept != null && onDecline != null) ...[
@@ -71,17 +69,16 @@ class RequestCard extends StatelessWidget {
       children: [
         Text(
           'Proposed times',
-          style: AppTextStyles.bodySmall.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 8.0),
         Wrap(
           spacing: 8.0,
           runSpacing: 6.0,
-          children: proposedTimeSlots.map((slot) {
-            return _AnimatedTimeChip(label: slot);
-          }).toList(),
+          children:
+              proposedTimeSlots.map((slot) {
+                return _AnimatedTimeChip(label: slot);
+              }).toList(),
         ),
       ],
     );
@@ -98,10 +95,7 @@ class RequestCard extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.pastelGreenDeep,
               foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(
-                vertical: 12.0,
-                horizontal: 8.0,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -117,10 +111,7 @@ class RequestCard extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.error,
               side: BorderSide(color: AppColors.error, width: 2),
-              padding: EdgeInsets.symmetric(
-                vertical: 12.0,
-                horizontal: 8.0,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -172,9 +163,7 @@ class RequestCard extends StatelessWidget {
           backgroundColor: AppColors.primary,
           child: Text(
             avatarInitial,
-            style: AppTextStyles.h3.copyWith(
-              color: Colors.white,
-            ),
+            style: AppTextStyles.h3.copyWith(color: Colors.white),
           ),
         ),
         SizedBox(width: 12.0),
@@ -200,10 +189,7 @@ class RequestCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
                 color: _getStatusColor(),
                 borderRadius: BorderRadius.circular(6.0),
@@ -217,10 +203,7 @@ class RequestCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 4.0),
-            Text(
-              timestamp,
-              style: AppTextStyles.caption,
-            ),
+            Text(timestamp, style: AppTextStyles.caption),
           ],
         ),
       ],
@@ -274,16 +257,19 @@ class _AnimatedTimeChipState extends State<_AnimatedTimeChip> {
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: _pressed
-                  ? [AppColors.pastelGreenDeep, AppColors.pastelGreen]
-                  : [AppColors.pastelGreen, AppColors.pastelGreenDeep],
+              colors:
+                  _pressed
+                      ? [AppColors.pastelGreenDeep, AppColors.pastelGreen]
+                      : [AppColors.pastelGreen, AppColors.pastelGreenDeep],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(999),
             boxShadow: [
               BoxShadow(
-                color: AppColors.pastelGreenDeep.withOpacity(_pressed ? 0.18 : 0.12),
+                color: AppColors.pastelGreenDeep.withOpacity(
+                  _pressed ? 0.18 : 0.12,
+                ),
                 blurRadius: _pressed ? 10 : 8,
                 offset: Offset(0, _pressed ? 2 : 4),
               ),

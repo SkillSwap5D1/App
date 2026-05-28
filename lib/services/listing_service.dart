@@ -5,20 +5,21 @@ class ListingService {
   // ── Firebase instance ─────────────────────────────────────────────────────
   final FirebaseFirestore _db;
 
-  ListingService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
+  ListingService({FirebaseFirestore? db})
+    : _db = db ?? FirebaseFirestore.instance;
 
   // ── Get all active listings ───────────────────────────────────────────────
   Future<List<ListingModel>> getAllListings() async {
     try {
-      final snapshot = await _db
-          .collection('listings')
-          .where('isActive', isEqualTo: true)
-          .get();
+      final snapshot =
+          await _db
+              .collection('listings')
+              .where('isActive', isEqualTo: true)
+              .get();
 
       return snapshot.docs
           .map((doc) => ListingModel.fromMap(doc.data()))
           .toList();
-
     } catch (e) {
       throw Exception('Failed to get listings: $e');
     }
@@ -30,24 +31,27 @@ class ListingService {
         .collection('listings')
         .where('isActive', isEqualTo: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ListingModel.fromMap(doc.data()))
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => ListingModel.fromMap(doc.data()))
+                  .toList(),
+        );
   }
 
   // ── Get listings owned by a specific user ─────────────────────────────────
   Future<List<ListingModel>> getMyListings(String uid) async {
     try {
-      final snapshot = await _db
-          .collection('listings')
-          .where('ownerId', isEqualTo: uid)
-          .where('isActive', isEqualTo: true)
-          .get();
+      final snapshot =
+          await _db
+              .collection('listings')
+              .where('ownerId', isEqualTo: uid)
+              .where('isActive', isEqualTo: true)
+              .get();
 
       return snapshot.docs
           .map((doc) => ListingModel.fromMap(doc.data()))
           .toList();
-
     } catch (e) {
       throw Exception('Failed to get my listings: $e');
     }
@@ -61,7 +65,6 @@ class ListingService {
 
       // Save with the generated ID
       await docRef.set(listing.copyWith(id: docRef.id).toMap());
-
     } catch (e) {
       throw Exception('Failed to create listing: $e');
     }
@@ -70,10 +73,7 @@ class ListingService {
   // ── Update an existing listing ────────────────────────────────────────────
   Future<void> updateListing(String id, Map<String, dynamic> data) async {
     try {
-      await _db
-          .collection('listings')
-          .doc(id)
-          .update(data);
+      await _db.collection('listings').doc(id).update(data);
     } catch (e) {
       throw Exception('Failed to update listing: $e');
     }
@@ -82,10 +82,7 @@ class ListingService {
   // ── Soft delete — sets isActive to false ──────────────────────────────────
   Future<void> deleteListing(String id) async {
     try {
-      await _db
-          .collection('listings')
-          .doc(id)
-          .update({'isActive': false});
+      await _db.collection('listings').doc(id).update({'isActive': false});
     } catch (e) {
       throw Exception('Failed to delete listing: $e');
     }
@@ -100,9 +97,7 @@ class ListingService {
   }) async {
     try {
       // Start with all active listings
-      Query q = _db
-          .collection('listings')
-          .where('isActive', isEqualTo: true);
+      Query q = _db.collection('listings').where('isActive', isEqualTo: true);
 
       // Apply category filter
       if (category != 'All') {
@@ -121,22 +116,35 @@ class ListingService {
 
       final snapshot = await q.get();
 
-      List<ListingModel> results = snapshot.docs
-          .map((doc) => ListingModel.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
+      List<ListingModel> results =
+          snapshot.docs
+              .map(
+                (doc) =>
+                    ListingModel.fromMap(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
 
       // Apply text search filter locally
       if (query.isNotEmpty) {
-        results = results.where((listing) =>
-            listing.title.toLowerCase().contains(query.toLowerCase()) ||
-            listing.description.toLowerCase().contains(query.toLowerCase()) ||
-            listing.tags.any((tag) =>
-                tag.toLowerCase().contains(query.toLowerCase()))
-        ).toList();
+        results =
+            results
+                .where(
+                  (listing) =>
+                      listing.title.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ) ||
+                      listing.description.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ) ||
+                      listing.tags.any(
+                        (tag) =>
+                            tag.toLowerCase().contains(query.toLowerCase()),
+                      ),
+                )
+                .toList();
       }
 
       return results;
-
     } catch (e) {
       throw Exception('Failed to search listings: $e');
     }
@@ -145,16 +153,12 @@ class ListingService {
   // ── Get a single listing by ID ────────────────────────────────────────────
   Future<ListingModel?> getListing(String id) async {
     try {
-      final doc = await _db
-          .collection('listings')
-          .doc(id)
-          .get();
+      final doc = await _db.collection('listings').doc(id).get();
 
       if (doc.exists) {
         return ListingModel.fromMap(doc.data()!);
       }
       return null;
-
     } catch (e) {
       throw Exception('Failed to get listing: $e');
     }

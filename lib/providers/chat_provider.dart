@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../models/conversation_model.dart';
@@ -52,7 +51,9 @@ class ChatProvider extends ChangeNotifier {
     try {
       // Debug log for re-subscribing to messagesStream
       if (kDebugMode) {
-        print('🔵 ChatProvider: Re-subscribing to messagesStream for conversation $conversationId');
+        print(
+          '🔵 ChatProvider: Re-subscribing to messagesStream for conversation $conversationId',
+        );
       }
 
       _messagesSubscription = _chatService.messagesStream(conversationId).listen((
@@ -97,7 +98,7 @@ class ChatProvider extends ChangeNotifier {
         print('   Sender: $senderId ($senderName)');
         print('   Text length: ${text.length}');
       }
-      
+
       final sentMessage = await _chatService.sendMessage(
         conversationId: conversationId,
         senderId: senderId,

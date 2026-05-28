@@ -38,9 +38,9 @@ class MockListing {
   final String title;
   final String description;
   final List<String> tags;
-  final String level;       // Beginner / Intermediate / Advanced
-  final String modality;    // Online / In-Person
-  final String category;    // Programming / Languages / Music etc
+  final String level; // Beginner / Intermediate / Advanced
+  final String modality; // Online / In-Person
+  final String category; // Programming / Languages / Music etc
   final String nextAvailable;
   final bool isBookmarked;
 
@@ -68,7 +68,7 @@ class MockRequest {
   final String listingId;
   final String skillName;
   final String message;
-  final String status;      // pending / accepted / declined / countered
+  final String status; // pending / accepted / declined / countered
   final String timeAgo;
   final List<String> proposedTimes;
 
@@ -109,7 +109,7 @@ class MockConversation {
   final String timestamp;
   final int unreadCount;
   final bool isOnline;
-  final String category;  // Programming / Languages / Design / Music
+  final String category; // Programming / Languages / Design / Music
   final List<MockMessage> messages;
 
   const MockConversation({
@@ -127,7 +127,7 @@ class MockConversation {
 
 class MockNotification {
   final String id;
-  final String type;        // message / request / reminder / accepted / declined
+  final String type; // message / request / reminder / accepted / declined
   final String title;
   final String subtitle;
   final String timeAgo;
@@ -166,7 +166,6 @@ class MockReview {
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 
 class MockData {
-
   // ── CURRENT LOGGED IN USER ──────────────────────────────────────────────────
   static final MockUser currentUser = MockUser(
     id: 'user_001',
@@ -174,9 +173,10 @@ class MockData {
     lastName: 'Wilson',
     email: 'jamie.wilson@myport.ac.uk',
     course: 'Computer Science',
-    bio: 'Passionate about technology and learning new things. '
-         'I love teaching what I know and picking up skills from others. '
-         'Currently focused on web development and data science.',
+    bio:
+        'Passionate about technology and learning new things. '
+        'I love teaching what I know and picking up skills from others. '
+        'Currently focused on web development and data science.',
     rating: 4.8,
     sessionsCompleted: 12,
     memberSince: DateTime(2025, 9, 1),
@@ -190,8 +190,9 @@ class MockData {
       lastName: 'Chen',
       email: 'alex.chen@myport.ac.uk',
       course: 'Software Engineering',
-      bio: 'Python enthusiast and coding tutor. '
-           'Love helping beginners get started with programming.',
+      bio:
+          'Python enthusiast and coding tutor. '
+          'Love helping beginners get started with programming.',
       rating: 4.8,
       sessionsCompleted: 24,
       memberSince: DateTime(2024, 9, 1),
@@ -202,8 +203,9 @@ class MockData {
       lastName: 'Lopez',
       email: 'maria.lopez@myport.ac.uk',
       course: 'International Business',
-      bio: 'Native Spanish speaker offering conversation practice. '
-           'Intermediate and advanced levels welcome.',
+      bio:
+          'Native Spanish speaker offering conversation practice. '
+          'Intermediate and advanced levels welcome.',
       rating: 4.9,
       sessionsCompleted: 31,
       memberSince: DateTime(2024, 10, 1),
@@ -214,8 +216,9 @@ class MockData {
       lastName: 'Blake',
       email: 'jordan.blake@myport.ac.uk',
       course: 'Graphic Design',
-      bio: 'UI/UX designer with a passion for teaching '
-           'design fundamentals to beginners.',
+      bio:
+          'UI/UX designer with a passion for teaching '
+          'design fundamentals to beginners.',
       rating: 4.6,
       sessionsCompleted: 18,
       memberSince: DateTime(2025, 1, 15),
@@ -226,8 +229,9 @@ class MockData {
       lastName: 'Rivera',
       email: 'sam.rivera@myport.ac.uk',
       course: 'Music Technology',
-      bio: 'Guitar player of 8 years. '
-           'Teaching all styles from classical to rock.',
+      bio:
+          'Guitar player of 8 years. '
+          'Teaching all styles from classical to rock.',
       rating: 4.7,
       sessionsCompleted: 15,
       memberSince: DateTime(2025, 2, 1),
@@ -238,8 +242,9 @@ class MockData {
       lastName: 'Sharma',
       email: 'priya.sharma@myport.ac.uk',
       course: 'Data Science',
-      bio: 'Data science student looking to learn '
-           'web development skills.',
+      bio:
+          'Data science student looking to learn '
+          'web development skills.',
       rating: 4.5,
       sessionsCompleted: 6,
       memberSince: DateTime(2025, 3, 1),
@@ -266,9 +271,10 @@ class MockData {
       ownerRating: 4.8,
       ownerReviewCount: 24,
       title: 'Python Programming',
-      description: 'Learn Python from scratch — variables, loops, '
-                   'data structures, and build your first projects together. '
-                   'Perfect for complete beginners.',
+      description:
+          'Learn Python from scratch — variables, loops, '
+          'data structures, and build your first projects together. '
+          'Perfect for complete beginners.',
       tags: ['Programming', 'Computer Science', 'Beginner'],
       level: 'Beginner',
       modality: 'Online',
@@ -282,9 +288,10 @@ class MockData {
       ownerRating: 4.9,
       ownerReviewCount: 31,
       title: 'Spanish Conversation Practice',
-      description: 'Practice real-world Spanish conversation. '
-                   'Improve your accent, vocabulary, and confidence speaking. '
-                   'Native speaker with teaching experience.',
+      description:
+          'Practice real-world Spanish conversation. '
+          'Improve your accent, vocabulary, and confidence speaking. '
+          'Native speaker with teaching experience.',
       tags: ['Languages', 'Culture', 'Intermediate'],
       level: 'Intermediate',
       modality: 'In-Person',
@@ -298,9 +305,10 @@ class MockData {
       ownerRating: 4.6,
       ownerReviewCount: 18,
       title: 'Digital Design Basics',
-      description: 'Get started with UI/UX design. '
-                   'Learn layout principles, colour theory, and '
-                   'how to use Figma to create stunning designs.',
+      description:
+          'Get started with UI/UX design. '
+          'Learn layout principles, colour theory, and '
+          'how to use Figma to create stunning designs.',
       tags: ['Design', 'Creative', 'Beginner'],
       level: 'Beginner',
       modality: 'Online',
@@ -314,9 +322,10 @@ class MockData {
       ownerRating: 4.7,
       ownerReviewCount: 15,
       title: 'Guitar Lessons',
-      description: 'Acoustic guitar for any level. '
-                   'Chords, strumming patterns, music theory basics, '
-                   'and your favourite songs.',
+      description:
+          'Acoustic guitar for any level. '
+          'Chords, strumming patterns, music theory basics, '
+          'and your favourite songs.',
       tags: ['Music', 'Creative'],
       level: 'Beginner',
       modality: 'In-Person',
@@ -330,9 +339,10 @@ class MockData {
       ownerRating: 4.8,
       ownerReviewCount: 24,
       title: 'Web Development with React',
-      description: 'Build modern web apps using React. '
-                   'Covers components, hooks, state management, '
-                   'and connecting to APIs.',
+      description:
+          'Build modern web apps using React. '
+          'Covers components, hooks, state management, '
+          'and connecting to APIs.',
       tags: ['Programming', 'Computer Science', 'Intermediate'],
       level: 'Intermediate',
       modality: 'Online',
@@ -346,9 +356,10 @@ class MockData {
       ownerRating: 4.9,
       ownerReviewCount: 31,
       title: 'Business Spanish',
-      description: 'Professional Spanish for business settings. '
-                   'Emails, presentations, meetings, and negotiations. '
-                   'Advanced level only.',
+      description:
+          'Professional Spanish for business settings. '
+          'Emails, presentations, meetings, and negotiations. '
+          'Advanced level only.',
       tags: ['Languages', 'Business', 'Advanced'],
       level: 'Advanced',
       modality: 'Online',
@@ -367,9 +378,10 @@ class MockData {
       ownerRating: 4.8,
       ownerReviewCount: 12,
       title: 'Flutter App Development',
-      description: 'Learn to build cross-platform mobile apps '
-                   'using Flutter and Dart. From zero to your '
-                   'first working app.',
+      description:
+          'Learn to build cross-platform mobile apps '
+          'using Flutter and Dart. From zero to your '
+          'first working app.',
       tags: ['Programming', 'Mobile', 'Beginner'],
       level: 'Beginner',
       modality: 'Online',
@@ -383,9 +395,10 @@ class MockData {
       ownerRating: 4.8,
       ownerReviewCount: 12,
       title: 'Data Structures & Algorithms',
-      description: 'Crack coding interviews. '
-                   'Arrays, linked lists, trees, sorting, '
-                   'and dynamic programming explained clearly.',
+      description:
+          'Crack coding interviews. '
+          'Arrays, linked lists, trees, sorting, '
+          'and dynamic programming explained clearly.',
       tags: ['Programming', 'Computer Science', 'Intermediate'],
       level: 'Intermediate',
       modality: 'Online',
@@ -409,9 +422,10 @@ class MockData {
       fromUserName: 'Priya Sharma',
       listingId: 'listing_007',
       skillName: 'Flutter App Development',
-      message: 'Hi Jamie! I\'d love to learn Flutter. '
-               'I have some Python experience and want to '
-               'build a mobile app for my final year project.',
+      message:
+          'Hi Jamie! I\'d love to learn Flutter. '
+          'I have some Python experience and want to '
+          'build a mobile app for my final year project.',
       status: 'pending',
       timeAgo: '2 hours ago',
       proposedTimes: ['Mon 14 Apr, 2:00 PM', 'Tue 15 Apr, 4:00 PM'],
@@ -422,9 +436,10 @@ class MockData {
       fromUserName: 'Liam Foster',
       listingId: 'listing_007',
       skillName: 'Flutter App Development',
-      message: 'Hey! I\'m a photographer and want to build '
-               'my own portfolio app. Can you help me '
-               'learn the basics?',
+      message:
+          'Hey! I\'m a photographer and want to build '
+          'my own portfolio app. Can you help me '
+          'learn the basics?',
       status: 'pending',
       timeAgo: '5 hours ago',
       proposedTimes: ['Wed 16 Apr, 3:00 PM'],
@@ -439,8 +454,9 @@ class MockData {
       fromUserName: 'Jamie Wilson',
       listingId: 'listing_002',
       skillName: 'Spanish Conversation Practice',
-      message: 'Hi Maria! I saw your Spanish listing. '
-               'I\'d love to practice — I\'m at intermediate level.',
+      message:
+          'Hi Maria! I saw your Spanish listing. '
+          'I\'d love to practice — I\'m at intermediate level.',
       status: 'accepted',
       timeAgo: '1 day ago',
       proposedTimes: ['Thu 17 Apr, 5:00 PM'],
@@ -451,8 +467,9 @@ class MockData {
       fromUserName: 'Jamie Wilson',
       listingId: 'listing_003',
       skillName: 'Digital Design Basics',
-      message: 'Hi Jordan! Really interested in learning '
-               'Figma for my projects.',
+      message:
+          'Hi Jordan! Really interested in learning '
+          'Figma for my projects.',
       status: 'pending',
       timeAgo: '3 hours ago',
       proposedTimes: ['Fri 18 Apr, 2:00 PM', 'Sat 19 Apr, 11:00 AM'],
@@ -474,8 +491,9 @@ class MockData {
         MockMessage(
           id: 'msg_001',
           senderId: 'user_001',
-          text: 'Hi! I saw your Spanish conversation listing. '
-                'I\'d love to practice!',
+          text:
+              'Hi! I saw your Spanish conversation listing. '
+              'I\'d love to practice!',
           timestamp: '10:30 AM',
           isMe: true,
         ),
@@ -489,16 +507,18 @@ class MockData {
         MockMessage(
           id: 'msg_003',
           senderId: 'user_001',
-          text: 'I\'d say intermediate — I can hold conversations '
-                'but want to sound more natural.',
+          text:
+              'I\'d say intermediate — I can hold conversations '
+              'but want to sound more natural.',
           timestamp: '10:35 AM',
           isMe: true,
         ),
         MockMessage(
           id: 'msg_004',
           senderId: 'user_003',
-          text: 'Perfect! We can do conversational practice. '
-                'Want to meet at the campus library?',
+          text:
+              'Perfect! We can do conversational practice. '
+              'Want to meet at the campus library?',
           timestamp: '10:38 AM',
           isMe: false,
         ),
@@ -642,11 +662,7 @@ class MockData {
   ];
 
   // ── FORMATS ──────────────────────────────────────────────────────────────────
-  static const List<String> formats = [
-    'All Formats',
-    'Online',
-    'In-Person',
-  ];
+  static const List<String> formats = ['All Formats', 'Online', 'In-Person'];
 
   // ── COURSES ──────────────────────────────────────────────────────────────────
   static const List<String> courses = [

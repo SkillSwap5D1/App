@@ -4,10 +4,7 @@ import '../../theme/app_theme.dart';
 class SavedEmptyState extends StatelessWidget {
   final VoidCallback onBrowsePressed;
 
-  const SavedEmptyState({
-    super.key,
-    required this.onBrowsePressed,
-  });
+  const SavedEmptyState({super.key, required this.onBrowsePressed});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +19,7 @@ class SavedEmptyState extends StatelessWidget {
               tween: Tween(begin: 0.0, end: 1.0),
               duration: const Duration(milliseconds: 600),
               builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: child,
-                );
+                return Transform.scale(scale: value, child: child);
               },
               child: Container(
                 width: 96,
@@ -48,9 +42,7 @@ class SavedEmptyState extends StatelessWidget {
             // Title
             Text(
               'No saved skills yet',
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
             ),
             const SizedBox(height: AppSpacing.sm),
 

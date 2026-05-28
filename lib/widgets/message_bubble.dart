@@ -19,9 +19,8 @@ class MessageBubble extends StatelessWidget {
       child: Align(
         alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Column(
-          crossAxisAlignment: message.isMe
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
+          crossAxisAlignment:
+              message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Container(
               constraints: BoxConstraints(
@@ -32,12 +31,8 @@ class MessageBubble extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(AppRadius.md),
                   topRight: const Radius.circular(AppRadius.md),
-                  bottomLeft: Radius.circular(
-                    message.isMe ? AppRadius.md : 2,
-                  ),
-                  bottomRight: Radius.circular(
-                    message.isMe ? 2 : AppRadius.md,
-                  ),
+                  bottomLeft: Radius.circular(message.isMe ? AppRadius.md : 2),
+                  bottomRight: Radius.circular(message.isMe ? 2 : AppRadius.md),
                 ),
                 border: Border.all(
                   color: message.isMe ? AppColors.primary : AppColors.border,
@@ -58,18 +53,15 @@ class MessageBubble extends StatelessWidget {
               child: Text(
                 message.text,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: message.isMe
-                      ? AppColors.surface
-                      : AppColors.textPrimary,
+                  color:
+                      message.isMe ? AppColors.surface : AppColors.textPrimary,
                   height: 1.4,
                 ),
               ),
             ),
             const SizedBox(height: 4),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -78,9 +70,7 @@ class MessageBubble extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
-                    ).copyWith(
-                      color: AppColors.textMuted,
-                    ),
+                    ).copyWith(color: AppColors.textMuted),
                   ),
                   if (message.isMe && showDeliveryStatus) ...[
                     const SizedBox(width: 4),
