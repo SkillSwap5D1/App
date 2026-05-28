@@ -20,7 +20,6 @@ Video demonstration: https://www.youtube.com/watch?v=iX1_VaygFvw
 ## Features
 
 - University email authentication (@myport.ac.uk only)
-- Google Sign In restricted to university accounts
 - Browse and search skill listings with filters
 - Send lesson requests with multiple proposed time slots
 - Accept, decline, or counter requests
@@ -167,9 +166,6 @@ flutter test integration_test/app_test.dart
 
 Only University of Portsmouth email addresses 
 (@myport.ac.uk) are accepted at login and registration. 
-This is enforced at the service level before any 
-Firebase call is made. Google Sign In is also restricted 
-to @myport.ac.uk Google accounts only.
 
 ---
 
